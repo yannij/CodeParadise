@@ -11,6 +11,7 @@ CpMaterial3LayoutPresenter >> renderView [
 	self setBottomAppBar.
 
 	self view
+		"pane2Hidden: true;"
 		renderLeftDrawer;
 		renderNav;
 		renderTopAppBar;

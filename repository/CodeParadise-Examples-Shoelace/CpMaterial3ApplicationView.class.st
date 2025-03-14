@@ -58,5 +58,20 @@ body {
 .rail-icon {
 	font-size: 24px;
 }
+
+.slx-pane2 {
+  flex: 100%;
+  display: flex;  
+  flex-direction: column;
+  padding: 0;
+  padding-right: 16px;
+  margin: 0;
+  text-align: left;
+}
+
+.slx-pane2-content {
+  border-radius: 16px;
+  background: var(--sl-color-primary-200);
+}
 '
 ]

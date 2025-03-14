@@ -2,6 +2,10 @@ Class {
 	#name : #CpMaterial3LayoutView,
 	#superclass : #CpView,
 	#instVars : [
+		'pane2Hidden',
+		'sidesheetHidden',
+		'navRailHidden',
+		'bottomAppBarHidden',
 		'items',
 		'currentPage',
 		'leadingAction',
@@ -89,6 +93,7 @@ ul.slx-nav-rail {
   display: flex;  
   flex-direction: column;
   padding: 0;
+  padding-right: 16px;
   margin: 0;
   text-align: left;
 }
@@ -115,12 +120,11 @@ ul.slx-nav-rail {
 .slx-sidesheet {
   margin-left: auto;
   max-width: 400px;
-  padding-left: 16px;
+  background: var(--sl-color-primary-200);
 }
 
 .slx-sidesheet-content {
   border-radius: 16px;
-  background: var(--sl-color-primary-200);
 }
 '
 ]
@@ -223,11 +227,7 @@ CpMaterial3LayoutView class >> templateLayout [
         <slot name="slx-pane-content"></slot>
       </div>
     </div>
-    <div class="slx-pane">
-      <div class="slx-pane-content">
-        <slot name="slx-pane-content">Pane2 content</slot>
-      </div>
-    </div>',
+    <slot name="slx-pane2"></slot>',
     self templateSidesheet, '
   </main>
 </div>',
@@ -258,11 +258,23 @@ CpMaterial3LayoutView class >> templateSidesheet [
 	^ '
 <aside class="slx-sidesheet">
   <div class="slx-sidesheet-content">
-  SideSheetSideSheet
+  <p>SideSheetSideSheet</p>
   <slot name="sidesheet"></slot>
   </div>
 </aside>
 '
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> bottomAppBarHidden [
+
+	^ bottomAppBarHidden
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> bottomAppBarHidden: anObject [
+
+	bottomAppBarHidden := anObject
 ]
 
 { #category : #accessing }
@@ -351,6 +363,11 @@ CpMaterial3LayoutView >> initialize [
 
 	super initialize.
 
+	pane2Hidden := false.
+	sidesheetHidden := false.
+	navRailHidden := false.
+	bottomAppBarHidden := false.
+
 	currentPage := 'Club'.
 
 	items := {
@@ -383,6 +400,30 @@ CpMaterial3LayoutView >> leadingAction [
 CpMaterial3LayoutView >> leadingAction: anObject [
 
 	leadingAction := anObject
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> navRailHidden [
+
+	^ navRailHidden
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> navRailHidden: anObject [
+
+	navRailHidden := anObject
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> pane2Hidden [
+
+	^ pane2Hidden
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> pane2Hidden: anObject [
+
+	pane2Hidden := anObject
 ]
 
 { #category : #'rendering - bottomAppBar' }
@@ -533,7 +574,9 @@ CpMaterial3LayoutView >> renderNav [
 { #category : #rendering }
 CpMaterial3LayoutView >> renderPage [
 
-	self renderPage: currentPage
+	self renderPage: currentPage.
+	self renderPane2.
+
 ]
 
 { #category : #rendering }
@@ -542,14 +585,32 @@ CpMaterial3LayoutView >> renderPage: aPageName [
 
 	split := SlSplitPanel new
 			customPropertyAt: 'divider-width' put: '24px';
-			replaceAllChildrenWith: (aPageName inHtmlTag: #span) atSlotNamed: #'start';
-			replaceAllChildrenWith: (aPageName inHtmlTag: #span) atSlotNamed: #'end';
+			replaceAllChildrenWith: (aPageName inHtmlTag: #p) atSlotNamed: #'start';
+			replaceAllChildrenWith: (aPageName inHtmlTag: #p) atSlotNamed: #'end';
 			replaceAllChildrenWith: (SlIcon named: 'grip-vertical') atSlotNamed: #'divider';
 			yourself.
 
 	self
 		replaceAllChildrenWith: split
 		atSlotNamed: #'slx-pane-content'
+]
+
+{ #category : #'rendering - pane' }
+CpMaterial3LayoutView >> renderPane2 [
+	| element |
+
+	self pane2Hidden ifTrue: [
+		^ self ].
+
+	element := (CpHtmlElement newWithTag: #div)
+		addClass: 'slx-pane2';
+		appendChild: ((CpHtmlElement newWithTag: #div)
+			addClass: 'slx-pane2-content';
+			appendChild: ('Lorem ipsum...' inHtmlTag: #p);
+			yourself);
+		yourself.
+
+	self replaceAllChildrenWith: element atSlotNamed: #'slx-pane2'
 ]
 
 { #category : #'rendering - topAppBar' }
@@ -602,6 +663,18 @@ CpMaterial3LayoutView >> setMainPage: aString [
 	currentPage := aString.
 	self renderPage
 
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> sidesheetHidden [
+
+	^ sidesheetHidden
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> sidesheetHidden: anObject [
+
+	sidesheetHidden := anObject
 ]
 
 { #category : #accessing }
