@@ -5,6 +5,19 @@ Class {
 }
 
 { #category : #'web resources' }
+CpMaterial3ApplicationView class >> globalStyle [
+
+	<webResource: #css>
+
+	^ '
+body {
+	margin: 0;
+	padding: 0;
+}
+'
+]
+
+{ #category : #'web resources' }
 CpMaterial3ApplicationView class >> style [
 
 	<webResource: #css>
@@ -37,41 +50,5 @@ CpMaterial3ApplicationView class >> template [
 <div id="container">
   <slot name="layout"></slot>
 </div>
-'
-]
-
-{ #category : #initialization }
-CpMaterial3ApplicationView >> initialize [
-
-	CpHtmlElement documentAddStyle: '
-body {
-	margin: 0;
-	padding: 0;
-}
-
-.rail-item {
-	margin: 12px;
-	height: 56px;
-	width: 56px;
-}
-
-.rail-icon {
-	font-size: 24px;
-}
-
-.slx-pane2 {
-  flex: 100%;
-  display: flex;  
-  flex-direction: column;
-  padding: 0;
-  padding-right: 16px;
-  margin: 0;
-  text-align: left;
-}
-
-.slx-pane2-content {
-  border-radius: 16px;
-  background: var(--sl-color-primary-200);
-}
 '
 ]

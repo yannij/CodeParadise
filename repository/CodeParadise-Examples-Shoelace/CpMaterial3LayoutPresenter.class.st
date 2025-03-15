@@ -9,14 +9,9 @@ CpMaterial3LayoutPresenter >> renderView [
 
 	self setTopAppBar.
 	self setBottomAppBar.
+	"self view pane2Hidden: true;"
 
-	self view
-		"pane2Hidden: true;"
-		renderLeftDrawer;
-		renderNav;
-		renderTopAppBar;
-		renderBottomeAppBar;
-		renderPage.
+	self view renderLayout.
 
 ]
 
@@ -34,7 +29,7 @@ CpMaterial3LayoutPresenter >> setTopAppBar [
 
 	self view
 		headline: 'Responsive App';
-		leadingAction: 'Start';
+		leadingAction: 'list';
 		trailingActions: { '1-square'. '2-square' . '3-square'. '4-square' }.
 
 ]

@@ -18,11 +18,122 @@ Class {
 }
 
 { #category : #'web resources' }
+CpMaterial3LayoutView class >> globalStyle [
+
+	<webResource: #css>
+
+	^ '
+.rail-item {
+	margin: 12px;
+	height: 56px;
+	width: 56px;
+}
+
+.rail-icon {
+	font-size: 24px;
+}
+'
+, self globalStyleBody
+, self globalStyleTopAppBar
+]
+
+{ #category : #'web resources' }
+CpMaterial3LayoutView class >> globalStyleBody [
+
+	<webResource: #css>
+
+	^ '
+.slx-body {
+  flex: auto;
+  display: flex;  
+  flex-direction: row;
+  background: var(--sl-color-primary-100);
+}
+
+.slx-split-panel {
+  width: 100%;
+  background: var(--sl-color-primary-100);
+  margin: 16px 0;
+}
+
+.slx-split-panel sl-split-panel::part(divider) {
+  background-color: var(--sl-color-primary-100);
+}
+
+.slx-pane {
+  flex: 100%;
+  display: flex;  
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.slx-pane-1 {
+  padding-left: 16px;
+}
+
+.slx-pane-2 {
+  padding-right: 16px;
+}
+
+.slx-pane-content {
+  border-radius: 16px;
+  background: var(--sl-color-primary-200);
+}
+'
+]
+
+{ #category : #'web resources' }
+CpMaterial3LayoutView class >> globalStyleTopAppBar [
+
+	<webResource: #css>
+
+	^ '
+.slx-header {
+  border-radius: 16px;
+  margin-bottom: 16px;
+  flex: 0 0 64px;
+  display: flex;  
+  flex-direction: column;
+  background: var(--sl-color-primary-200);
+}
+.topAppBar {
+  display: flex;
+  flex-flow: row wrap;
+  padding: 8px 4px 8px 4px;
+}
+.topAppBar-leadingAction {
+  margin-top: 4px;
+  height: 48px;
+  width: 48px;
+  font-size: 24px;
+}
+.topAppBar-headline {
+  margin-top: 4px;
+  padding-top: 8px;
+  padding-left: 8px;
+  height: 48px;
+  font-size: 24px;
+}
+.topAppBar-trailingActions {
+  margin-left: auto;
+  margin-top: 4px;
+  height: 48px;
+  font-size: 24px;
+}
+'
+]
+
+{ #category : #'web resources' }
 CpMaterial3LayoutView class >> style [
 
 	<webResource: #css>
 
-	^ self styleLayout, self styleTopAppBar, self styleBottomAppBar
+	^ self styleLayout
+		, self styleNav
+		, self styleSidesheet
+		, self styleBottomAppBar
 ]
 
 { #category : #'web resources' }
@@ -31,6 +142,11 @@ CpMaterial3LayoutView class >> styleBottomAppBar [
 	<webResource: #css>
 
 	^ '
+.slx-footer {
+  flex: 0 0 72px;
+  background: var(--sl-color-primary-200);
+}
+
 .bottomAppBar {
   display: flex;
   flex-flow: row wrap;
@@ -65,12 +181,20 @@ CpMaterial3LayoutView class >> styleLayout [
   display: flex;  
   flex-flow: row wrap;
 }
+'
+]
 
+{ #category : #'web resources' }
+CpMaterial3LayoutView class >> styleNav [
+
+	<webResource: #css>
+
+	^ '
 .slx-nav {
   padding: 0;
   margin: 0;
   flex: 0 0 80px;
-  background: var(--sl-color-primary-100);
+  background: var(--sl-color-primary-200);
 }
 
 ul.slx-nav-rail {
@@ -78,45 +202,15 @@ ul.slx-nav-rail {
   padding: 0;
   margin: 0;
 }
+'
+]
 
-.slx-body {
-  padding: 16px;
-  margin: 0;
-  flex: auto;
-  display: flex;  
-  flex-direction: row;
-  background: var(--sl-color-primary-100);
-}
+{ #category : #'web resources' }
+CpMaterial3LayoutView class >> styleSidesheet [
 
-.slx-pane {
-  flex: 100%;
-  display: flex;  
-  flex-direction: column;
-  padding: 0;
-  padding-right: 16px;
-  margin: 0;
-  text-align: left;
-}
+	<webResource: #css>
 
-.slx-header {
-  border-radius: 16px;
-  margin-bottom: 16px;
-  flex: 0 0 64px;
-  display: flex;  
-  flex-direction: column;
-  background: var(--sl-color-primary-200);
-}
-
-.slx-pane-content {
-  border-radius: 16px;
-  background: var(--sl-color-primary-200);
-}
-
-.slx-footer {
-  flex: 0 0 72px;
-  background: var(--sl-color-primary-200);
-}
-
+	^ '
 .slx-sidesheet {
   margin-left: auto;
   max-width: 400px;
@@ -130,46 +224,18 @@ ul.slx-nav-rail {
 ]
 
 { #category : #'web resources' }
-CpMaterial3LayoutView class >> styleTopAppBar [
-
-	<webResource: #css>
-
-	^ '
-.topAppBar {
-  display: flex;
-  flex-flow: row wrap;
-  padding: 8px 4px 8px 4px;
-}
-.topAppBar-leadingAction {
-  margin-top: 4px;
-  height: 48px;
-  width: 48px;
-  font-size: 24px;
-}
-.topAppBar-headline {
-  margin-top: 4px;
-  padding-top: 8px;
-  padding-left: 8px;
-  height: 48px;
-  font-size: 24px;
-}
-.topAppBar-trailingActions {
-  margin-left: auto;
-  margin-top: 4px;
-  height: 48px;
-  font-size: 24px;
-}
-'
-]
-
-{ #category : #'web resources' }
 CpMaterial3LayoutView class >> template [
 
 	<webResource: #html>
 
 	^ '
-<div id="container">',
-	self templateLayout, '
+<div id="container">
+  <div class="slx-layout">',
+    self templateNav,
+    '<slot name="slx-body"></slot>',
+    self templateSidesheet, '
+  </div>',
+  self templateFooter, '
 </div>'
 ]
 
@@ -190,49 +256,6 @@ CpMaterial3LayoutView class >> templateFooter [
   </div>
 </footer>
 '
-]
-
-{ #category : #'web resources' }
-CpMaterial3LayoutView class >> templateHeader [
-
-	<webResource: #html>
-
-	^ '
-<header class="slx-header">
-  <div class="topAppBar">
-    <div class="topAppBar-leadingAction"><slot name="leadingAction"></slot></div>
-    <div class="topAppBar-headline"><slot name="headline"></slot></div>
-    <div class="topAppBar-trailingActions">
-      <slot name="trailingIcon1"></slot>
-      <slot name="trailingIcon2"></slot>
-      <slot name="trailingIcon3"></slot>
-    </div>
-  </div>
-</header>
-'
-]
-
-{ #category : #'web resources' }
-CpMaterial3LayoutView class >> templateLayout [
-
-	<webResource: #html>
-
-	^ '
-<div class="slx-layout">',
-  self templateNav, '
-  <main class="slx-body">
-    <div class="slx-pane">',
-      self templateHeader, '
-      <div class="slx-pane-content">
-        <slot name="slx-pane-content"></slot>
-      </div>
-    </div>
-    <slot name="slx-pane2"></slot>',
-    self templateSidesheet, '
-  </main>
-</div>',
-self templateFooter
-
 ]
 
 { #category : #'web resources' }
@@ -277,6 +300,79 @@ CpMaterial3LayoutView >> bottomAppBarHidden: anObject [
 	bottomAppBarHidden := anObject
 ]
 
+{ #category : #'rendering - topAppBar' }
+CpMaterial3LayoutView >> buildLeadingAction [
+	| drawer |
+
+	drawer := self findLeftDrawer.
+
+	^ (SlIconButton named: self leadingAction)
+		when: CpClickEvent basicPrimary send: #show to: drawer;
+		yourself
+
+]
+
+{ #category : #'rendering - body' }
+CpMaterial3LayoutView >> buildPane1 [
+	| element |
+
+	element := (CpHtmlElement newWithTag: #div)
+		addClass: 'slx-pane';
+		addClass: 'slx-pane-1';
+		appendChild: self buildTopAppBar;
+		appendChild: ((CpHtmlElement newWithTag: #div)
+			addClass: 'slx-pane-content';
+			appendChild: (self currentPage inHtmlTag: #p);
+			yourself);
+		yourself.
+
+	^ element
+]
+
+{ #category : #'rendering - body' }
+CpMaterial3LayoutView >> buildPane2 [
+	| element |
+
+	element := (CpHtmlElement newWithTag: #div)
+		addClass: 'slx-pane';
+		addClass: 'slx-pane-2';
+		appendChild: ((CpHtmlElement newWithTag: #div)
+			addClass: 'slx-pane-content';
+			appendChild: ('Pane2...' inHtmlTag: #p);
+			yourself);
+		yourself.
+
+	^ element
+]
+
+{ #category : #'rendering - topAppBar' }
+CpMaterial3LayoutView >> buildTopAppBar [
+	| trailing |
+
+	trailing := self trailingActions.
+
+	^ (CpHtmlElement newWithTag: #header)
+		addClass: 'slx-header';
+		appendChild: ((CpHtmlElement newWithTag: #div)
+			addClass: 'topAppBar';
+			appendChild: ((CpHtmlElement newWithTag: #div)
+				addClass: 'topAppBar-leadingAction';
+				appendChild: self buildLeadingAction;
+				yourself);
+			appendChild: ((CpHtmlElement newWithTag: #div)
+				addClass: 'topAppBar-headline';
+				appendChild: (self headline inHtmlTag: #span);
+				yourself);
+			appendChild: ((CpHtmlElement newWithTag: #div)
+				addClass: 'topAppBar-trailingActions';
+				appendChild: (SlIconButton named: trailing first);
+				appendChild: (SlIconButton named: trailing second);
+				appendChild: (SlIconButton named: trailing third);
+				yourself);
+			yourself);
+		yourself
+]
+
 { #category : #accessing }
 CpMaterial3LayoutView >> currentPage [
 
@@ -289,29 +385,29 @@ CpMaterial3LayoutView >> currentPage: anObject [
 	currentPage := anObject
 ]
 
-{ #category : #rendering }
+{ #category : #'rendering - page' }
 CpMaterial3LayoutView >> doClub [
 
-	self setMainPage: 'Club'
+	self setCurrentPage: 'Club'
 ]
 
-{ #category : #rendering }
+{ #category : #'rendering - page' }
 CpMaterial3LayoutView >> doDiamond [
 
-	self setMainPage: 'Diamond'.
+	self setCurrentPage: 'Diamond'.
 
 ]
 
-{ #category : #rendering }
+{ #category : #'rendering - page' }
 CpMaterial3LayoutView >> doHeart [
 
-	self setMainPage: 'Heart'
+	self setCurrentPage: 'Heart'
 ]
 
-{ #category : #rendering }
+{ #category : #'rendering - page' }
 CpMaterial3LayoutView >> doSpade [
 
-	self setMainPage: 'Spade'
+	self setCurrentPage: 'Spade'
 ]
 
 { #category : #accessing }
@@ -426,8 +522,37 @@ CpMaterial3LayoutView >> pane2Hidden: anObject [
 	pane2Hidden := anObject
 ]
 
+{ #category : #'rendering - body' }
+CpMaterial3LayoutView >> renderBody [
+	| split |
+
+	split := SlSplitPanel new
+		customPropertyAt: 'divider-width' put: '24px';
+		"propertyAt: 'primary' put: 'start';"
+		customPropertyAt: 'min' put: '400px';
+		"customPropertyAt: 'max' put: 'calc(100% - 150px)';"
+		replaceAllChildrenWith: (SlIcon named: 'grip-vertical') atSlotNamed: #'divider';
+		yourself.
+
+	split replaceAllChildrenWith: self buildPane1 atSlotNamed: #'start'.
+
+	self pane2Hidden
+		ifTrue: [ split removeChildrenAtSlotNamed: #'end' ]
+		ifFalse: [ split replaceAllChildrenWith: self buildPane2 atSlotNamed: #'end' ].
+
+	self
+		replaceAllChildrenWith: ((CpHtmlElement newWithTag: #div)
+			addClass: 'slx-body';
+			appendChild: ((CpHtmlElement newWithTag: #div)
+				addClass: 'slx-split-panel';
+				appendChild: split;
+				yourself);
+			yourself)
+		atSlotNamed: #'slx-body'
+]
+
 { #category : #'rendering - bottomAppBar' }
-CpMaterial3LayoutView >> renderBottomeAppBar [
+CpMaterial3LayoutView >> renderBottomAppBar [
 
 	"self model isActive" true ifTrue: [
 		self renderIcons.
@@ -444,17 +569,6 @@ CpMaterial3LayoutView >> renderFAB [
 CpMaterial3LayoutView >> renderFAB: aString [
 
 	self renderIcon: aString at: #fab
-]
-
-{ #category : #'rendering - topAppBar' }
-CpMaterial3LayoutView >> renderHeadline: aString [
-
-	aString
-		ifNotNil: [
-			self
-				replaceAllChildrenWith: (aString asString inHtmlTag: #span)
-				atSlotNamed: #headline ]
-		ifNil: [ self removeChildrenAtSlotNamed: #headline ]
 ]
 
 { #category : #'rendering - bottomAppBar' }
@@ -504,18 +618,15 @@ CpMaterial3LayoutView >> renderIcons [
 
 ]
 
-{ #category : #'rendering - topAppBar' }
-CpMaterial3LayoutView >> renderLeadingAction: aString [
+{ #category : #rendering }
+CpMaterial3LayoutView >> renderLayout [
 
-	aString
-		ifNotNil: [ | drawer |
-			drawer := self findLeftDrawer.
-			self
-				replaceAllChildrenWith: ((SlIconButton named: 'list')
-					when: CpClickEvent basicPrimary send: #show to: drawer;
-					yourself)
-				atSlotNamed: #leadingAction ]
-		ifNil: [ self removeChildrenAtSlotNamed: #leadingAction ]
+	self
+		renderLeftDrawer;
+		renderNav;
+		renderBottomAppBar;
+		renderBody.
+
 ]
 
 { #category : #rendering }
@@ -571,97 +682,11 @@ CpMaterial3LayoutView >> renderNav [
 		self replaceAllChildrenWith: element atSlotNamed: #nav ]
 ]
 
-{ #category : #rendering }
-CpMaterial3LayoutView >> renderPage [
-
-	self renderPage: currentPage.
-	self renderPane2.
-
-]
-
-{ #category : #rendering }
-CpMaterial3LayoutView >> renderPage: aPageName [
-	| split |
-
-	split := SlSplitPanel new
-			customPropertyAt: 'divider-width' put: '24px';
-			replaceAllChildrenWith: (aPageName inHtmlTag: #p) atSlotNamed: #'start';
-			replaceAllChildrenWith: (aPageName inHtmlTag: #p) atSlotNamed: #'end';
-			replaceAllChildrenWith: (SlIcon named: 'grip-vertical') atSlotNamed: #'divider';
-			yourself.
-
-	self
-		replaceAllChildrenWith: split
-		atSlotNamed: #'slx-pane-content'
-]
-
-{ #category : #'rendering - pane' }
-CpMaterial3LayoutView >> renderPane2 [
-	| element |
-
-	self pane2Hidden ifTrue: [
-		^ self ].
-
-	element := (CpHtmlElement newWithTag: #div)
-		addClass: 'slx-pane2';
-		appendChild: ((CpHtmlElement newWithTag: #div)
-			addClass: 'slx-pane2-content';
-			appendChild: ('Lorem ipsum...' inHtmlTag: #p);
-			yourself);
-		yourself.
-
-	self replaceAllChildrenWith: element atSlotNamed: #'slx-pane2'
-]
-
-{ #category : #'rendering - topAppBar' }
-CpMaterial3LayoutView >> renderTopAppBar [
-	| trailing |
-
-	self
-		renderLeadingAction: self leadingAction;
-		renderHeadline: self headline;
-		yourself.
-	trailing := self trailingActions.
-	trailing size >= 1 ifTrue: [ self renderTrailingIcon1: trailing first ].
-	trailing size >= 2 ifTrue: [ self renderTrailingIcon2: trailing second ].
-	trailing size >= 3 ifTrue: [ self renderTrailingIcon3: trailing third ].
-
-]
-
-{ #category : #'rendering - topAppBar' }
-CpMaterial3LayoutView >> renderTrailingIcon1: aString [
-
-	self renderTrailingIcon: aString at: #trailingIcon1
-]
-
-{ #category : #'rendering - topAppBar' }
-CpMaterial3LayoutView >> renderTrailingIcon2: aString [
-
-	self renderTrailingIcon: aString at: #trailingIcon2
-]
-
-{ #category : #'rendering - topAppBar' }
-CpMaterial3LayoutView >> renderTrailingIcon3: aString [
-
-	self renderTrailingIcon: aString at: #trailingIcon3 
-]
-
-{ #category : #'rendering - topAppBar' }
-CpMaterial3LayoutView >> renderTrailingIcon: aString at: slotName [
-
-	aString
-		ifNotNil: [
-			self
-				replaceAllChildrenWith: (SlIconButton named: aString)
-				atSlotNamed: slotName ]
-		ifNil: [ self removeChildrenAtSlotNamed: slotName ]
-]
-
-{ #category : #rendering }
-CpMaterial3LayoutView >> setMainPage: aString [
+{ #category : #'rendering - page' }
+CpMaterial3LayoutView >> setCurrentPage: aString [
 
 	currentPage := aString.
-	self renderPage
+	self renderLayout.
 
 ]
 
