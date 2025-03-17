@@ -46,7 +46,7 @@ CpMaterial3LayoutView class >> globalStyleBody [
 .slx-split-panel {
   flex: 100%;
   background: var(--sl-color-primary-100);
-  margin: 16px 0;
+  margin: 0;
 }
 
 .slx-split-panel sl-split-panel::part(divider) {
@@ -57,9 +57,11 @@ CpMaterial3LayoutView class >> globalStyleBody [
   flex: 100%;
   display: flex;  
   flex-direction: column;
-  padding: 0;
+  padding: 16px 0;
   margin: 0;
   text-align: left;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 .slx-pane-1 {
@@ -214,7 +216,7 @@ CpMaterial3LayoutView class >> template [
 
 	^ '
 <div id="container">
-  <div style="background: blue; display: flex; flex-direction: column">
+  <div style="display: flex; flex-direction: column">
     <div id="layoutRegion" style="flex: 1; display: flex; flex-direction: row">
       <slot name="nav"></slot>
       <slot name="slx-body"></slot>
@@ -233,9 +235,30 @@ CpMaterial3LayoutView >> appendBottomAppBarToggle: paneContent [
 	self
 		appendToggle: paneContent
 		label: 'BottomAppBar hidden'
+		id: 'bottomAppBarHidden'
 		do: [
 			self bottomAppBarHidden: self bottomAppBarHidden not.
-			self renderLayout ].
+			self refresh ].
+
+]
+
+{ #category : #'rendering - pane2' }
+CpMaterial3LayoutView >> appendLayoutRadioGroup: paneContent [
+	| radioGroup |
+
+	radioGroup := SlRadioGroup new
+		propertyAt: 'label' put: 'Choose a layout style';
+		propertyAt: 'value' put: 2;
+		when: SlChangeEvent do: [ self setLayoutStyle: radioGroup value ] for: self;
+		yourself.
+
+	radioGroup appendChild: (SlRadioButton new value: 1; textContent: 'Compact'; yourself).
+	radioGroup appendChild: (SlRadioButton new value: 2; textContent: 'Medium'; yourself).
+	radioGroup appendChild: (SlRadioButton new value: 3; textContent: 'Expanded'; yourself).
+	radioGroup appendChild: (SlRadioButton new value: 4; textContent: 'Large'; yourself).
+	radioGroup appendChild: (SlRadioButton new value: 5; textContent: 'Extra-large'; yourself).
+
+	paneContent appendChild: ((CpHtmlElement newWithTag: #div) appendChild: radioGroup; yourself).
 
 ]
 
@@ -274,17 +297,19 @@ CpMaterial3LayoutView >> appendSidesheetToggle: paneContent [
 	self
 		appendToggle: paneContent
 		label: 'Sidesheet hidden'
+		id: 'sidesheetHidden'
 		do: [
 			self sidesheetHidden: self sidesheetHidden not.
-			self renderLayout ].
+			self refresh ].
 
 ]
 
 { #category : #'rendering - pane2' }
-CpMaterial3LayoutView >> appendToggle: paneContent label: label do: aBlock [
+CpMaterial3LayoutView >> appendToggle: paneContent label: label id: id do: aBlock [
 	| toggle |
 
 	toggle := SlSwitch new
+		id: id;
 		label: label;
 		when: SlChangeEvent do: aBlock for: self;
 		yourself.
@@ -299,10 +324,11 @@ CpMaterial3LayoutView >> appendTopAppBarToggle: paneContent [
 	self
 		appendToggle: paneContent
 		label: 'TopAppBar hidden'
+		id: 'topAppBarHidden'
 		do: [
 			self topAppBarHidden: self topAppBarHidden not.
 			self setTopAppBarDisplay: self topAppBarHidden.
-			self renderLayout ].
+			self refresh ].
 
 ]
 
@@ -316,6 +342,22 @@ CpMaterial3LayoutView >> bottomAppBarHidden [
 CpMaterial3LayoutView >> bottomAppBarHidden: anObject [
 
 	bottomAppBarHidden := anObject
+]
+
+{ #category : #'rendering - pane2' }
+CpMaterial3LayoutView >> bottomAppBarOff [
+
+	self bottomAppBarHidden: true.
+	self setChecked: true domId: '#bottomAppBarHidden'.
+
+]
+
+{ #category : #'rendering - pane2' }
+CpMaterial3LayoutView >> bottomAppBarOn [
+
+	self bottomAppBarHidden: false.
+	self setChecked: false domId: '#bottomAppBarHidden'.
+
 ]
 
 { #category : #'rendering - bottomAppBar' }
@@ -420,8 +462,9 @@ CpMaterial3LayoutView >> buildPane2 [
 			yourself);
 		yourself.
 
-	self appendBottomAppBarToggle: paneContent.
+	self appendLayoutRadioGroup: paneContent.
 	self appendTopAppBarToggle: paneContent.
+	self appendBottomAppBarToggle: paneContent.
 	self appendSidesheetToggle: paneContent.
 
 	^ element
@@ -647,12 +690,21 @@ CpMaterial3LayoutView >> pane2Hidden: anObject [
 	pane2Hidden := anObject
 ]
 
+{ #category : #'rendering - pane2' }
+CpMaterial3LayoutView >> refresh [
+
+	self renderLayout.
+
+]
+
 { #category : #rendering }
 CpMaterial3LayoutView >> renderBody [
 	| element |
 
 	element := self findBody.
-	element ifNil: [ self setUpBody ].
+	element ifNil: [
+		self setUpBody.
+		self setLayoutStyle: 2 ].
 
 	self findBody
 		styleAt: 'height'
@@ -727,11 +779,33 @@ CpMaterial3LayoutView >> renderSidesheet [
 				atSlotNamed: 'slx-sidesheet' ]
 ]
 
+{ #category : #'rendering - pane2' }
+CpMaterial3LayoutView >> setChecked: aBoolean domId: id [
+	| el |
+
+	el := CpHtmlElement documentBody firstDescendantMatching: id.
+	el ifNotNil: [
+		el checked: aBoolean ]
+]
+
 { #category : #'rendering - pane1' }
 CpMaterial3LayoutView >> setCurrentPage: aString [
 
 	currentPage := aString.
 	self updatePane1Content.
+
+]
+
+{ #category : #'rendering - pane2' }
+CpMaterial3LayoutView >> setLayoutStyle: aLayoutType [
+
+	aLayoutType = 1 ifTrue: [ self sidesheetOff; bottomAppBarOn ].
+	aLayoutType = 2 ifTrue: [ self sidesheetOff ; bottomAppBarOff ].
+	aLayoutType = 3 ifTrue: [ self sidesheetOff ; bottomAppBarOff ].
+	aLayoutType = 4 ifTrue: [ self sidesheetOff ; bottomAppBarOff ].
+	aLayoutType = 5 ifTrue: [ self sidesheetOn ; bottomAppBarOff ].
+
+	self refresh.
 
 ]
 
@@ -787,6 +861,22 @@ CpMaterial3LayoutView >> sidesheetHidden [
 CpMaterial3LayoutView >> sidesheetHidden: anObject [
 
 	sidesheetHidden := anObject
+]
+
+{ #category : #'rendering - pane2' }
+CpMaterial3LayoutView >> sidesheetOff [
+
+	self sidesheetHidden: true.
+	self setChecked: true domId: '#sidesheetHidden'.
+
+]
+
+{ #category : #'rendering - pane2' }
+CpMaterial3LayoutView >> sidesheetOn [
+
+	self sidesheetHidden: false.
+	self setChecked: false domId: '#sidesheetHidden'.
+
 ]
 
 { #category : #accessing }
