@@ -4,14 +4,11 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
 }
 
-{ #category : #rendering }
-CpMaterial3LayoutPresenter >> renderView [
+{ #category : #view }
+CpMaterial3LayoutPresenter >> layoutSetUp [
 
 	self setTopAppBar.
 	self setBottomAppBar.
-	"self view pane2Hidden: true;"
-
-	self view renderLayout.
 
 ]
 
@@ -31,5 +28,14 @@ CpMaterial3LayoutPresenter >> setTopAppBar [
 		headline: 'Responsive App';
 		leadingAction: 'list';
 		trailingActions: { '1-square'. '2-square' . '3-square'. '4-square' }.
+
+]
+
+{ #category : #view }
+CpMaterial3LayoutPresenter >> viewInitialized [
+
+	self layoutSetUp.
+
+	self view layoutSetUp.
 
 ]
