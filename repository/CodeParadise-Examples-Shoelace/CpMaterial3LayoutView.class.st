@@ -2,7 +2,6 @@ Class {
 	#name : #CpMaterial3LayoutView,
 	#superclass : #CpView,
 	#instVars : [
-		'navRegionPersistent',
 		'pane2Hidden',
 		'sidesheetHidden',
 		'topAppBarHidden',
@@ -13,7 +12,9 @@ Class {
 		'trailingActions',
 		'headline',
 		'iconButtons',
-		'fab'
+		'fab',
+		'navRegionModal',
+		'navType'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
 }
@@ -118,7 +119,6 @@ CpMaterial3LayoutView class >> globalStyleNav [
 	^ '
 .slx-navRegion {
   flex: 0 0 80px;
-  background: var(--sl-color-primary-200);
 }
 
 ul.slx-nav-rail {
@@ -205,6 +205,12 @@ CpMaterial3LayoutView class >> style [
   background: var(--sl-color-primary-200);
 }
 
+.smd-navrail-drawer {
+  padding: 0;
+  margin: 0;
+  background: var(--sl-color-primary-200);
+}
+
 .slx-sidesheet {
   margin-left: auto;
   max-width: 400px;
@@ -222,20 +228,20 @@ CpMaterial3LayoutView class >> template [
 <div id="container">
   <div style="display: flex; flex-direction: column">
     <div id="layoutRegion" style="flex: 1; display: flex; flex-direction: row">
-      <div id="sm3-navRegion" class="slx-navRegion">
+      <div id="smdNavRegion" class="slx-navRegion">
         <slot name="nav"></slot>
       </div>
       <slot name="slx-body"></slot>
       <aside id="sm3-sidesheet" class="slx-sidesheet">
-        <slot name="slx-sidesheet"></slot>
+        <slot name="sidesheet"></slot>
       </aside>
     </div>
     <footer id="sm3-bottomAppBar" class="slx-bottomAppBar">
       <slot name="bottomAppBar"></slot>
     </footer>
   </div>
-  <aside id="sm3-footer" class="slx-footer">
-    <slot name="left-drawer"></slot>
+  <aside>
+    <slot name="navModalPane"></slot>
   </div>
 </div>
 '
@@ -247,37 +253,6 @@ CpMaterial3LayoutView >> adjustBodyHeight [
 	self bodyFind
 		styleAt: 'height'
 		put: (self bottomAppBarHidden ifTrue: [ '100vh' ] ifFalse: [ 'calc(100vh - 72px)' ]).
-]
-
-{ #category : #nav }
-CpMaterial3LayoutView >> appendMenuItem: element [
-	| drawer |
-
-	drawer := self leftDrawerFind.
-	element appendChild: (
-		(CpHtmlElement newWithTag: #div)
-			addClass: 'rail-item';
-			appendChild: (
-				(SlIconButton named: 'list')
-					addClass: 'rail-icon';
-					when: CpClickEvent basicPrimary send: #show to: drawer;
-					yourself);
-			yourself).
-
-]
-
-{ #category : #nav }
-CpMaterial3LayoutView >> appendNavItem: element buttonName: buttonName methodName: methodName [
-
-	element appendChild: (
-		(CpHtmlElement newWithTag: #div)
-			addClass: 'rail-item';
-			when: CpClickEvent basicPrimary send: methodName to: self;
-			appendChild: (
-				(SlIconButton named: buttonName)
-					addClass: 'rail-icon';
-					yourself);
-			yourself)
 ]
 
 { #category : #layout }
@@ -302,7 +277,7 @@ CpMaterial3LayoutView >> bodySetUp [
 
 	self pane2Hidden
 		ifTrue: [ split removeChildrenAtSlotNamed: #'end' ]
-		ifFalse: [ split replaceAllChildrenWith: self buildPane2 atSlotNamed: #'end' ].
+		ifFalse: [ split replaceAllChildrenWith: self pane2build atSlotNamed: #'end' ].
 
 	self
 		replaceAllChildrenWith: ((CpHtmlElement newWithTag: #div)
@@ -413,7 +388,7 @@ CpMaterial3LayoutView >> buildIconButton: iconName class: cssClass [
 		yourself
 ]
 
-{ #category : #pane2 }
+{ #category : #settings }
 CpMaterial3LayoutView >> buildLayoutRadioGroup [
 	| radioGroup |
 
@@ -436,7 +411,7 @@ CpMaterial3LayoutView >> buildLayoutRadioGroup [
 CpMaterial3LayoutView >> buildLeadingAction [
 	| drawer |
 
-	drawer := self leftDrawerFind.
+	drawer := self navModalPaneFind.
 
 	^ (SlIconButton named: self leadingAction)
 		when: CpClickEvent basicPrimary send: #show to: drawer;
@@ -444,29 +419,53 @@ CpMaterial3LayoutView >> buildLeadingAction [
 
 ]
 
-{ #category : #pane2 }
-CpMaterial3LayoutView >> buildPane2 [
-	| element paneContent |
+{ #category : #settings }
+CpMaterial3LayoutView >> buildNavTypeRadioGroup [
+	| radioGroup |
 
-	element := (CpHtmlElement newWithTag: #div)
-		addClass: 'slx-pane';
-		addClass: 'slx-pane-2';
-		appendChild: (paneContent := (CpHtmlElement newWithTag: #div)
-			addClass: 'slx-pane-content';
-			appendChild: ('Layout Settings' inHtmlTag: #h3);
-			yourself);
+	radioGroup := SlRadioGroup new
+		propertyAt: 'label' put: 'Choose a navigation type';
+		propertyAt: 'value' put: #rail;
+		when: SlChangeEvent do: [ self setNavTypeStyle: radioGroup value ] for: self;
 		yourself.
 
-	paneContent appendChild: self buildLayoutRadioGroup.
-	paneContent appendChild: self buildToggleNavRegion.
-	paneContent appendChild: self buildToggleTopAppBar.
-	paneContent appendChild: self buildToggleBottomAppBar.
-	paneContent appendChild: self buildToggleSidesheet.
+	radioGroup appendChild: (SlRadioButton new value: #rail; textContent: 'Rail'; yourself).
+	radioGroup appendChild: (SlRadioButton new value: #drawer; textContent: 'Drawer'; yourself).
+	radioGroup appendChild: (SlRadioButton new value: #bar; textContent: 'Bar'; beDisabled; yourself).
 
-	^ element
+	^ ((CpHtmlElement newWithTag: #div) appendChild: radioGroup; yourself)
 ]
 
-{ #category : #pane2 }
+{ #category : #'nav - drawer' }
+CpMaterial3LayoutView >> buildNavdrawerItem: buttonName methodName: methodName [
+
+	^ (CpHtmlElement newWithTag: #div)
+		addClass: 'nav-drawer-item';
+		when: CpClickEvent basicPrimary send: methodName to: self;
+		appendChild: (
+			SlButton new
+				bePill;
+				addClass: 'nav-drawer-icon';
+				labelText: buttonName;
+				prefix: (SlIconButton named: buttonName);
+				yourself);
+		yourself
+]
+
+{ #category : #'nav - rail' }
+CpMaterial3LayoutView >> buildNavrailItem: buttonName methodName: methodName [
+
+	^ (CpHtmlElement newWithTag: #div)
+		addClass: 'rail-item';
+		when: CpClickEvent basicPrimary send: methodName to: self;
+		appendChild: (
+			(SlIconButton named: buttonName)
+				addClass: 'rail-icon';
+				yourself);
+		yourself
+]
+
+{ #category : #settings }
 CpMaterial3LayoutView >> buildToggleBottomAppBar [
 
 	^ self
@@ -477,19 +476,17 @@ CpMaterial3LayoutView >> buildToggleBottomAppBar [
 
 ]
 
-{ #category : #pane2 }
+{ #category : #settings }
 CpMaterial3LayoutView >> buildToggleNavRegion [
 
 	^ self
-		newToggleId: 'navRegionPersistent'
-		label: 'Navigation Region persistent'
-		do: [
-			self navRegionPersistent: self navRegionPersistent not.
-			self navRegionDisplay: self navRegionPersistent ].
+		newToggleId: 'navRegionModal'
+		label: 'Navigation Region modal'
+		do: [ self navRegionModalSet: self navRegionModal not ].
 
 ]
 
-{ #category : #pane2 }
+{ #category : #settings }
 CpMaterial3LayoutView >> buildToggleSidesheet [
 
 	^ self
@@ -501,7 +498,7 @@ CpMaterial3LayoutView >> buildToggleSidesheet [
 
 ]
 
-{ #category : #pane2 }
+{ #category : #settings }
 CpMaterial3LayoutView >> buildToggleTopAppBar [
 
 	^ self
@@ -525,26 +522,26 @@ CpMaterial3LayoutView >> currentPage: anObject [
 	currentPage := anObject
 ]
 
-{ #category : #pane1 }
+{ #category : #pages }
 CpMaterial3LayoutView >> doClub [
 
 	self setCurrentPage: 'Club'
 ]
 
-{ #category : #pane1 }
+{ #category : #pages }
 CpMaterial3LayoutView >> doDiamond [
 
 	self setCurrentPage: 'Diamond'.
 
 ]
 
-{ #category : #pane1 }
+{ #category : #pages }
 CpMaterial3LayoutView >> doHeart [
 
 	self setCurrentPage: 'Heart'
 ]
 
-{ #category : #pane1 }
+{ #category : #pages }
 CpMaterial3LayoutView >> doSpade [
 
 	self setCurrentPage: 'Spade'
@@ -591,7 +588,8 @@ CpMaterial3LayoutView >> initialize [
 
 	super initialize.
 
-	navRegionPersistent := true.
+	navType := #rail.
+	navRegionModal := false.
 	pane2Hidden := false.
 	sidesheetHidden := false.
 	topAppBarHidden := false.
@@ -629,7 +627,7 @@ CpMaterial3LayoutView >> layoutRegionFind [
 CpMaterial3LayoutView >> layoutSetUp [
 	"Invoked by presenter's viewInitialize"
 
-	self leftDrawerSetUp.
+	self navModalPaneSetUp.
 	self navSetUp.
 
 	self bodySetUp.
@@ -653,65 +651,65 @@ CpMaterial3LayoutView >> leadingAction: anObject [
 ]
 
 { #category : #nav }
-CpMaterial3LayoutView >> leftDrawerBuild [
+CpMaterial3LayoutView >> navContentBuild [
+
+	^ true
+		ifTrue: [ self navdrawerBuild ] ifFalse: [ self navrailBuild ]
+]
+
+{ #category : #nav }
+CpMaterial3LayoutView >> navModalPaneBuild [
 	| drawer |
 
 	drawer := SlDrawer new
-		id: 'leftDrawer';
-		labelText: 'Left Drawer';
-		addClass: 'left-drawer';
+		id: 'smdNavModalPane';
 		placement: 'start';
+		beNoHeader;
+		customPropertyAt: 'size' put: self navModalPaneWidth;
+		customPropertyAt: 'body-spacing' put: '0';
+		customPropertyAt: 'header-spacing' put: '0';
+		customPropertyAt: 'footer-spacing' put: '0';
 		appendChild: ((CpHtmlElement newWithTag: #div)
-			id: 'leftDrawerContent';
+			id: 'smdNavModalPaneContent';
 			"contentText: 'Lorem ipsum...';"
 			yourself);
 		yourself.
 	
-	drawer footer: (
+	"drawer footer: (
 		(SlButton label: 'Close')
 			when: CpClickEvent basicPrimary send: #hide to: drawer;
-			yourself).
+			yourself)."
 
 	^ drawer
 
 ]
 
 { #category : #nav }
-CpMaterial3LayoutView >> leftDrawerContentFind [
+CpMaterial3LayoutView >> navModalPaneContentFind [
 
-	^ CpHtmlElement documentBody firstDescendantMatching: '#leftDrawerContent'
+	^ CpHtmlElement documentBody firstDescendantMatching: '#smdNavModalPaneContent'
 ]
 
 { #category : #nav }
-CpMaterial3LayoutView >> leftDrawerFind [
+CpMaterial3LayoutView >> navModalPaneFind [
 
-	^ CpHtmlElement documentBody firstDescendantMatching: '#leftDrawer'
-	"^ CpHtmlElement documentBody firstDescendantMatching: '.left-drawer'"
-	"^ SlDrawer first"
+	^ CpHtmlElement documentBody firstDescendantMatching: '#smdNavModalPane'
 ]
 
 { #category : #nav }
-CpMaterial3LayoutView >> leftDrawerSetUp [
+CpMaterial3LayoutView >> navModalPaneSetUp [
 
-	self replaceAllChildrenWith: self leftDrawerBuild atSlotNamed: #'left-drawer'
+	self replaceAllChildrenWith: self navModalPaneBuild atSlotNamed: #'navModalPane'
 
 ]
 
 { #category : #nav }
-CpMaterial3LayoutView >> navBuild [
-	| element |
+CpMaterial3LayoutView >> navModalPaneWidth [
 
-	element := CpHtmlElement newWithTag: #ul.
-	element addClass: 'slx-nav-rail'.
-	"self appendMenuItem: element."
-	items ifNotNil: [
-		items do: [ :eachItem |
-			self appendNavItem: element buttonName: eachItem key methodName: eachItem value ] ].
-
-	^ (CpHtmlElement newWithTag: #nav)
-		addClass: 'slx-nav';
-		appendChild: element;
-		yourself
+	self navTypeIsRail ifTrue: [ ^ '80px' ].
+	self navTypeIsDrawer ifTrue: [ ^ '360px' ].
+	self navTypeIsBar ifTrue: [ ^ '0' ].
+	^ '80px'
 ]
 
 { #category : #nav }
@@ -729,18 +727,31 @@ CpMaterial3LayoutView >> navRegionDisplay: aBoolean [
 { #category : #nav }
 CpMaterial3LayoutView >> navRegionFind [
 
-	"^ CpHtmlElement documentBody firstDescendantMatching: '#sm3-navRegion'"
-	^ self shadowedElementWithId: 'sm3-navRegion'
+	"^ CpHtmlElement documentBody firstDescendantMatching: '#smdNavRegion'"
+	^ self shadowedElementWithId: 'smdNavRegion'
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> navRegionModal [
+
+	^ navRegionModal
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> navRegionModal: anObject [
+
+	navRegionModal := anObject
 ]
 
 { #category : #nav }
 CpMaterial3LayoutView >> navRegionModalOff [
 
-	self navRegionPersistent ifTrue: [
+	self navRegionModal not ifTrue: [
 		^ self ].
 
-	self navRegionPersistent: true.
-	self setChecked: true domId: '#navRegionPersistent'.
+	self navRegionModal: false.
+	self topAppBarMenuDisplay: true.
+	self setChecked: false domId: '#navRegionModal'.
 	self navSetUp.
 
 ]
@@ -748,43 +759,126 @@ CpMaterial3LayoutView >> navRegionModalOff [
 { #category : #nav }
 CpMaterial3LayoutView >> navRegionModalOn [
 
-	self navRegionPersistent not ifTrue: [
+	self navRegionModal ifTrue: [
 		^ self ].
 
-	self navRegionPersistent: false.
-	self setChecked: false domId: '#navRegionPersistent'.
+	self navRegionModal: true.
+	self topAppBarMenuDisplay: false.
+	self setChecked: true domId: '#navRegionModal'.
 	self navSetUp.
 
 ]
 
-{ #category : #accessing }
-CpMaterial3LayoutView >> navRegionPersistent [
+{ #category : #settings }
+CpMaterial3LayoutView >> navRegionModalSet: aBoolean [
 
-	^ navRegionPersistent
-]
-
-{ #category : #accessing }
-CpMaterial3LayoutView >> navRegionPersistent: anObject [
-
-	navRegionPersistent := anObject
+	aBoolean ifTrue: [ self navRegionModalOn ] ifFalse: [ self navRegionModalOff ]
 ]
 
 { #category : #nav }
 CpMaterial3LayoutView >> navSetUp [
 
-	self navRegionPersistent
-		ifTrue: [
-			self
-				replaceAllChildrenWith: self navBuild
-				atSlotNamed: 'nav' ]
-		ifFalse: [ | el |
+	self navRegionModal
+		ifTrue: [ | el |
 			self removeChildrenAtSlotNamed: 'nav'.
-			el := self leftDrawerContentFind.
+			el := self navModalPaneContentFind.
 			el ifNotNil: [
-				el replaceAllChildrenWith: self navBuild ] ]
+				el replaceAllChildrenWith: self navContentBuild ]]
+		ifFalse: [ 
+			self
+				replaceAllChildrenWith: self navContentBuild
+				atSlotNamed: 'nav' ]
 ]
 
-{ #category : #pane2 }
+{ #category : #accessing }
+CpMaterial3LayoutView >> navType [
+
+	^ navType
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> navType: anObject [
+
+	navType := anObject
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> navTypeBeBar [
+
+	self navType: #bar
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> navTypeBeDrawer [
+
+	self navType: #drawer
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> navTypeBeRail [
+
+	self navType: #rail
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> navTypeIsBar [
+
+	^ self navType = #bar
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> navTypeIsDrawer [
+
+	^ self navType = #drawer
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> navTypeIsRail [
+
+	^ self navType = #rail
+]
+
+{ #category : #'nav - drawer' }
+CpMaterial3LayoutView >> navdrawerBuild [
+	| element drawer |
+
+	drawer := self navModalPaneFind.
+
+	element := CpHtmlElement newWithTag: #ul.
+	element addClass: 'slx-nav-rail'.
+	items ifNotNil: [
+		items do: [ :eachItem | | navItem |
+			navItem := self buildNavdrawerItem: eachItem key methodName: eachItem value.
+			navItem when: CpClickEvent basicPrimary send: #hide to: drawer.
+			element appendChild: navItem ] ].
+
+	^ (CpHtmlElement newWithTag: #nav)
+		addClass: 'slx-nav';
+		appendChild: element;
+		yourself
+]
+
+{ #category : #'nav - rail' }
+CpMaterial3LayoutView >> navrailBuild [
+	| element drawer |
+
+	drawer := self navModalPaneFind.
+
+	element := CpHtmlElement newWithTag: #ul.
+	element addClass: 'slx-nav-rail'.
+	items ifNotNil: [
+		items do: [ :eachItem | | navItem |
+			navItem := self buildNavrailItem: eachItem key methodName: eachItem value.
+			navItem when: CpClickEvent basicPrimary send: #hide to: drawer.
+			element appendChild: navItem ] ].
+
+	^ (CpHtmlElement newWithTag: #nav)
+		addClass: 'slx-nav';
+		appendChild: element;
+		yourself
+]
+
+{ #category : #settings }
 CpMaterial3LayoutView >> newToggleId: id label: label do: aBlock [
 	| toggle |
 
@@ -798,7 +892,7 @@ CpMaterial3LayoutView >> newToggleId: id label: label do: aBlock [
 
 ]
 
-{ #category : #pane1 }
+{ #category : #layout }
 CpMaterial3LayoutView >> pane1Build [
 	| element |
 
@@ -833,7 +927,30 @@ CpMaterial3LayoutView >> pane2Hidden: anObject [
 	pane2Hidden := anObject
 ]
 
-{ #category : #layout }
+{ #category : #settings }
+CpMaterial3LayoutView >> pane2build [
+	| element paneContent |
+
+	element := (CpHtmlElement newWithTag: #div)
+		addClass: 'slx-pane';
+		addClass: 'slx-pane-2';
+		appendChild: (paneContent := (CpHtmlElement newWithTag: #div)
+			addClass: 'slx-pane-content';
+			appendChild: ('Layout Settings' inHtmlTag: #h3);
+			yourself);
+		yourself.
+
+	paneContent appendChild: self buildLayoutRadioGroup.
+	paneContent appendChild: self buildNavTypeRadioGroup.
+	paneContent appendChild: self buildToggleNavRegion.
+	paneContent appendChild: self buildToggleTopAppBar.
+	paneContent appendChild: self buildToggleBottomAppBar.
+	paneContent appendChild: self buildToggleSidesheet.
+
+	^ element
+]
+
+{ #category : #settings }
 CpMaterial3LayoutView >> setChecked: aBoolean domId: id [
 	| el |
 
@@ -842,7 +959,7 @@ CpMaterial3LayoutView >> setChecked: aBoolean domId: id [
 		el checked: aBoolean ]
 ]
 
-{ #category : #pane1 }
+{ #category : #pages }
 CpMaterial3LayoutView >> setCurrentPage: aString [
 	| element |
 
@@ -854,7 +971,7 @@ CpMaterial3LayoutView >> setCurrentPage: aString [
 
 ]
 
-{ #category : #layout }
+{ #category : #settings }
 CpMaterial3LayoutView >> setLayoutStyle: aLayoutType [
 
 	aLayoutType = 1 ifTrue: [ self navRegionModalOn; bottomAppBarOn; sidesheetOff ].
@@ -863,6 +980,16 @@ CpMaterial3LayoutView >> setLayoutStyle: aLayoutType [
 	aLayoutType = 4 ifTrue: [ self navRegionModalOff; bottomAppBarOff; sidesheetOff ].
 	aLayoutType = 5 ifTrue: [ self navRegionModalOff; bottomAppBarOff; sidesheetOn ].
 
+]
+
+{ #category : #settings }
+CpMaterial3LayoutView >> setNavTypeStyle: aNavType [
+
+	self navType: aNavType.
+
+	self navModalPaneFind
+		customPropertyAt: 'size'
+		put: self navModalPaneWidth
 ]
 
 { #category : #sidesheet }
@@ -929,7 +1056,7 @@ CpMaterial3LayoutView >> sidesheetSetUp [
 
 	self
 		replaceAllChildrenWith: self sidesheetBuild
-		atSlotNamed: 'slx-sidesheet'
+		atSlotNamed: 'sidesheet'
 ]
 
 { #category : #topAppBar }
@@ -989,6 +1116,24 @@ CpMaterial3LayoutView >> topAppBarHidden [
 CpMaterial3LayoutView >> topAppBarHidden: anObject [
 
 	topAppBarHidden := anObject
+]
+
+{ #category : #topAppBar }
+CpMaterial3LayoutView >> topAppBarMenuDisplay: aBoolean [
+	| element |
+
+	element := self topAppBarMenuFind.
+	element ifNotNil: [
+		aBoolean
+			ifTrue: [ element styleAt: 'display' put: 'none' ]
+			ifFalse: [ element removeStyleAt: 'display' ] ].
+
+]
+
+{ #category : #topAppBar }
+CpMaterial3LayoutView >> topAppBarMenuFind [
+
+	^ CpHtmlElement documentBody firstDescendantMatching: '.topAppBar-leadingAction'
 ]
 
 { #category : #accessing }
