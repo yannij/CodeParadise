@@ -37,7 +37,12 @@ CpMaterial3LayoutView class >> globalStyleBody [
 	<webResource: #css>
 
 	^ '
+.smd-layout {
+  background: var(--sl-color-primary-100);
+}
+
 .slx-body {
+  font-family: var(--sl-font-sans);
   flex: auto;
   display: flex;  
   flex-direction: row;
@@ -76,6 +81,10 @@ CpMaterial3LayoutView class >> globalStyleBody [
 .slx-pane-content {
   border-radius: 16px;
   background: var(--sl-color-primary-200);
+}
+
+.example-settings-pane {
+  padding: 6px;
 }
 '
 ]
@@ -117,11 +126,12 @@ CpMaterial3LayoutView class >> globalStyleNav [
 	<webResource: #css>
 
 	^ '
-.slx-navRegion {
+.smd-navRegion {
   flex: 0 0 80px;
 }
 
-ul.slx-nav-rail {
+ul.smd-navrail {
+  font-family: var(--sl-font-sans);
   list-style: none;
   padding: 0;
   margin: 0;
@@ -129,14 +139,61 @@ ul.slx-nav-rail {
 }
 
 .rail-item {
-	padding: 12px;
-	height: 56px;
-	width: 56px;
+  display: flex;
+  flex-flow: column;
+  height: 56px;
+  width: 56px;
+  margin-top: 12px;
 }
 
 .rail-icon {
-	padding: 6px;
-	font-size: 24px;
+  padding: 0 16px;
+  font-size: 24px;
+}
+
+.nav-rail-labelText {
+  padding: 0;
+  width: 80px;
+  line-height: 16pt;
+  text-align: center;
+  overflow-x: clip;
+}
+
+.slx-nav-drawer {
+  font-family: var(--sl-font-sans);
+  padding: 12px 4px 0 12px;
+  margin: 0;
+  background: var(--sl-color-primary-100);
+  flow-direction: row;
+}
+
+.smd-nav-font {
+  line-height: var(--sl-line-height-normal);
+  font-size: var(--sl-font-size-large);
+  font-weight: var(--sl-font-weight-bold);
+}
+
+.nav-drawer-headline {
+  padding: 0 4px 12px 28px;
+}
+
+.nav-drawer-item {
+  display: flex;
+  border-radius: 28px;
+  height: 56px;
+  background: var(--sl-color-primary-200);
+}
+
+.nav-drawer-icon {
+  padding-top: 8px;
+  padding-left: 16px;
+  font-size: 24px;
+}
+
+.nav-drawer-labelText {
+  padding-top: 8px;
+  padding-left: 12px;
+  width: 236px;
 }
 '
 ]
@@ -147,8 +204,28 @@ CpMaterial3LayoutView class >> globalStyleSidesheet [
 	<webResource: #css>
 
 	^ '
-.slx-sidesheet-content {
+.smd-sidesheet {
+  padding: 0;
+  margin-left: auto;
+  max-width: 400px;
+  background: var(--sl-color-primary-100);
+}
+
+.smd-sidesheet-container {
+  padding: 0;
+  margin: 0;
+}
+
+.smd-sidesheet-content {
+  padding: 16px 16px 16px 0;
+  width: 300px;
+  height: 100%;
+  background: var(--sl-color-primary-100);
+}
+
+.smd-sidesheet-card {
   border-radius: 16px;
+  padding: 8px;
   background: var(--sl-color-primary-200);
 }
 '
@@ -200,23 +277,7 @@ CpMaterial3LayoutView class >> style [
 
 	<webResource: #css>
 
-	^ '
-.slx-nav {
-  background: var(--sl-color-primary-200);
-}
-
-.smd-navrail-drawer {
-  padding: 0;
-  margin: 0;
-  background: var(--sl-color-primary-200);
-}
-
-.slx-sidesheet {
-  margin-left: auto;
-  max-width: 400px;
-  background: var(--sl-color-primary-200);
-}
-'
+	^ ''
 ]
 
 { #category : #'web resources' }
@@ -226,17 +287,17 @@ CpMaterial3LayoutView class >> template [
 
 	^ '
 <div id="container">
-  <div style="display: flex; flex-direction: column">
+  <div class="smd-layout" style="display: flex; flex-direction: column">
     <div id="layoutRegion" style="flex: 1; display: flex; flex-direction: row">
-      <div id="smdNavRegion" class="slx-navRegion">
-        <slot name="nav"></slot>
+      <div id="smdNavRegion" class="smd-navRegion">
+        <slot name="navRegion"></slot>
       </div>
       <slot name="slx-body"></slot>
-      <aside id="sm3-sidesheet" class="slx-sidesheet">
+      <aside id="smdSidesheet" class="smd-sidesheet">
         <slot name="sidesheet"></slot>
       </aside>
     </div>
-    <footer id="sm3-bottomAppBar" class="slx-bottomAppBar">
+    <footer id="smdBottomAppBar">
       <slot name="bottomAppBar"></slot>
     </footer>
   </div>
@@ -334,8 +395,7 @@ CpMaterial3LayoutView >> bottomAppBarDisplay: aBoolean [
 { #category : #bottomAppBar }
 CpMaterial3LayoutView >> bottomAppBarFind [
 
-	"^ CpHtmlElement documentBody firstDescendantMatching: '#sm3-bottomAppBar'"
-	^ self shadowedElementWithId: 'sm3-bottomAppBar'
+	^ self shadowedElementWithId: 'smdBottomAppBar'
 ]
 
 { #category : #accessing }
@@ -441,14 +501,14 @@ CpMaterial3LayoutView >> buildNavdrawerItem: buttonName methodName: methodName [
 
 	^ (CpHtmlElement newWithTag: #div)
 		addClass: 'nav-drawer-item';
+		addClass: 'smd-nav-font';
 		when: CpClickEvent basicPrimary send: methodName to: self;
-		appendChild: (
-			SlButton new
-				bePill;
-				addClass: 'nav-drawer-icon';
-				labelText: buttonName;
-				prefix: (SlIconButton named: buttonName);
-				yourself);
+		appendChild: ((SlIconButton named: buttonName) addClass: 'nav-drawer-icon'; yourself);
+		appendChild: ((CpHtmlElement newWithTag: #div)
+			addClass: 'nav-drawer-labelText';
+			textContent: methodName;
+			yourself);
+		"appendChild: (buttonName inHtmlTag: #span);"
 		yourself
 ]
 
@@ -462,7 +522,30 @@ CpMaterial3LayoutView >> buildNavrailItem: buttonName methodName: methodName [
 			(SlIconButton named: buttonName)
 				addClass: 'rail-icon';
 				yourself);
+		appendChild: (
+			(CpHtmlElement newWithTag: #div)
+				addClass: 'nav-rail-labelText';
+				textContent: methodName;
+				yourself);
 		yourself
+]
+
+{ #category : #settings }
+CpMaterial3LayoutView >> buildSettingsPane [
+	| element |
+
+	element := (CpHtmlElement newWithTag: #div)
+		addClass: 'example-settings-pane';
+		appendChild: ('Layout Settings' inHtmlTag: #h3);
+		appendChild: self buildLayoutRadioGroup;
+		appendChild: self buildNavTypeRadioGroup;
+		appendChild: self buildToggleNavRegion;
+		appendChild: self buildToggleTopAppBar;
+		appendChild: self buildToggleBottomAppBar;
+		appendChild: self buildToggleSidesheet;
+		yourself.
+
+	^ element
 ]
 
 { #category : #settings }
@@ -653,8 +736,10 @@ CpMaterial3LayoutView >> leadingAction: anObject [
 { #category : #nav }
 CpMaterial3LayoutView >> navContentBuild [
 
-	^ true
-		ifTrue: [ self navdrawerBuild ] ifFalse: [ self navrailBuild ]
+	self navTypeIsDrawer ifTrue: [
+		^ self navdrawerBuild ].
+
+	^ self navrailBuild
 ]
 
 { #category : #nav }
@@ -746,10 +831,11 @@ CpMaterial3LayoutView >> navRegionModal: anObject [
 { #category : #nav }
 CpMaterial3LayoutView >> navRegionModalOff [
 
-	self navRegionModal not ifTrue: [
-		^ self ].
+	"self navRegionModal not ifTrue: [
+		^ self ]."
 
 	self navRegionModal: false.
+	self navRegionDisplay: self navRegionModal.
 	self topAppBarMenuDisplay: true.
 	self setChecked: false domId: '#navRegionModal'.
 	self navSetUp.
@@ -759,10 +845,11 @@ CpMaterial3LayoutView >> navRegionModalOff [
 { #category : #nav }
 CpMaterial3LayoutView >> navRegionModalOn [
 
-	self navRegionModal ifTrue: [
-		^ self ].
+	"self navRegionModal ifTrue: [
+		^ self ]."
 
 	self navRegionModal: true.
+	self navRegionDisplay: self navRegionModal.
 	self topAppBarMenuDisplay: false.
 	self setChecked: true domId: '#navRegionModal'.
 	self navSetUp.
@@ -780,14 +867,14 @@ CpMaterial3LayoutView >> navSetUp [
 
 	self navRegionModal
 		ifTrue: [ | el |
-			self removeChildrenAtSlotNamed: 'nav'.
+			self removeChildrenAtSlotNamed: 'navRegion'.
 			el := self navModalPaneContentFind.
 			el ifNotNil: [
 				el replaceAllChildrenWith: self navContentBuild ]]
 		ifFalse: [ 
 			self
 				replaceAllChildrenWith: self navContentBuild
-				atSlotNamed: 'nav' ]
+				atSlotNamed: 'navRegion' ]
 ]
 
 { #category : #accessing }
@@ -844,8 +931,13 @@ CpMaterial3LayoutView >> navdrawerBuild [
 
 	drawer := self navModalPaneFind.
 
-	element := CpHtmlElement newWithTag: #ul.
-	element addClass: 'slx-nav-rail'.
+	element := CpHtmlElement newWithTag: #div.
+	element addClass: 'slx-nav-drawer'.
+	element appendChild: ((CpHtmlElement newWithTag: #div)
+		addClass: 'nav-drawer-headline';
+		addClass: 'smd-nav-font';
+		textContent: 'Headline';
+		yourself).
 	items ifNotNil: [
 		items do: [ :eachItem | | navItem |
 			navItem := self buildNavdrawerItem: eachItem key methodName: eachItem value.
@@ -865,7 +957,7 @@ CpMaterial3LayoutView >> navrailBuild [
 	drawer := self navModalPaneFind.
 
 	element := CpHtmlElement newWithTag: #ul.
-	element addClass: 'slx-nav-rail'.
+	element addClass: 'smd-navrail'.
 	items ifNotNil: [
 		items do: [ :eachItem | | navItem |
 			navItem := self buildNavrailItem: eachItem key methodName: eachItem value.
@@ -873,7 +965,7 @@ CpMaterial3LayoutView >> navrailBuild [
 			element appendChild: navItem ] ].
 
 	^ (CpHtmlElement newWithTag: #nav)
-		addClass: 'slx-nav';
+		"addClass: 'slx-nav';"
 		appendChild: element;
 		yourself
 ]
@@ -929,25 +1021,15 @@ CpMaterial3LayoutView >> pane2Hidden: anObject [
 
 { #category : #settings }
 CpMaterial3LayoutView >> pane2build [
-	| element paneContent |
 
-	element := (CpHtmlElement newWithTag: #div)
+	^ (CpHtmlElement newWithTag: #div)
 		addClass: 'slx-pane';
 		addClass: 'slx-pane-2';
-		appendChild: (paneContent := (CpHtmlElement newWithTag: #div)
+		appendChild: ((CpHtmlElement newWithTag: #div)
 			addClass: 'slx-pane-content';
-			appendChild: ('Layout Settings' inHtmlTag: #h3);
+			appendChild: self buildSettingsPane;
 			yourself);
-		yourself.
-
-	paneContent appendChild: self buildLayoutRadioGroup.
-	paneContent appendChild: self buildNavTypeRadioGroup.
-	paneContent appendChild: self buildToggleNavRegion.
-	paneContent appendChild: self buildToggleTopAppBar.
-	paneContent appendChild: self buildToggleBottomAppBar.
-	paneContent appendChild: self buildToggleSidesheet.
-
-	^ element
+		yourself
 ]
 
 { #category : #settings }
@@ -967,7 +1049,7 @@ CpMaterial3LayoutView >> setCurrentPage: aString [
 
 	element := CpHtmlElement documentBody firstDescendantMatching: '#pane1-content'.
 	element notNil ifTrue: [
-		element replaceAllChildrenWith: (currentPage inHtmlTag: #p) ]
+		element replaceAllChildrenWith: (currentPage inHtmlTag: #h1) ]
 
 ]
 
@@ -987,17 +1069,30 @@ CpMaterial3LayoutView >> setNavTypeStyle: aNavType [
 
 	self navType: aNavType.
 
+	self navRegionFind
+		styleAt: 'flex'
+		put: '0 0 ', self navModalPaneWidth.
+
 	self navModalPaneFind
 		customPropertyAt: 'size'
-		put: self navModalPaneWidth
+		put: self navModalPaneWidth.
+
+	self navSetUp.
+
 ]
 
 { #category : #sidesheet }
 CpMaterial3LayoutView >> sidesheetBuild [
 
 	^ (CpHtmlElement newWithTag: #div)
-		addClass: 'slx-sidesheet-content';
-		appendChild: ('Lorem ipsum...' inHtmlTag: #span);
+		addClass: 'smd-sidesheet-container';
+		appendChild: ((CpHtmlElement newWithTag: #div)
+			addClass: 'smd-sidesheet-content';
+			appendChild: ((CpHtmlElement newWithTag: #div)
+				addClass: 'smd-sidesheet-card';
+				appendChild: ('Lorem ipsum...' inHtmlTag: #span);
+				yourself);
+			yourself);
 		yourself
 
 ]
@@ -1017,8 +1112,7 @@ CpMaterial3LayoutView >> sidesheetDisplay: aBoolean [
 { #category : #sidesheet }
 CpMaterial3LayoutView >> sidesheetFind [
 
-	"^ CpHtmlElement documentBody firstDescendantMatching: '#sm3-sidesheet'"
-	^ self shadowedElementWithId: 'sm3-sidesheet'
+	^ self shadowedElementWithId: 'smdSidesheet'
 ]
 
 { #category : #accessing }
