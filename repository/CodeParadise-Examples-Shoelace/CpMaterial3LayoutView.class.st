@@ -2,8 +2,9 @@ Class {
 	#name : #CpMaterial3LayoutView,
 	#superclass : #CpView,
 	#instVars : [
+		'width',
+		'height',
 		'currentLayout',
-		'pane2Hidden',
 		'currentPage',
 		'leadingAction',
 		'trailingActions',
@@ -42,6 +43,10 @@ CpMaterial3LayoutView class >> globalStyleBody [
   background: var(--sl-color-primary-100);
 }
 
+.smd-one-pane-layout {
+  flex: 100%;
+}
+
 .smd-split-panel {
   flex: 100%;
   background: var(--sl-color-primary-100);
@@ -64,20 +69,21 @@ CpMaterial3LayoutView class >> globalStyleBody [
 }
 
 .smd-pane-1 {
-  padding-left: 16px;
+  padding: 8px;
 }
 
 .smd-pane-2 {
-  padding-right: 16px;
+  padding: 8px;
 }
 
 .smd-pane-content {
   border-radius: 16px;
-  background: var(--sl-color-primary-200);
+  background: var(--sl-color-primary-50);
 }
 
-.example-settings-pane {
-  padding: 6px;
+.smd-settings-pane {
+  padding: 0;
+  overflow-y: auto;
 }
 '
 ]
@@ -142,7 +148,7 @@ CpMaterial3LayoutView class >> globalStyleNav [
 
 .smd-nav-font {
   line-height: var(--sl-line-height-normal);
-  font-size: var(--sl-font-size-large);
+  font-size: var(--sl-font-size-medium);
   font-weight: var(--sl-font-weight-bold);
 }
 
@@ -169,6 +175,7 @@ CpMaterial3LayoutView class >> globalStyleNav [
 .smd-navrail-labelText {
   padding: 0;
   line-height: 16pt;
+  font-size: var(--sl-font-size-x-small);
   text-align: center;
   overflow-x: clip;
 }
@@ -203,7 +210,7 @@ CpMaterial3LayoutView class >> globalStyleNav [
 }
 
 .smd-navdrawer-labelText {
-  padding-top: 8px;
+  padding-top: 12px;
   padding-left: 12px;
   width: 236px;
 }
@@ -299,7 +306,7 @@ CpMaterial3LayoutView class >> style [
 }
 
 .smd-attribute-container {
-  padding: 0 12px;
+  padding: 0 0 0 12px;
 }
 '
 ]
@@ -312,6 +319,7 @@ CpMaterial3LayoutView class >> template [
 	^ '
 <div id="container">
 <div id="smdLayout" class="smd-background">
+  <slot name="settings"></slot>
   <div style="display: flex; flex-direction: column">
     <div style="flex: 1; display: flex; flex-direction: row">
       <div id="smdNavRegion" class="smd-navRegion">
@@ -339,40 +347,93 @@ CpMaterial3LayoutView >> addAttributeContainerStyle: element [
 		addClass: 'smd-attribute-container';
 		appendChild: element
 		yourself"
-	^ element styleAt: 'padding' put: '12px'; yourself
+	^ element styleAt: 'padding-bottom' put: '12px'; yourself
 ]
 
 { #category : #bottomAppBar }
 CpMaterial3LayoutView >> adjustBodyHeight [
+	| bodyElement |
 
-	self bodyFind
+	bodyElement := self bodyFind.
+	bodyElement ifNil: [ ^ self  ].
+
+	bodyElement
 		styleAt: 'height'
 		put: (self showBottomAppBar ifTrue: [ 'calc(100vh - 72px)' ] ifFalse: [ '100vh' ]).
 ]
 
-{ #category : #layout }
+{ #category : #body }
 CpMaterial3LayoutView >> bodyFind [
 
 	^ CpHtmlElement documentBody firstDescendantMatching: '#smdBodyContent'
 ]
 
-{ #category : #layout }
+{ #category : #body }
+CpMaterial3LayoutView >> bodyPanesAdapt: aBoolean [
+
+	aBoolean
+		ifTrue: [ self bodyUseTwoPanes ]
+		ifFalse: [ self bodyUseOnePane ]
+]
+
+{ #category : #body }
 CpMaterial3LayoutView >> bodySetUp [
+
+	self bodyPanesAdapt: self useTwoPaneBody.
+
+]
+
+{ #category : #body }
+CpMaterial3LayoutView >> bodySplitPanelAdapt [
+	| split |
+
+	split := self smdBodySplitPanelFind.
+	split ifNil: [ ^ self ].
+
+	split attributeAt: 'position-in-pixels' put: self pane1WidthCompute printString
+]
+
+{ #category : #body }
+CpMaterial3LayoutView >> bodySplitPanelDividerWidth [
+
+	^ 24
+]
+
+{ #category : #body }
+CpMaterial3LayoutView >> bodyUseOnePane [
+	| body |
+
+	body := #div asHtmlTag
+		addClass: 'smd-one-pane-layout';
+		appendChild: self pane1Build;
+		appendChild: self pane2build;
+		yourself.
+
+	self
+		replaceAllChildrenWith: (#div asHtmlTag
+			id: 'smdBodyContent';
+			addClass: 'smd-body-content';
+			appendChild: body;
+			yourself)
+		atSlotNamed: 'body'
+]
+
+{ #category : #body }
+CpMaterial3LayoutView >> bodyUseTwoPanes [
 	| split |
 
 	split := SlSplitPanel new
-		customPropertyAt: 'divider-width' put: '24px';
-		"propertyAt: 'primary' put: 'start';"
-		customPropertyAt: 'min' put: '400px';
+		id: 'smdBodySplitPanel';
+		attributeAt: 'primary' put: 'start';
+		"attributeAt: 'position-in-pixels' put: self pane1WidthCompute printString;"
+		customPropertyAt: 'divider-width' put: self bodySplitPanelDividerWidth printString, 'px';
+		customPropertyAt: 'min' put: '300px';
 		"customPropertyAt: 'max' put: 'calc(100% - 150px)';"
 		replaceAllChildrenWith: (SlIcon named: 'grip-vertical') atSlotNamed: #'divider';
 		yourself.
 
 	split replaceAllChildrenWith: self pane1Build atSlotNamed: #'start'.
-
-	self pane2Hidden
-		ifTrue: [ split removeChildrenAtSlotNamed: #'end' ]
-		ifFalse: [ split replaceAllChildrenWith: self pane2build atSlotNamed: #'end' ].
+	split replaceAllChildrenWith: self pane2build atSlotNamed: #'end'.
 
 	self
 		replaceAllChildrenWith: ((CpHtmlElement newWithTag: #div)
@@ -594,17 +655,22 @@ CpMaterial3LayoutView >> fab: anObject [
 
 { #category : #layout }
 CpMaterial3LayoutView >> handleResizeEvent: anEvent [
-	| el width |
+	| el |
 
+	el := CpHtmlElement documentBody firstDescendantMatching: '#smdPane1Content'.
+	anEvent detail valuesDo: [ :eachDetail |
+		eachDetail do: [ :eachEntry | | rect |
+			rect := eachEntry apply: 'contentRect'.
+			width := rect apply: 'width'.
+			"Don't bother with height. It seems to report 0. Probably no browser support"
+			"height := rect apply: 'height'."
+			"el appendChild: ((rect apply: 'toJSON') printString inHtmlTag: #p)."
+			el removeChildren.
+			el appendChild: ((width printString, '@', height printString) inHtmlTag: #p) ] ].
+
+	self bodySplitPanelAdapt.
 	self useAutoLayout not ifTrue: [
 		^ self ].
-
-	anEvent detail valuesDo: [ :eachDetail |
-		eachDetail do: [ :eachEntry |
-			width := ((eachEntry apply: 'contentRect') apply: 'width') ] ].
-
-	"el := CpHtmlElement documentBody firstDescendantMatching: '#smdPane1Content'.
-	el appendChild: (width printString inHtmlTag: #p)."
 
 	width < 600 ifTrue: [ ^ self layoutTypeChangeAutoResize: #compact ].
 	width < 840 ifTrue: [ ^ self layoutTypeChangeAutoResize: #medium ].
@@ -627,6 +693,18 @@ CpMaterial3LayoutView >> headline: anObject [
 ]
 
 { #category : #accessing }
+CpMaterial3LayoutView >> height [
+
+	^ height
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> height: anObject [
+
+	height := anObject
+]
+
+{ #category : #accessing }
 CpMaterial3LayoutView >> iconButtons [
 
 	^ iconButtons
@@ -643,10 +721,10 @@ CpMaterial3LayoutView >> initialize [
 
 	super initialize.
 
+	width := 0.
+
 	"#layoutSetUp will set the value later. DO NOT set it here."
 	"layoutType := nil."
-
-	pane2Hidden := false.
 
 	currentPage := 'Club'.
 
@@ -662,6 +740,7 @@ CpMaterial3LayoutView >> initialize [
 CpMaterial3LayoutView >> layoutSetUp [
 	"Invoked by presenter's viewInitialize"
 
+	self settingsSetUp.
 	self navModalPaneSetUp.
 	self navSetUp.
 	self bodySetUp.
@@ -693,15 +772,17 @@ CpMaterial3LayoutView >> layoutTypeAdapt: aLayoutType [
 
 	self currentLayout: aLayoutType.
 	aLayoutType = #compact ifTrue: [
-		self navRegionModalOn; bottomAppBarOn; sidesheetOff ].
+		self navRegionModalOn; navTypeUseRail; bottomAppBarOn; sidesheetOff; useTwoPanesChangeAutoResize: false ].
 	aLayoutType = #medium ifTrue: [
-		self navRegionModalOn; bottomAppBarOn; sidesheetOff ].
+		self navRegionModalOn; navTypeUseDrawer; bottomAppBarOn; sidesheetOff; useTwoPanesChangeAutoResize: true  ].
 	aLayoutType = #expanded ifTrue: [
-		self navRegionModalOff; navTypeUseRail; bottomAppBarOff; sidesheetOff ].
+		self navRegionModalOff; navTypeUseRail; bottomAppBarOff; sidesheetOff; useTwoPanesChangeAutoResize: true  ].
 	aLayoutType = #large ifTrue: [
-		 self navRegionModalOff; navTypeUseDrawer; bottomAppBarOff; sidesheetOff ].
+		 self navRegionModalOff; navTypeUseDrawer; bottomAppBarOff; sidesheetOff; useTwoPanesChangeAutoResize: true  ].
 	aLayoutType = #'extra-large' ifTrue: [
-		self navRegionModalOff; navTypeUseDrawer; bottomAppBarOff; sidesheetOn ].
+		self navRegionModalOff; navTypeUseDrawer; bottomAppBarOff; sidesheetOn; useTwoPanesChangeAutoResize: true  ].
+
+	self bodySplitPanelAdapt.
 
 ]
 
@@ -791,7 +872,7 @@ CpMaterial3LayoutView >> navModalPaneBuild [
 		addClass: 'smd-nav-drawer';
 		placement: 'start';
 		beNoHeader;
-		customPropertyAt: 'size' put: self navModalPaneWidth;
+		customPropertyAt: 'size' put: self navTypeWidth printString;
 		customPropertyAt: 'body-spacing' put: '0';
 		customPropertyAt: 'header-spacing' put: '0';
 		customPropertyAt: 'footer-spacing' put: '0';
@@ -829,15 +910,6 @@ CpMaterial3LayoutView >> navModalPaneSetUp [
 ]
 
 { #category : #nav }
-CpMaterial3LayoutView >> navModalPaneWidth [
-
-	self navTypeIsRail ifTrue: [ ^ '80px' ].
-	self navTypeIsDrawer ifTrue: [ ^ '360px' ].
-	self navTypeIsBar ifTrue: [ ^ '0' ].
-	^ '80px'
-]
-
-{ #category : #nav }
 CpMaterial3LayoutView >> navRegionDisplay: aBoolean [
 	| element |
 
@@ -868,6 +940,7 @@ CpMaterial3LayoutView >> navRegionModalAdapt: isOn [
 			self topAppBarMenuDisplay: true ].
 
 	self navSetUp.
+	self bodySplitPanelAdapt.
 
 ]
 
@@ -919,13 +992,14 @@ CpMaterial3LayoutView >> navTypeAdapt: aNavType [
 
 	self navRegionFind
 		styleAt: 'flex'
-		put: '0 0 ', self navModalPaneWidth.
+		put: '0 0 ', self navTypeWidth printString, 'px'.
 
 	self navModalPaneFind
 		customPropertyAt: 'size'
-		put: self navModalPaneWidth.
+		put: self navTypeWidth printString.
 
 	self navSetUp.
+	self bodySplitPanelAdapt.
 
 ]
 
@@ -953,8 +1027,6 @@ CpMaterial3LayoutView >> navTypeBuildChooser [
 
 	radioGroup := SlRadioGroup new
 		id: 'smdNavTypeChooser';
-		addClass: 'smd-attribute-container';
-		styleAt: 'padding' put: '8px';
 		propertyAt: 'label' put: 'Use navigation type:';
 		propertyAt: 'value' put: self navTypeDefault;
 		yourself.
@@ -1006,6 +1078,15 @@ CpMaterial3LayoutView >> navTypeUseRail [
 	self navTypeBeRail.
 	self navTypeAdapt: #rail.
 
+]
+
+{ #category : #nav }
+CpMaterial3LayoutView >> navTypeWidth [
+
+	self navTypeIsRail ifTrue: [ ^ 80 ].
+	self navTypeIsDrawer ifTrue: [ ^ 360 ].
+	self navTypeIsBar ifTrue: [ ^ 0 ].
+	^ 80
 ]
 
 { #category : #'nav - drawer' }
@@ -1066,7 +1147,7 @@ CpMaterial3LayoutView >> newToggleId: id label: label do: aBlock [
 
 ]
 
-{ #category : #layout }
+{ #category : #body }
 CpMaterial3LayoutView >> pane1Build [
 	| element |
 
@@ -1090,22 +1171,26 @@ CpMaterial3LayoutView >> pane1Build [
 
 ]
 
-{ #category : #accessing }
-CpMaterial3LayoutView >> pane2Hidden [
+{ #category : #body }
+CpMaterial3LayoutView >> pane1WidthCompute [
+	| w |
 
-	^ pane2Hidden
+	w := ((width "- self bodySplitPanelDividerWidth") / 2) asInteger.
+	self useModalNav ifFalse: [  w := w - self navTypeWidth ].
+	^ w
 ]
 
-{ #category : #accessing }
-CpMaterial3LayoutView >> pane2Hidden: anObject [
-
-	pane2Hidden := anObject
-]
-
-{ #category : #layout }
+{ #category : #body }
 CpMaterial3LayoutView >> pane2build [
 
-	^ self settingsPaneBuild
+	^ #div asHtmlTag
+		addClass: 'smd-pane';
+		addClass: 'smd-pane-2';
+		appendChild: (#div asHtmlTag
+			addClass: 'smd-pane-content';
+			appendChild: (#p asHtmlTag textContent: 'Pane2 content...');
+			yourself);
+		yourself
 ]
 
 { #category : #layout }
@@ -1133,30 +1218,54 @@ CpMaterial3LayoutView >> setCurrentPage: aString [
 
 ]
 
+{ #category : #layout }
+CpMaterial3LayoutView >> settingsFind [
+
+	^ CpHtmlElement documentBody firstDescendantMatching: '#smdSettings'
+
+]
+
+{ #category : #layout }
+CpMaterial3LayoutView >> settingsOpen [
+
+	self settingsFind beOpen
+
+]
+
 { #category : #settings }
 CpMaterial3LayoutView >> settingsPaneBuild [
 	| element |
 
 	element := #div asHtmlTag
-		addClass: 'example-settings-pane';
-		appendChild: ('Layout Settings' inHtmlTag: #h3);
-		appendChild: (self addAttributeContainerStyle: self useModalNavBuildToggle);
+		addClass: 'smd-settings-pane';
 		appendChild: (self addAttributeContainerStyle: self useAutoLayoutBuildToggle);
 		appendChild: (self addAttributeContainerStyle: self layoutTypeBuildChooser);
 		appendChild: (self addAttributeContainerStyle: self navTypeBuildChooser);
+		appendChild: (self addAttributeContainerStyle: self useModalNavBuildToggle);
+		appendChild: (self addAttributeContainerStyle: self useTwoPaneBodyBuildToggle);
 		appendChild: (self addAttributeContainerStyle: self showTopAppBarBuildToggle);
 		appendChild: (self addAttributeContainerStyle: self showBottomAppBarBuildToggle);
 		appendChild: (self addAttributeContainerStyle: self showSidesheetBuildToggle);
 		yourself.
 
-	^ #div asHtmlTag
-		addClass: 'smd-pane';
-		addClass: 'smd-pane-2';
-		appendChild: (#div asHtmlTag
-			addClass: 'smd-pane-content';
-			appendChild: element;
+	^ element
+]
+
+{ #category : #layout }
+CpMaterial3LayoutView >> settingsSetUp [
+	| element |
+
+	element := #div asHtmlTag
+		appendChild: (SlDrawer new
+			id: 'smdSettings';
+			label: 'Layout settings';
+			"placement: 'top';"
+			appendChild: self settingsPaneBuild;
 			yourself);
-		yourself
+		yourself.
+
+	self replaceAllChildrenWith: element atSlotNamed: #'settings'.
+
 ]
 
 { #category : #settings }
@@ -1266,7 +1375,7 @@ CpMaterial3LayoutView >> sidesheetBuild [
 			addClass: 'smd-sidesheet-content';
 			appendChild: (#div asHtmlTag
 				addClass: 'smd-sidesheet-card';
-				appendChild: ('Lorem ipsum...' inHtmlTag: #span);
+				appendChild: ('Sidesheet content...' inHtmlTag: #span);
 				yourself);
 			yourself);
 		yourself
@@ -1315,6 +1424,12 @@ CpMaterial3LayoutView >> sidesheetSetUp [
 		atSlotNamed: 'sidesheet'
 ]
 
+{ #category : #body }
+CpMaterial3LayoutView >> smdBodySplitPanelFind [
+
+	^ CpHtmlElement documentBody firstDescendantMatching: '#smdBodySplitPanel'
+]
+
 { #category : #topAppBar }
 CpMaterial3LayoutView >> topAppBarBuild [
 	| trailing |
@@ -1337,7 +1452,10 @@ CpMaterial3LayoutView >> topAppBarBuild [
 			appendChild: (#div asHtmlTag
 				addClass: 'smd-topAppBar-trailingActions';
 				appendChild: (SlIconButton named: trailing first);
-				appendChild: (SlIconButton named: trailing second);
+				appendChild: (
+					(SlIconButton named: 'gear')
+						when: CpClickEvent basicPrimary send: #settingsOpen to: self;
+						yourself);
 				appendChild: (SlIconButton named: trailing third);
 				yourself);
 			yourself);
@@ -1436,4 +1554,50 @@ CpMaterial3LayoutView >> useModalNavBuildToggle [
 			self navRegionModalAdapt: self useModalNav.
 			self useAutoLayout: false ].
 
+]
+
+{ #category : #settings }
+CpMaterial3LayoutView >> useTwoPaneBody [
+
+	^ self elementId: '#useTwoPaneBody' propertyAt: #checked ifNotFound: true
+]
+
+{ #category : #settings }
+CpMaterial3LayoutView >> useTwoPaneBody: aBoolean [
+
+	self elementId: '#useTwoPaneBody' propertyAt: #checked put: aBoolean
+]
+
+{ #category : #settings }
+CpMaterial3LayoutView >> useTwoPaneBodyBuildToggle [
+
+	^ self
+		newToggleId: 'useTwoPaneBody'
+		label: 'Use two pane layout'
+		do: [
+			self bodyPanesAdapt: self useTwoPaneBody ].
+
+]
+
+{ #category : #body }
+CpMaterial3LayoutView >> useTwoPanesChangeAutoResize: aBoolean [
+
+	self useTwoPaneBody = aBoolean ifTrue: [
+		^ self ].
+
+	self useTwoPaneBody: aBoolean.
+	self bodyPanesAdapt: aBoolean.
+
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> width [
+
+	^ width
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> width: anObject [
+
+	width := anObject
 ]
