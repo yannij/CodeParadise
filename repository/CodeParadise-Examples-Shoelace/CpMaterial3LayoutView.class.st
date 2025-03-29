@@ -11,7 +11,8 @@ Class {
 		'headline',
 		'iconButtons',
 		'fab',
-		'navItems'
+		'navItems',
+		'colorThemeName'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
 }
@@ -574,6 +575,68 @@ CpMaterial3LayoutView >> buildNavrailItem: buttonName methodName: methodName [
 		yourself
 ]
 
+{ #category : #'color theme' }
+CpMaterial3LayoutView >> colorThemeAdapt: aColorName [
+
+	self colorThemeName: aColorName.
+	self class updateGlobalStyleUsing: (self colorThemeFrom: aColorName), self class globalStyle.
+
+]
+
+{ #category : #settings }
+CpMaterial3LayoutView >> colorThemeBuildChooser [
+	| chooser |
+
+	chooser := SlSelect new
+		id: 'smdColorThemeChooser';
+		labelText: 'Use color theme:';
+		propertyAt: 'value' put: self defaultColorThemeName asString;
+		yourself.
+
+	chooser when: SlChangeEvent do: [ self colorThemeAdapt: chooser value ] for: self.
+
+	#(gray red orange amber yellow lime green emerald teal cyan sky blue indigo violet purple fuchsia pink rose)
+		do: [ :each |
+			chooser appendChild: (SlOption new value: each; textContent: each capitalized; yourself) ].
+
+	^ chooser
+]
+
+{ #category : #'color theme' }
+CpMaterial3LayoutView >> colorThemeFrom: base [
+	|  |
+
+	^ String streamContents: [:s |
+		s nextPutAll: '
+:root,
+:host,
+.sl-theme-light {
+'.
+		#('50' '100' '200' '300' '400' '500' '600' '700' '800' '900' '950') do: [ :each |
+			s
+				nextPutAll: '--sl-color-primary-';
+				nextPutAll: each;
+				nextPutAll: ': var(--sl-color-', base, '-';
+				nextPutAll: each;
+				nextPutAll: ');';
+				yourself ].
+		s nextPutAll: '
+}
+' ]
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> colorThemeName [
+
+	^ colorThemeName
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> colorThemeName: anObject [
+
+	colorThemeName := anObject
+]
+
 { #category : #accessing }
 CpMaterial3LayoutView >> currentLayout [
 
@@ -596,6 +659,12 @@ CpMaterial3LayoutView >> currentPage [
 CpMaterial3LayoutView >> currentPage: anObject [
 
 	currentPage := anObject
+]
+
+{ #category : #'color theme' }
+CpMaterial3LayoutView >> defaultColorThemeName [
+
+	^ #sky
 ]
 
 { #category : #pages }
@@ -721,6 +790,7 @@ CpMaterial3LayoutView >> initialize [
 
 	super initialize.
 
+	colorThemeName := self defaultColorThemeName.
 	width := 0.
 
 	"#layoutSetUp will set the value later. DO NOT set it here."
@@ -747,6 +817,7 @@ CpMaterial3LayoutView >> layoutSetUp [
 	self sidesheetSetUp.
 	self bottomAppBarSetUp.
 
+	self colorThemeAdapt: self defaultColorThemeName.
 	self layoutTypeAdapt: self layoutTypeDefault.
 	self resizeSetUp.
 
@@ -1246,6 +1317,7 @@ CpMaterial3LayoutView >> settingsPaneBuild [
 		appendChild: (self addAttributeContainerStyle: self showTopAppBarBuildToggle);
 		appendChild: (self addAttributeContainerStyle: self showBottomAppBarBuildToggle);
 		appendChild: (self addAttributeContainerStyle: self showSidesheetBuildToggle);
+		appendChild: (self addAttributeContainerStyle: self colorThemeBuildChooser);
 		yourself.
 
 	^ element
