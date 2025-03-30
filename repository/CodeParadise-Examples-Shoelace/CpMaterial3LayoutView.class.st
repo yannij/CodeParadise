@@ -19,15 +19,9 @@ Class {
 
 { #category : #'web resources' }
 CpMaterial3LayoutView class >> globalStyle [
+	"Answer stub value. See #globalStyleForUpdate"
 
-	<webResource: #css>
-
-	^ self globalStyleExtra
-, self globalStyleNav
-, self globalStyleTopAppBar
-, self globalStyleBottomAppBar
-, self globalStyleSidesheet
-, self globalStyleBody
+	^ ''
 ]
 
 { #category : #'web resources' }
@@ -37,7 +31,6 @@ CpMaterial3LayoutView class >> globalStyleBody [
 
 	^ '
 .smd-body-content {
-  font-family: var(--sl-font-sans);
   flex: auto;
   display: flex;  
   flex-direction: row;
@@ -136,6 +129,21 @@ CpMaterial3LayoutView class >> globalStyleExtra [
 ]
 
 { #category : #'web resources' }
+CpMaterial3LayoutView class >> globalStyleForUpdate [
+	"Answer the actual globalStyle to be used by instance side #updateGlobalStyle,
+	which avoids setting the styles twice during initialization."
+
+	<webResource: #css>
+
+	^ self globalStyleExtra
+, self globalStyleNav
+, self globalStyleTopAppBar
+, self globalStyleBottomAppBar
+, self globalStyleSidesheet
+, self globalStyleBody
+]
+
+{ #category : #'web resources' }
 CpMaterial3LayoutView class >> globalStyleNav [
 
 	<webResource: #css>
@@ -154,7 +162,6 @@ CpMaterial3LayoutView class >> globalStyleNav [
 }
 
 .smd-navrail {
-  font-family: var(--sl-font-sans);
   padding: 0;
   margin: 0;
   background: var(--sl-color-primary-100);
@@ -182,7 +189,6 @@ CpMaterial3LayoutView class >> globalStyleNav [
 }
 
 .smd-navdrawer {
-  font-family: var(--sl-font-sans);
   padding: 12px 4px 0 12px;
   margin: 0;
   background: var(--sl-color-primary-100);
@@ -355,7 +361,7 @@ CpMaterial3LayoutView >> addAttributeContainerStyle: element [
 CpMaterial3LayoutView >> adjustBodyHeight [
 	| bodyElement |
 
-	bodyElement := self bodyFind.
+	bodyElement := self bodyContentFind.
 	bodyElement ifNil: [ ^ self  ].
 
 	bodyElement
@@ -364,9 +370,16 @@ CpMaterial3LayoutView >> adjustBodyHeight [
 ]
 
 { #category : #body }
-CpMaterial3LayoutView >> bodyFind [
+CpMaterial3LayoutView >> bodyContentFind [
 
 	^ CpHtmlElement documentBody firstDescendantMatching: '#smdBodyContent'
+]
+
+{ #category : #body }
+CpMaterial3LayoutView >> bodyFind [
+
+	"^ self lastAncestorMatching: 'body'"
+	^ CpHtmlElement documentBody
 ]
 
 { #category : #body }
@@ -374,7 +387,10 @@ CpMaterial3LayoutView >> bodyPanesAdapt: aBoolean [
 
 	aBoolean
 		ifTrue: [ self bodyUseTwoPanes ]
-		ifFalse: [ self bodyUseOnePane ]
+		ifFalse: [ self bodyUseOnePane ].
+
+	self adjustBodyHeight.
+
 ]
 
 { #category : #body }
@@ -579,7 +595,7 @@ CpMaterial3LayoutView >> buildNavrailItem: buttonName methodName: methodName [
 CpMaterial3LayoutView >> colorThemeAdapt: aColorName [
 
 	self colorThemeName: aColorName.
-	self class updateGlobalStyleUsing: (self colorThemeFrom: aColorName), self class globalStyle.
+	self updateGlobalStyle.
 
 ]
 
@@ -667,6 +683,12 @@ CpMaterial3LayoutView >> defaultColorThemeName [
 	^ #sky
 ]
 
+{ #category : #typography }
+CpMaterial3LayoutView >> defaultFontFamily [
+
+	^ nil
+]
+
 { #category : #pages }
 CpMaterial3LayoutView >> doClub [
 
@@ -720,6 +742,41 @@ CpMaterial3LayoutView >> fab [
 CpMaterial3LayoutView >> fab: anObject [
 
 	fab := anObject
+]
+
+{ #category : #typography }
+CpMaterial3LayoutView >> fontFamilyAdapt: aFontFamily [
+	| element |
+
+	element := self bodyFind.
+	element ifNil: [ ^ self ].
+
+	element styleAt: 'font-family' put: aFontFamily
+
+]
+
+{ #category : #settings }
+CpMaterial3LayoutView >> fontFamilyChooserBuild [
+	| chooser |
+
+	chooser := SlSelect new
+		id: 'smdFontFamilyChooser';
+		labelText: 'Use font family:';
+		propertyAt: 'value' put: self defaultFontFamily asString;
+		yourself.
+
+	chooser when: SlChangeEvent do: [ self fontFamilyAdapt: chooser value ] for: self.
+
+	{
+nil -> 'Default'.
+#'var(--sl-font-sans)' -> 'Sans'.
+#'var(--sl-font-serif)' -> 'Serif'.
+#'var(--sl-font-mono)' -> 'Mono'
+}
+		do: [ :each |
+			chooser appendChild: (SlOption new value: each key; textContent: each value capitalized; yourself) ].
+
+	^ chooser
 ]
 
 { #category : #layout }
@@ -807,6 +864,12 @@ CpMaterial3LayoutView >> initialize [
 ]
 
 { #category : #layout }
+CpMaterial3LayoutView >> layoutFind [
+
+	^ CpHtmlElement documentBody firstDescendantMatching: '#smdLayout'
+]
+
+{ #category : #layout }
 CpMaterial3LayoutView >> layoutSetUp [
 	"Invoked by presenter's viewInitialize"
 
@@ -818,6 +881,7 @@ CpMaterial3LayoutView >> layoutSetUp [
 	self bottomAppBarSetUp.
 
 	self colorThemeAdapt: self defaultColorThemeName.
+	self fontFamilyAdapt: self defaultFontFamily.
 	self layoutTypeAdapt: self layoutTypeDefault.
 	self resizeSetUp.
 
@@ -1318,6 +1382,7 @@ CpMaterial3LayoutView >> settingsPaneBuild [
 		appendChild: (self addAttributeContainerStyle: self showBottomAppBarBuildToggle);
 		appendChild: (self addAttributeContainerStyle: self showSidesheetBuildToggle);
 		appendChild: (self addAttributeContainerStyle: self colorThemeBuildChooser);
+		appendChild: (self addAttributeContainerStyle: self fontFamilyChooserBuild);
 		yourself.
 
 	^ element
@@ -1580,6 +1645,13 @@ CpMaterial3LayoutView >> trailingActions [
 CpMaterial3LayoutView >> trailingActions: anObject [
 
 	trailingActions := anObject
+]
+
+{ #category : #initialization }
+CpMaterial3LayoutView >> updateGlobalStyle [
+
+	self class updateGlobalStyleUsing: (self colorThemeFrom: self colorThemeName), self class globalStyleForUpdate.
+
 ]
 
 { #category : #settings }
