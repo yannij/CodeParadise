@@ -7,9 +7,21 @@ Class {
 { #category : #view }
 CpMaterial3LayoutPresenter >> layoutSetUp [
 
+	self navSetUp.
 	self setTopAppBar.
 	self setBottomAppBar.
 
+]
+
+{ #category : #rendering }
+CpMaterial3LayoutPresenter >> navSetUp [
+	| v |
+
+	v := self view.
+	self application navActions do: [ :eachNavAction |
+		eachNavAction asDictionary keysAndValuesDo: [ :key :value |
+			v addNavActionId: eachNavAction id key: key value: value ].
+		v addNavItem: eachNavAction id ]
 ]
 
 { #category : #rendering }
@@ -25,8 +37,7 @@ CpMaterial3LayoutPresenter >> setBottomAppBar [
 CpMaterial3LayoutPresenter >> setTopAppBar [
 
 	self view
-		headline: 'Responsive App';
-		leadingAction: 'list';
+		headline: self application class appName;
 		trailingActions: { '1-square'. '2-square' . '3-square'. '4-square' }.
 
 ]
@@ -35,7 +46,5 @@ CpMaterial3LayoutPresenter >> setTopAppBar [
 CpMaterial3LayoutPresenter >> viewInitialized [
 
 	self layoutSetUp.
-
 	self view layoutSetUp.
-
 ]

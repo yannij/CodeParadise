@@ -1,9 +1,5 @@
-"
-I am a simple WebApplication based on Model-View-Presenter pattern.
-I only live in the ServerEnvironment.
-"
 Class {
-	#name : #CpMaterial3Application,
+	#name : #MdexTodoApplication,
 	#superclass : #CpMvpWebApplication,
 	#instVars : [
 		'layout',
@@ -13,7 +9,7 @@ Class {
 }
 
 { #category : #accessing }
-CpMaterial3Application class >> allowedPackages [
+MdexTodoApplication class >> allowedPackages [
 
 	"Answer a collection of Packages which are allowed to contain classes to install in the receiver.
 
@@ -25,21 +21,21 @@ CpMaterial3Application class >> allowedPackages [
 ]
 
 { #category : #accessing }
-CpMaterial3Application class >> app [
+MdexTodoApplication class >> app [
 	"self register"
 
-	^ #'Shoelace-MD3'
+	^ #'Shoelace-ToDo'
 ]
 
 { #category : #accessing }
-CpMaterial3Application class >> appName [
+MdexTodoApplication class >> appName [
 	"Answer name to be shown in TopAppBar headline"
 
-	^ #'MD3 Example'
+	^ #'ToDo Example'
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> applicationModel [
+MdexTodoApplication >> applicationModel [
 
 	"Answer the Model for the receiver, which is the receiver itself"
 
@@ -47,46 +43,43 @@ CpMaterial3Application >> applicationModel [
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> applicationPresenterClass [
+MdexTodoApplication >> applicationPresenterClass [
 
 	^ CpMaterial3ApplicationPresenter
 ]
 
 { #category : #initialization }
-CpMaterial3Application >> initialize [
+MdexTodoApplication >> initialize [
 
 	super initialize.
 
 	layout := CpMaterial3LayoutModel new.
 	navActions := OrderedCollection new
-		add: (SlmdNavAction id: #club iconName: 'suit-club' iconLabel: 'Club' arg1: 'Club Page');
-		add: (SlmdNavAction id: #diamond iconName: 'suit-diamond' iconLabel: 'Diamond' arg1: 'Diamond Page');
-		add: (SlmdNavAction id: #heart iconName: 'suit-heart' iconLabel: 'Heart' arg1: 'Heart Page');
-		add: (SlmdNavAction id: #spade iconName: 'suit-spade' iconLabel: 'Spade' arg1: 'Spade Page');
+		add: (SlmdNavAction id: #home iconName: 'house' iconLabel: 'Home' arg1: 'Home Page');
 		yourself.
 
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> layout [
+MdexTodoApplication >> layout [
 
 	^ layout
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> layout: anObject [
+MdexTodoApplication >> layout: anObject [
 
 	layout := anObject
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> navActions [
+MdexTodoApplication >> navActions [
 
 	^ navActions
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> navActions: anObject [
+MdexTodoApplication >> navActions: anObject [
 
 	navActions := anObject
 ]

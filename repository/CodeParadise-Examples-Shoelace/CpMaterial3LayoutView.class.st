@@ -11,8 +11,9 @@ Class {
 		'headline',
 		'iconButtons',
 		'fab',
-		'navItems',
-		'colorThemeName'
+		'colorThemeName',
+		'navActions',
+		'navItems'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
 }
@@ -357,6 +358,22 @@ CpMaterial3LayoutView >> addAttributeContainerStyle: element [
 	^ element styleAt: 'padding-bottom' put: '12px'; yourself
 ]
 
+{ #category : #nav }
+CpMaterial3LayoutView >> addNavActionId: id key: key value: value [
+	| item |
+
+	(navActions includesKey: id asSymbol) ifFalse: [
+		navActions at: id asSymbol put: Dictionary new ].
+	item := navActions at: id asSymbol.
+	item at: key asSymbol put: value
+]
+
+{ #category : #nav }
+CpMaterial3LayoutView >> addNavItem: aNavActionId [
+
+	self navItems add: aNavActionId asSymbol
+]
+
 { #category : #bottomAppBar }
 CpMaterial3LayoutView >> adjustBodyHeight [
 	| bodyElement |
@@ -559,34 +576,42 @@ CpMaterial3LayoutView >> buildLeadingAction [
 ]
 
 { #category : #'nav - drawer' }
-CpMaterial3LayoutView >> buildNavdrawerItem: buttonName methodName: methodName [
+CpMaterial3LayoutView >> buildNavdrawerItem: aNavAction [
+	| iconName arg1 |
+
+	iconName := aNavAction at: #iconName.
+	arg1 := aNavAction at: #arg1.
 
 	^ #div asHtmlTag
 		addClass: 'smd-navdrawer-item';
 		addClass: 'smd-nav-font';
-		when: CpClickEvent basicPrimary send: methodName to: self;
-		appendChild: ((SlIconButton named: buttonName) addClass: 'smd-navdrawer-icon'; yourself);
+		when: CpClickEvent basicPrimary do: [ self setCurrentPage: arg1 ] for: self;
+		appendChild: ((SlIconButton named: iconName) addClass: 'smd-navdrawer-icon'; yourself);
 		appendChild: (#div asHtmlTag
 			addClass: 'smd-navdrawer-labelText';
-			textContent: methodName;
+			textContent: (aNavAction at: #iconLabel);
 			yourself);
 		yourself
 ]
 
 { #category : #'nav - rail' }
-CpMaterial3LayoutView >> buildNavrailItem: buttonName methodName: methodName [
+CpMaterial3LayoutView >> buildNavrailItem: aNavAction [
+	| iconName arg1 |
+
+	iconName := aNavAction at: #iconName.
+	arg1 := aNavAction at: #arg1.
 
 	^ #div asHtmlTag
 		addClass: 'smd-navrail-item';
-		when: CpClickEvent basicPrimary send: methodName to: self;
+		when: CpClickEvent basicPrimary do: [ self setCurrentPage: arg1 ] for: self;
 		appendChild: (
-			(SlIconButton named: buttonName)
+			(SlIconButton named: iconName)
 				addClass: 'smd-navrail-icon';
 				yourself);
 		appendChild: (
 			#div asHtmlTag
 				addClass: 'smd-navrail-labelText';
-				textContent: methodName;
+				textContent: (aNavAction at: #iconLabel);
 				yourself);
 		yourself
 ]
@@ -687,31 +712,6 @@ CpMaterial3LayoutView >> defaultColorThemeName [
 CpMaterial3LayoutView >> defaultFontFamily [
 
 	^ nil
-]
-
-{ #category : #pages }
-CpMaterial3LayoutView >> doClub [
-
-	self setCurrentPage: 'Club'
-]
-
-{ #category : #pages }
-CpMaterial3LayoutView >> doDiamond [
-
-	self setCurrentPage: 'Diamond'.
-
-]
-
-{ #category : #pages }
-CpMaterial3LayoutView >> doHeart [
-
-	self setCurrentPage: 'Heart'
-]
-
-{ #category : #pages }
-CpMaterial3LayoutView >> doSpade [
-
-	self setCurrentPage: 'Spade'
 ]
 
 { #category : #utilities }
@@ -849,18 +849,17 @@ CpMaterial3LayoutView >> initialize [
 
 	colorThemeName := self defaultColorThemeName.
 	width := 0.
+	headline := ''.
+	leadingAction := 'list'.
 
 	"#layoutSetUp will set the value later. DO NOT set it here."
 	"layoutType := nil."
 
-	currentPage := 'Club'.
+	currentPage := ''.
 
-	navItems := {
-'suit-club' -> #doClub.
-'suit-diamond' -> #doDiamond.
-'suit-heart' -> #doHeart.
-'suit-spade' -> #doSpade
-}
+	navActions := Dictionary new.
+	navItems := OrderedCollection new.
+
 ]
 
 { #category : #layout }
@@ -975,6 +974,18 @@ CpMaterial3LayoutView >> leadingAction [
 CpMaterial3LayoutView >> leadingAction: anObject [
 
 	leadingAction := anObject
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> navActions [
+
+	^ navActions
+]
+
+{ #category : #accessing }
+CpMaterial3LayoutView >> navActions: anObject [
+
+	navActions := anObject
 ]
 
 { #category : #nav }
@@ -1240,7 +1251,7 @@ CpMaterial3LayoutView >> navdrawerBuild [
 		yourself.
 	navItems ifNotNil: [
 		navItems do: [ :eachItem | | navItem |
-			navItem := self buildNavdrawerItem: eachItem key methodName: eachItem value.
+			navItem := self buildNavdrawerItem: (navActions at: eachItem).
 			navItem when: CpClickEvent basicPrimary send: #hide to: drawer.
 			element appendChild: navItem ] ].
 
@@ -1258,7 +1269,7 @@ CpMaterial3LayoutView >> navrailBuild [
 	element := #div asHtmlTag addClass: 'smd-navrail'; yourself.
 	navItems ifNotNil: [
 		navItems do: [ :eachItem | | navItem |
-			navItem := self buildNavrailItem: eachItem key methodName: eachItem value.
+			navItem := self buildNavrailItem: (navActions at: eachItem asSymbol).
 			navItem when: CpClickEvent basicPrimary send: #hide to: drawer.
 			element appendChild: navItem ] ].
 
