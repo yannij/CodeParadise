@@ -1,11 +1,11 @@
 Class {
-	#name : #CpMaterial3ApplicationPresenter,
+	#name : #MD3ExampleApplicationPresenter,
 	#superclass : #CpPresenter,
 	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
 }
 
 { #category : #view }
-CpMaterial3ApplicationPresenter >> renderView [
+MD3ExampleApplicationPresenter >> renderView [
 
 	self renderAllChildViewsForModels: {self model layout} atSlotNamed: #layout
 ]

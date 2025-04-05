@@ -1,11 +1,11 @@
 Class {
-	#name : #CpMaterial3LayoutPresenter,
+	#name : #SlmdLayoutPresenter,
 	#superclass : #CpPresenter,
 	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
 }
 
 { #category : #view }
-CpMaterial3LayoutPresenter >> layoutSetUp [
+SlmdLayoutPresenter >> layoutSetUp [
 
 	self navSetUp.
 	self setTopAppBar.
@@ -14,7 +14,7 @@ CpMaterial3LayoutPresenter >> layoutSetUp [
 ]
 
 { #category : #rendering }
-CpMaterial3LayoutPresenter >> navSetUp [
+SlmdLayoutPresenter >> navSetUp [
 	| v |
 
 	v := self view.
@@ -25,20 +25,19 @@ CpMaterial3LayoutPresenter >> navSetUp [
 ]
 
 { #category : #view }
-CpMaterial3LayoutPresenter >> renderView [
+SlmdLayoutPresenter >> renderView [
 
 	self view renderTopAppBar.
 
 	self application pane1Model ifNotNil: [ :value |
 		self
 			renderChildViewForModel: value
-			usingPresenter: TBBlogPresenter
 			atSlotNamed: #pane1 ].
 
 ]
 
 { #category : #rendering }
-CpMaterial3LayoutPresenter >> setBottomAppBar [
+SlmdLayoutPresenter >> setBottomAppBar [
 
 	self view
 		iconButtons: {'1-circle'. '2-circle' . '3-circle'. '4-circle'};
@@ -47,7 +46,7 @@ CpMaterial3LayoutPresenter >> setBottomAppBar [
 ]
 
 { #category : #rendering }
-CpMaterial3LayoutPresenter >> setTopAppBar [
+SlmdLayoutPresenter >> setTopAppBar [
 
 	self view
 		headline: self application class appName;
@@ -56,7 +55,7 @@ CpMaterial3LayoutPresenter >> setTopAppBar [
 ]
 
 { #category : #view }
-CpMaterial3LayoutPresenter >> viewInitialized [
+SlmdLayoutPresenter >> viewInitialized [
 
 	self layoutSetUp.
 	self view layoutSetUp.

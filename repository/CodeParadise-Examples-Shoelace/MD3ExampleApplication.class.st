@@ -3,7 +3,7 @@ I am a simple WebApplication based on Model-View-Presenter pattern.
 I only live in the ServerEnvironment.
 "
 Class {
-	#name : #CpMaterial3Application,
+	#name : #MD3ExampleApplication,
 	#superclass : #CpMvpWebApplication,
 	#instVars : [
 		'layout',
@@ -14,7 +14,7 @@ Class {
 }
 
 { #category : #accessing }
-CpMaterial3Application class >> allowedPackages [
+MD3ExampleApplication class >> allowedPackages [
 
 	"Answer a collection of Packages which are allowed to contain classes to install in the receiver.
 
@@ -26,21 +26,21 @@ CpMaterial3Application class >> allowedPackages [
 ]
 
 { #category : #accessing }
-CpMaterial3Application class >> app [
+MD3ExampleApplication class >> app [
 	"self register"
 
 	^ #'Shoelace-MD3'
 ]
 
 { #category : #accessing }
-CpMaterial3Application class >> appName [
+MD3ExampleApplication class >> appName [
 	"Answer name to be shown in TopAppBar headline"
 
 	^ #'MD3 Example'
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> applicationModel [
+MD3ExampleApplication >> applicationModel [
 
 	"Answer the Model for the receiver, which is the receiver itself"
 
@@ -48,18 +48,18 @@ CpMaterial3Application >> applicationModel [
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> applicationPresenterClass [
+MD3ExampleApplication >> applicationPresenterClass [
 
-	^ CpMaterial3ApplicationPresenter
+	^ MD3ExampleApplicationPresenter
 ]
 
 { #category : #initialization }
-CpMaterial3Application >> initialize [
+MD3ExampleApplication >> initialize [
 
 	super initialize.
 
-	pane1Model := nil.
-	layout := CpMaterial3LayoutModel new.
+	pane1Model := MD3ExamplePagesModel new.
+	layout := SlmdLayoutModel new.
 	navActions := OrderedCollection new
 		add: (SlmdNavAction id: #club iconName: 'suit-club' iconLabel: 'Club' arg1: 'Club Page');
 		add: (SlmdNavAction id: #diamond iconName: 'suit-diamond' iconLabel: 'Diamond' arg1: 'Diamond Page');
@@ -73,37 +73,37 @@ CpMaterial3Application >> initialize [
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> layout [
+MD3ExampleApplication >> layout [
 
 	^ layout
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> layout: anObject [
+MD3ExampleApplication >> layout: anObject [
 
 	layout := anObject
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> navActions [
+MD3ExampleApplication >> navActions [
 
 	^ navActions
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> navActions: anObject [
+MD3ExampleApplication >> navActions: anObject [
 
 	navActions := anObject
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> pane1Model [
+MD3ExampleApplication >> pane1Model [
 
 	^ pane1Model
 ]
 
 { #category : #accessing }
-CpMaterial3Application >> pane1Model: anObject [
+MD3ExampleApplication >> pane1Model: anObject [
 
 	pane1Model := anObject
 ]

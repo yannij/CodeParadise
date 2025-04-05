@@ -1,11 +1,11 @@
 Class {
-	#name : #CpMaterial3ApplicationView,
+	#name : #MD3ExampleApplicationView,
 	#superclass : #CpView,
 	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
 }
 
 { #category : #'web resources' }
-CpMaterial3ApplicationView class >> globalStyle [
+MD3ExampleApplicationView class >> globalStyle [
 
 	<webResource: #css>
 
@@ -21,7 +21,7 @@ body {
 ]
 
 { #category : #'web resources' }
-CpMaterial3ApplicationView class >> style [
+MD3ExampleApplicationView class >> style [
 
 	<webResource: #css>
 
@@ -29,7 +29,7 @@ CpMaterial3ApplicationView class >> style [
 ]
 
 { #category : #'web resources' }
-CpMaterial3ApplicationView class >> template [
+MD3ExampleApplicationView class >> template [
 
 	<webResource: #html>
 
