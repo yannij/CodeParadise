@@ -1,15 +1,16 @@
 Class {
-	#name : #MdexTodoApplication,
+	#name : #TBRootApplication,
 	#superclass : #CpMvpWebApplication,
 	#instVars : [
 		'layout',
-		'navActions'
+		'navActions',
+		'pane1Model'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
 }
 
 { #category : #accessing }
-MdexTodoApplication class >> allowedPackages [
+TBRootApplication class >> allowedPackages [
 
 	"Answer a collection of Packages which are allowed to contain classes to install in the receiver.
 
@@ -21,21 +22,21 @@ MdexTodoApplication class >> allowedPackages [
 ]
 
 { #category : #accessing }
-MdexTodoApplication class >> app [
+TBRootApplication class >> app [
 	"self register"
 
-	^ #'Shoelace-ToDo'
+	^ #'tinyblog'
 ]
 
 { #category : #accessing }
-MdexTodoApplication class >> appName [
+TBRootApplication class >> appName [
 	"Answer name to be shown in TopAppBar headline"
 
-	^ #'ToDo Example'
+	^ #'Tiny Blog'
 ]
 
 { #category : #accessing }
-MdexTodoApplication >> applicationModel [
+TBRootApplication >> applicationModel [
 
 	"Answer the Model for the receiver, which is the receiver itself"
 
@@ -43,16 +44,17 @@ MdexTodoApplication >> applicationModel [
 ]
 
 { #category : #accessing }
-MdexTodoApplication >> applicationPresenterClass [
+TBRootApplication >> applicationPresenterClass [
 
-	^ CpMaterial3ApplicationPresenter
+	^ TBRootPresenter
 ]
 
 { #category : #initialization }
-MdexTodoApplication >> initialize [
+TBRootApplication >> initialize [
 
 	super initialize.
 
+	pane1Model := TBBlogModel current.
 	layout := CpMaterial3LayoutModel new.
 	navActions := OrderedCollection new
 		add: (SlmdNavAction id: #home iconName: 'house' iconLabel: 'Home' arg1: 'Home Page');
@@ -61,25 +63,37 @@ MdexTodoApplication >> initialize [
 ]
 
 { #category : #accessing }
-MdexTodoApplication >> layout [
+TBRootApplication >> layout [
 
 	^ layout
 ]
 
 { #category : #accessing }
-MdexTodoApplication >> layout: anObject [
+TBRootApplication >> layout: anObject [
 
 	layout := anObject
 ]
 
 { #category : #accessing }
-MdexTodoApplication >> navActions [
+TBRootApplication >> navActions [
 
 	^ navActions
 ]
 
 { #category : #accessing }
-MdexTodoApplication >> navActions: anObject [
+TBRootApplication >> navActions: anObject [
 
 	navActions := anObject
+]
+
+{ #category : #accessing }
+TBRootApplication >> pane1Model [
+
+	^ pane1Model
+]
+
+{ #category : #accessing }
+TBRootApplication >> pane1Model: anObject [
+
+	pane1Model := anObject
 ]

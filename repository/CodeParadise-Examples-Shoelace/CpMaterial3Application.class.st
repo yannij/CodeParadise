@@ -7,7 +7,8 @@ Class {
 	#superclass : #CpMvpWebApplication,
 	#instVars : [
 		'layout',
-		'navActions'
+		'navActions',
+		'pane1Model'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
 }
@@ -57,12 +58,16 @@ CpMaterial3Application >> initialize [
 
 	super initialize.
 
+	pane1Model := nil.
 	layout := CpMaterial3LayoutModel new.
 	navActions := OrderedCollection new
 		add: (SlmdNavAction id: #club iconName: 'suit-club' iconLabel: 'Club' arg1: 'Club Page');
 		add: (SlmdNavAction id: #diamond iconName: 'suit-diamond' iconLabel: 'Diamond' arg1: 'Diamond Page');
 		add: (SlmdNavAction id: #heart iconName: 'suit-heart' iconLabel: 'Heart' arg1: 'Heart Page');
 		add: (SlmdNavAction id: #spade iconName: 'suit-spade' iconLabel: 'Spade' arg1: 'Spade Page');
+		add: (SlmdNavAction id: #square1 iconName: '1-square' iconLabel: 'Square1' arg1: 'Square-1');
+		add: (SlmdNavAction id: #square2 iconName: '2-square' iconLabel: 'Square2' arg1: 'Square-2');
+		add: (SlmdNavAction id: #square3 iconName: '3-square' iconLabel: 'Square3' arg1: 'Square-3');
 		yourself.
 
 ]
@@ -89,4 +94,16 @@ CpMaterial3Application >> navActions [
 CpMaterial3Application >> navActions: anObject [
 
 	navActions := anObject
+]
+
+{ #category : #accessing }
+CpMaterial3Application >> pane1Model [
+
+	^ pane1Model
+]
+
+{ #category : #accessing }
+CpMaterial3Application >> pane1Model: anObject [
+
+	pane1Model := anObject
 ]

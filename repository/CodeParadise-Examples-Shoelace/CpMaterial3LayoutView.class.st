@@ -20,9 +20,14 @@ Class {
 
 { #category : #'web resources' }
 CpMaterial3LayoutView class >> globalStyle [
-	"Answer stub value. See #globalStyleForUpdate"
+	<webResource: #css>
 
-	^ ''
+	^ self globalStyleExtra
+, self globalStyleNav
+, self globalStyleTopAppBar
+, self globalStyleBottomAppBar
+, self globalStyleSidesheet
+, self globalStyleBody
 ]
 
 { #category : #'web resources' }
@@ -42,13 +47,16 @@ CpMaterial3LayoutView class >> globalStyleBody [
   flex: 100%;
 }
 
-.smd-split-panel {
+.smd-body-split-panel {
+  height: 100%;
+}
+
+.smd-split-div {
   flex: 100%;
-  background: var(--sl-color-primary-100);
   margin: 0;
 }
 
-.smd-split-panel sl-split-panel::part(divider) {
+.smd-split-div sl-split-panel::part(divider) {
   background-color: var(--sl-color-primary-100);
 }
 
@@ -130,21 +138,6 @@ CpMaterial3LayoutView class >> globalStyleExtra [
 ]
 
 { #category : #'web resources' }
-CpMaterial3LayoutView class >> globalStyleForUpdate [
-	"Answer the actual globalStyle to be used by instance side #updateGlobalStyle,
-	which avoids setting the styles twice during initialization."
-
-	<webResource: #css>
-
-	^ self globalStyleExtra
-, self globalStyleNav
-, self globalStyleTopAppBar
-, self globalStyleBottomAppBar
-, self globalStyleSidesheet
-, self globalStyleBody
-]
-
-{ #category : #'web resources' }
 CpMaterial3LayoutView class >> globalStyleNav [
 
 	<webResource: #css>
@@ -152,6 +145,7 @@ CpMaterial3LayoutView class >> globalStyleNav [
 	^ '
 .smd-navRegion {
   flex: 0 0 80px;
+  height: 100%;
   padding: 0;
   margin: 0;
 }
@@ -163,6 +157,8 @@ CpMaterial3LayoutView class >> globalStyleNav [
 }
 
 .smd-navrail {
+  height: 100%;
+  overflow-y: auto;
   padding: 0;
   margin: 0;
   background: var(--sl-color-primary-100);
@@ -173,7 +169,7 @@ CpMaterial3LayoutView class >> globalStyleNav [
   flex-flow: column;
   height: 56px;
   width: 80px;
-  margin-top: 12px;
+  padding-top: 12px;
 }
 
 .smd-navrail-icon {
@@ -190,7 +186,8 @@ CpMaterial3LayoutView class >> globalStyleNav [
 }
 
 .smd-navdrawer {
-  padding: 12px 4px 0 12px;
+  height: 100%;
+  padding: 0 4px 0 12px;
   margin: 0;
   background: var(--sl-color-primary-100);
   flow-direction: row;
@@ -201,7 +198,7 @@ CpMaterial3LayoutView class >> globalStyleNav [
 }
 
 .smd-navdrawer-headline {
-  padding: 0 4px 12px 12px;
+  padding: 12px 4px 12px 12px;
 }
 
 .smd-navdrawer-item {
@@ -325,15 +322,23 @@ CpMaterial3LayoutView class >> template [
 	<webResource: #html>
 
 	^ '
-<div id="container">
 <div id="smdLayout" class="smd-background">
   <slot name="settings"></slot>
   <div style="display: flex; flex-direction: column">
-    <div style="flex: 1; display: flex; flex-direction: row">
+    <div style="height: 100%; flex: 1; display: flex; flex-direction: row">
       <div id="smdNavRegion" class="smd-navRegion">
         <slot name="navRegion"></slot>
       </div>
-      <slot name="body"></slot>
+<div id="smdBodyContent" class="smd-body-content">
+  <div class="smd-one-pane-layout">
+    <div class="smd-pane smd-pane-1">
+      <slot name="topAppBar"></slot>
+      <div id="smdPane1Content" class="smd-pane-content">
+        <slot name="pane1"></slot>
+      </div>
+    </div>
+  </div>
+</div>
       <aside id="smdSidesheet" class="smd-sidesheet">
         <slot name="sidesheet"></slot>
       </aside>
@@ -343,7 +348,6 @@ CpMaterial3LayoutView class >> template [
     </footer>
   </div>
   <slot name="navModalPane"></slot>
-</div>
 </div>
 '
 ]
@@ -458,6 +462,7 @@ CpMaterial3LayoutView >> bodyUseTwoPanes [
 
 	split := SlSplitPanel new
 		id: 'smdBodySplitPanel';
+		addClass: 'smd-body-split-panel';
 		attributeAt: 'primary' put: 'start';
 		"attributeAt: 'position-in-pixels' put: self pane1WidthCompute printString;"
 		customPropertyAt: 'divider-width' put: self bodySplitPanelDividerWidth printString, 'px';
@@ -474,7 +479,7 @@ CpMaterial3LayoutView >> bodyUseTwoPanes [
 			id: 'smdBodyContent';
 			addClass: 'smd-body-content';
 			appendChild: ((CpHtmlElement newWithTag: #div)
-				addClass: 'smd-split-panel';
+				addClass: 'smd-split-div';
 				appendChild: split;
 				yourself);
 			yourself)
@@ -1256,6 +1261,8 @@ CpMaterial3LayoutView >> navdrawerBuild [
 			element appendChild: navItem ] ].
 
 	^ #nav asHtmlTag
+		styleAt: 'height' put: '100%';
+		"styleAt: 'overflow-y' put: 'auto';"
 		appendChild: element;
 		yourself
 ]
@@ -1274,6 +1281,8 @@ CpMaterial3LayoutView >> navrailBuild [
 			element appendChild: navItem ] ].
 
 	^ #nav asHtmlTag
+		styleAt: 'height' put: '100%';
+		"styleAt: 'overflow-y' put: 'auto';"
 		appendChild: element;
 		yourself
 ]
@@ -1337,6 +1346,17 @@ CpMaterial3LayoutView >> pane2build [
 			appendChild: (#p asHtmlTag textContent: 'Pane2 content...');
 			yourself);
 		yourself
+]
+
+{ #category : #body }
+CpMaterial3LayoutView >> renderTopAppBar [
+
+	self
+		replaceAllChildrenWith: self topAppBarBuild
+		atSlotNamed: 'topAppBar'.
+
+	self topAppBarDisplay: self showTopAppBarIsOn.
+
 ]
 
 { #category : #layout }
@@ -1661,7 +1681,7 @@ CpMaterial3LayoutView >> trailingActions: anObject [
 { #category : #initialization }
 CpMaterial3LayoutView >> updateGlobalStyle [
 
-	self class updateGlobalStyleUsing: (self colorThemeFrom: self colorThemeName), self class globalStyleForUpdate.
+	CpHtmlElement documentAddStyle: (self colorThemeFrom: self colorThemeName).
 
 ]
 

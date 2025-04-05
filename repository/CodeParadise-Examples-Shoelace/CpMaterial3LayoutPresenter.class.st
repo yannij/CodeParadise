@@ -24,6 +24,19 @@ CpMaterial3LayoutPresenter >> navSetUp [
 		v addNavItem: eachNavAction id ]
 ]
 
+{ #category : #view }
+CpMaterial3LayoutPresenter >> renderView [
+
+	self view renderTopAppBar.
+
+	self application pane1Model ifNotNil: [ :value |
+		self
+			renderChildViewForModel: value
+			usingPresenter: TBBlogPresenter
+			atSlotNamed: #pane1 ].
+
+]
+
 { #category : #rendering }
 CpMaterial3LayoutPresenter >> setBottomAppBar [
 

@@ -1,11 +1,11 @@
 Class {
-	#name : #MdexTodoView,
+	#name : #TBRootView,
 	#superclass : #CpView,
 	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
 }
 
 { #category : #'web resources' }
-MdexTodoView class >> globalStyle [
+TBRootView class >> globalStyle [
 
 	<webResource: #css>
 
@@ -18,12 +18,13 @@ body {
 ]
 
 { #category : #'web resources' }
-MdexTodoView class >> template [
+TBRootView class >> template [
 
 	<webResource: #html>
 
 	^ '
 <div id="container">
+  <slot name="blog"></slot>
   <slot name="layout"></slot>
 </div>
 '
