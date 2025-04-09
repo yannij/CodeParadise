@@ -1,7 +1,7 @@
 Class {
 	#name : #TBRootView,
 	#superclass : #CpView,
-	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
+	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
 { #category : #'web resources' }
@@ -24,7 +24,6 @@ TBRootView class >> template [
 
 	^ '
 <div id="container">
-  <slot name="blog"></slot>
   <slot name="layout"></slot>
 </div>
 '

@@ -8,7 +8,9 @@ Class {
 	#instVars : [
 		'layout',
 		'navActions',
-		'pane1Model'
+		'pane1Model',
+		'pane2Model',
+		'sidesheetModel'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
 }
@@ -58,7 +60,9 @@ MD3ExampleApplication >> initialize [
 
 	super initialize.
 
-	pane1Model := MD3ExamplePagesModel new.
+	pane1Model := SlmdPaneModel id: 'zsmdPane1' content: 'Pane1...'.
+	pane2Model := SlmdPaneModel id: 'zsmdPane2' content: 'Pane2...'.
+	sidesheetModel := SlmdSidesheetModel new.
 	layout := SlmdLayoutModel new.
 	navActions := OrderedCollection new
 		add: (SlmdNavAction id: #club iconName: 'suit-club' iconLabel: 'Club' arg1: 'Club Page');
@@ -106,4 +110,28 @@ MD3ExampleApplication >> pane1Model [
 MD3ExampleApplication >> pane1Model: anObject [
 
 	pane1Model := anObject
+]
+
+{ #category : #accessing }
+MD3ExampleApplication >> pane2Model [
+
+	^ pane2Model
+]
+
+{ #category : #accessing }
+MD3ExampleApplication >> pane2Model: anObject [
+
+	pane2Model := anObject
+]
+
+{ #category : #accessing }
+MD3ExampleApplication >> sidesheetModel [
+
+	^ sidesheetModel
+]
+
+{ #category : #accessing }
+MD3ExampleApplication >> sidesheetModel: anObject [
+
+	sidesheetModel := anObject
 ]

@@ -4,9 +4,10 @@ Class {
 	#instVars : [
 		'layout',
 		'navActions',
-		'pane1Model'
+		'pane1Model',
+		'pane2Model'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
+	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
 { #category : #accessing }
@@ -55,6 +56,7 @@ TBRootApplication >> initialize [
 	super initialize.
 
 	pane1Model := TBBlogModel current.
+	pane2Model := SlmdPaneModel id: 'zsmdPane2' content: 'Pane2...'..
 	layout := SlmdLayoutModel new.
 	navActions := OrderedCollection new
 		add: (SlmdNavAction id: #home iconName: 'house' iconLabel: 'Home' arg1: 'Home Page');
@@ -96,4 +98,22 @@ TBRootApplication >> pane1Model [
 TBRootApplication >> pane1Model: anObject [
 
 	pane1Model := anObject
+]
+
+{ #category : #accessing }
+TBRootApplication >> pane2Model [
+
+	^ pane2Model
+]
+
+{ #category : #accessing }
+TBRootApplication >> pane2Model: anObject [
+
+	pane2Model := anObject
+]
+
+{ #category : #accessing }
+TBRootApplication >> sidesheetModel [
+
+	^ nil
 ]

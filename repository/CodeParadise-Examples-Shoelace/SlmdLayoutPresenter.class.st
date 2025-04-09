@@ -30,9 +30,13 @@ SlmdLayoutPresenter >> renderView [
 	self view renderTopAppBar.
 
 	self application pane1Model ifNotNil: [ :value |
-		self
-			renderChildViewForModel: value
-			atSlotNamed: #pane1 ].
+		self renderChildViewForModel: value atSlotNamed: #pane1 ].
+
+	self application pane2Model ifNotNil: [ :value |
+		self renderChildViewForModel: value atSlotNamed: #pane2 ].
+
+	self application sidesheetModel ifNotNil: [ :value |
+		self renderChildViewForModel: value atSlotNamed: #sidesheet ].
 
 ]
 

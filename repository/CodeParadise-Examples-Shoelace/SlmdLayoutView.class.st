@@ -22,73 +22,9 @@ Class {
 SlmdLayoutView class >> globalStyle [
 	<webResource: #css>
 
-	^ self globalStyleExtra
-, self globalStyleNav
+	^ self globalStyleNav
 , self globalStyleTopAppBar
 , self globalStyleBottomAppBar
-, self globalStyleSidesheet
-, self globalStyleBody
-]
-
-{ #category : #'web resources' }
-SlmdLayoutView class >> globalStyleBody [
-
-	<webResource: #css>
-
-	^ '
-.smd-body-content {
-  flex: auto;
-  display: flex;  
-  flex-direction: row;
-  background: var(--sl-color-primary-100);
-}
-
-.smd-one-pane-layout {
-  flex: 100%;
-}
-
-.smd-body-split-panel {
-  height: 100%;
-}
-
-.smd-split-div {
-  flex: 100%;
-  margin: 0;
-}
-
-.smd-split-div sl-split-panel::part(divider) {
-  background-color: var(--sl-color-primary-100);
-}
-
-.smd-pane {
-  flex: 100%;
-  display: flex;  
-  flex-direction: column;
-  padding: 16px 0;
-  margin: 0;
-  text-align: left;
-  overflow-x: auto;
-  overflow-y: auto;
-}
-
-.smd-pane-1 {
-  padding: 8px;
-}
-
-.smd-pane-2 {
-  padding: 8px;
-}
-
-.smd-pane-content {
-  border-radius: 16px;
-  background: var(--sl-color-primary-50);
-}
-
-.smd-settings-pane {
-  padding: 0;
-  overflow-y: auto;
-}
-'
 ]
 
 { #category : #'web resources' }
@@ -121,18 +57,6 @@ SlmdLayoutView class >> globalStyleBottomAppBar [
   width: 48px;
   font-size: 24px;
   background: var(--sl-color-primary-300);
-}
-'
-]
-
-{ #category : #'web resources' }
-SlmdLayoutView class >> globalStyleExtra [
-
-	<webResource: #css>
-
-	^ '
-.smd-attribute-container {
-  padding: 12px;
 }
 '
 ]
@@ -223,39 +147,6 @@ SlmdLayoutView class >> globalStyleNav [
 ]
 
 { #category : #'web resources' }
-SlmdLayoutView class >> globalStyleSidesheet [
-
-	<webResource: #css>
-
-	^ '
-.smd-sidesheet {
-  padding: 0;
-  margin-left: auto;
-  max-width: 400px;
-  background: var(--sl-color-primary-100);
-}
-
-.smd-sidesheet-container {
-  padding: 0;
-  margin: 0;
-}
-
-.smd-sidesheet-content {
-  padding: 16px 16px 16px 0;
-  width: 300px;
-  height: 100%;
-  background: var(--sl-color-primary-100);
-}
-
-.smd-sidesheet-card {
-  border-radius: 16px;
-  padding: 8px;
-  background: var(--sl-color-primary-200);
-}
-'
-]
-
-{ #category : #'web resources' }
 SlmdLayoutView class >> globalStyleTopAppBar [
 
 	<webResource: #css>
@@ -306,12 +197,49 @@ SlmdLayoutView class >> style [
 	<webResource: #css>
 
 	^ '
-.smd-background {
+.smd-layout {
   background: var(--sl-color-primary-100);
 }
 
-.smd-attribute-container {
-  padding: 0 0 0 12px;
+.smd-settings-pane {
+  padding: 0;
+  overflow-y: auto;
+}
+
+.smd-body-region {
+  flex: auto;
+  display: flex;  
+  flex-direction: row;
+  background: var(--sl-color-primary-100);
+}
+
+.smd-pane-layout {
+  overflow-y: auto;
+  flex: 100%;
+}
+
+.smd-pane {
+  flex: 100%;
+  display: flex;  
+  flex-direction: column;
+  padding: 8px;
+  margin: 0;
+  text-align: left;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.smd-body-split-panel {
+  height: 100%;
+}
+
+.smd-split-div {
+  flex: 100%;
+  margin: 0;
+}
+
+.smd-pane-layout sl-split-panel::part(divider) {
+  background-color: var(--sl-color-primary-50);
 }
 '
 ]
@@ -322,32 +250,35 @@ SlmdLayoutView class >> template [
 	<webResource: #html>
 
 	^ '
-<div id="smdLayout" class="smd-background">
-  <slot name="settings"></slot>
+<div id="smdLayout" class="smd-layout">
   <div style="display: flex; flex-direction: column">
     <div style="height: 100%; flex: 1; display: flex; flex-direction: row">
       <div id="smdNavRegion" class="smd-navRegion">
         <slot name="navRegion"></slot>
       </div>
-<div id="smdBodyContent" class="smd-body-content">
-  <div class="smd-one-pane-layout">
-    <div class="smd-pane smd-pane-1">
-      <slot name="topAppBar"></slot>
-      <div id="smdPane1Content" class="smd-pane-content">
-        <slot name="pane1"></slot>
+      <div id="smdBodyRegion" class="smd-body-region">
+        <div class="smd-pane-layout">
+          <div id="smdPane1" class="smd-pane">
+            <div id="smdTopAppBar">
+              <slot name="topAppBar"></slot>
+            </div>
+            <slot name="pane1"></slot>
+          </div>
+          <div id="smdPane2" class="smd-pane">
+            <slot name="pane2"></slot>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
-      <aside id="smdSidesheet" class="smd-sidesheet">
+      <div id="smdSidesheet">
         <slot name="sidesheet"></slot>
-      </aside>
+      </div>
     </div>
     <footer id="smdBottomAppBar">
       <slot name="bottomAppBar"></slot>
     </footer>
   </div>
   <slot name="navModalPane"></slot>
+  <slot name="settings"></slot>
 </div>
 '
 ]
@@ -355,10 +286,6 @@ SlmdLayoutView class >> template [
 { #category : #utilities }
 SlmdLayoutView >> addAttributeContainerStyle: element [
 
-	"^ #div asHtmlTag
-		addClass: 'smd-attribute-container';
-		appendChild: element
-		yourself"
 	^ element styleAt: 'padding-bottom' put: '12px'; yourself
 ]
 
@@ -378,22 +305,16 @@ SlmdLayoutView >> addNavItem: aNavActionId [
 	self navItems add: aNavActionId asSymbol
 ]
 
-{ #category : #bottomAppBar }
-SlmdLayoutView >> adjustBodyHeight [
-	| bodyElement |
-
-	bodyElement := self bodyContentFind.
-	bodyElement ifNil: [ ^ self  ].
-
-	bodyElement
-		styleAt: 'height'
-		put: (self showBottomAppBar ifTrue: [ 'calc(100vh - 72px)' ] ifFalse: [ '100vh' ]).
-]
-
 { #category : #body }
-SlmdLayoutView >> bodyContentFind [
+SlmdLayoutView >> adjustBodyHeight [
+	| bodyRegion bodyHeight |
 
-	^ CpHtmlElement documentBody firstDescendantMatching: '#smdBodyContent'
+	bodyRegion := self bodyRegionFind.
+	bodyRegion ifNil: [ ^ self  ].
+
+	bodyHeight := self showBottomAppBar ifTrue: [ 'calc(100vh - 72px)' ] ifFalse: [ '100vh' ].
+	bodyRegion styleAt: 'height' put: bodyHeight.
+	bodyRegion styleAt: 'max-height' put: bodyHeight.
 ]
 
 { #category : #body }
@@ -406,12 +327,20 @@ SlmdLayoutView >> bodyFind [
 { #category : #body }
 SlmdLayoutView >> bodyPanesAdapt: aBoolean [
 
+"true ifTrue: [ ^ self ]."
+"self bodyUseTwoPanes."
 	aBoolean
 		ifTrue: [ self bodyUseTwoPanes ]
 		ifFalse: [ self bodyUseOnePane ].
 
-	self adjustBodyHeight.
+	"self adjustBodyHeight."
 
+]
+
+{ #category : #body }
+SlmdLayoutView >> bodyRegionFind [
+
+	^ self shadowedElementWithId: 'smdBodyRegion'
 ]
 
 { #category : #body }
@@ -428,7 +357,8 @@ SlmdLayoutView >> bodySplitPanelAdapt [
 	split := self smdBodySplitPanelFind.
 	split ifNil: [ ^ self ].
 
-	split attributeAt: 'position-in-pixels' put: self pane1WidthCompute printString
+	split attributeAt: 'position-in-pixels' put: self pane1WidthCompute printString.
+
 ]
 
 { #category : #body }
@@ -438,27 +368,8 @@ SlmdLayoutView >> bodySplitPanelDividerWidth [
 ]
 
 { #category : #body }
-SlmdLayoutView >> bodyUseOnePane [
-	| body |
-
-	body := #div asHtmlTag
-		addClass: 'smd-one-pane-layout';
-		appendChild: self pane1Build;
-		appendChild: self pane2build;
-		yourself.
-
-	self
-		replaceAllChildrenWith: (#div asHtmlTag
-			id: 'smdBodyContent';
-			addClass: 'smd-body-content';
-			appendChild: body;
-			yourself)
-		atSlotNamed: 'body'
-]
-
-{ #category : #body }
-SlmdLayoutView >> bodyUseTwoPanes [
-	| split |
+SlmdLayoutView >> bodySplitPanelSetUp [
+	| split bodyLayout |
 
 	split := SlSplitPanel new
 		id: 'smdBodySplitPanel';
@@ -466,24 +377,55 @@ SlmdLayoutView >> bodyUseTwoPanes [
 		attributeAt: 'primary' put: 'start';
 		"attributeAt: 'position-in-pixels' put: self pane1WidthCompute printString;"
 		customPropertyAt: 'divider-width' put: self bodySplitPanelDividerWidth printString, 'px';
-		customPropertyAt: 'min' put: '300px';
+		customPropertyAt: 'min' put: self pane1WidthMin printString, 'px';
 		"customPropertyAt: 'max' put: 'calc(100% - 150px)';"
-		replaceAllChildrenWith: (SlIcon named: 'grip-vertical') atSlotNamed: #'divider';
 		yourself.
 
-	split replaceAllChildrenWith: self pane1Build atSlotNamed: #'start'.
-	split replaceAllChildrenWith: self pane2build atSlotNamed: #'end'.
+	split replaceAllChildrenWith: (SlIcon named: 'grip-vertical') atSlotNamed: #'divider'.
 
-	self
-		replaceAllChildrenWith: ((CpHtmlElement newWithTag: #div)
-			id: 'smdBodyContent';
-			addClass: 'smd-body-content';
-			appendChild: ((CpHtmlElement newWithTag: #div)
-				addClass: 'smd-split-div';
-				appendChild: split;
-				yourself);
-			yourself)
-		atSlotNamed: #'body'
+	bodyLayout := self smdPaneLayoutFind.
+	bodyLayout appendChild: split.
+
+	^ split
+
+]
+
+{ #category : #body }
+SlmdLayoutView >> bodyUseOnePane [
+	| split pane1Element pane2Element paneLayout |
+
+	paneLayout := self smdPaneLayoutFind.
+
+	pane1Element := self shadowedElementWithId: 'smdPane1'.
+	pane1Element ifNotNil: [
+		paneLayout appendChild: pane1Element ].
+
+	pane2Element := self shadowedElementWithId: 'smdPane2'.
+	pane2Element ifNotNil: [
+		paneLayout appendChild: pane2Element ].
+
+	split := self smdBodySplitPanelFind.
+	split ifNotNil: [
+		split destroy ].
+
+]
+
+{ #category : #body }
+SlmdLayoutView >> bodyUseTwoPanes [
+	| split pane1Element pane2Element |
+
+	pane1Element := self findByIdInShadowDom: 'smdPane1'.
+	pane1Element ifNil: [ ^ self ].
+	pane2Element := self findByIdInShadowDom: 'smdPane2'.
+	pane2Element ifNil: [ ^ self ].
+
+	split := self smdBodySplitPanelFind.
+	split ifNil: [
+		split := self bodySplitPanelSetUp ].
+
+	split replaceAllChildrenWith: pane1Element atSlotNamed: 'start'.
+	split replaceAllChildrenWith: pane2Element atSlotNamed: 'end'.
+
 ]
 
 { #category : #bottomAppBar }
@@ -749,6 +691,18 @@ SlmdLayoutView >> fab: anObject [
 	fab := anObject
 ]
 
+{ #category : #utilities }
+SlmdLayoutView >> findByIdInLightDom: anId [
+
+	^ CpHtmlElement documentBody firstDescendantMatching: '#', anId
+]
+
+{ #category : #utilities }
+SlmdLayoutView >> findByIdInShadowDom: anId [
+
+	^ self shadowedElementWithId: anId
+]
+
 { #category : #typography }
 SlmdLayoutView >> fontFamilyAdapt: aFontFamily [
 	| element |
@@ -786,18 +740,13 @@ nil -> 'Default'.
 
 { #category : #layout }
 SlmdLayoutView >> handleResizeEvent: anEvent [
-	| el |
 
-	el := CpHtmlElement documentBody firstDescendantMatching: '#smdPane1Content'.
 	anEvent detail valuesDo: [ :eachDetail |
 		eachDetail do: [ :eachEntry | | rect |
 			rect := eachEntry apply: 'contentRect'.
 			width := rect apply: 'width'.
 			"Don't bother with height. It seems to report 0. Probably no browser support"
-			"height := rect apply: 'height'."
-			"el appendChild: ((rect apply: 'toJSON') printString inHtmlTag: #p)."
-			el removeChildren.
-			el appendChild: ((width printString, '@', height printString) inHtmlTag: #p) ] ].
+			"height := rect apply: 'height'." ] ].
 
 	self bodySplitPanelAdapt.
 	self useAutoLayout not ifTrue: [
@@ -1303,52 +1252,22 @@ SlmdLayoutView >> newToggleId: id label: label do: aBlock [
 ]
 
 { #category : #body }
-SlmdLayoutView >> pane1Build [
-	| element |
-
-	element := #div asHtmlTag
-		addClass: 'smd-pane';
-		addClass: 'smd-pane-1';
-		yourself.
-
-	element appendChild: self topAppBarBuild.
-	self topAppBarDisplay: self showTopAppBarIsOn.
-
-	element
-		appendChild: (#div asHtmlTag
-			id: 'smdPane1Content';
-			addClass: 'smd-pane-content';
-			appendChild: (self currentPage inHtmlTag: #p);
-			yourself);
-		yourself.
-
-	^ element
-
-]
-
-{ #category : #body }
 SlmdLayoutView >> pane1WidthCompute [
 	| w |
 
 	w := ((width "- self bodySplitPanelDividerWidth") / 2) asInteger.
 	self useModalNav ifFalse: [  w := w - self navTypeWidth ].
+	w < self pane1WidthMin ifTrue: [ w := self pane1WidthMin ].
 	^ w
 ]
 
 { #category : #body }
-SlmdLayoutView >> pane2build [
+SlmdLayoutView >> pane1WidthMin [
 
-	^ #div asHtmlTag
-		addClass: 'smd-pane';
-		addClass: 'smd-pane-2';
-		appendChild: (#div asHtmlTag
-			addClass: 'smd-pane-content';
-			appendChild: (#p asHtmlTag textContent: 'Pane2 content...');
-			yourself);
-		yourself
+	^ 300
 ]
 
-{ #category : #body }
+{ #category : #topAppBar }
 SlmdLayoutView >> renderTopAppBar [
 
 	self
@@ -1595,7 +1514,14 @@ SlmdLayoutView >> sidesheetSetUp [
 { #category : #body }
 SlmdLayoutView >> smdBodySplitPanelFind [
 
-	^ CpHtmlElement documentBody firstDescendantMatching: '#smdBodySplitPanel'
+	^ self shadowedElementWithId: 'smdBodySplitPanel'
+]
+
+{ #category : #body }
+SlmdLayoutView >> smdPaneLayoutFind [
+
+	^ self shadowedFirstDescendantMatching: '.smd-pane-layout'.
+
 ]
 
 { #category : #topAppBar }
@@ -1605,7 +1531,6 @@ SlmdLayoutView >> topAppBarBuild [
 	trailing := self trailingActions.
 
 	^ #header asHtmlTag
-		id: 'smdTopAppBar';
 		addClass: 'smd-header';
 		appendChild: (#div asHtmlTag
 			addClass: 'smd-topAppBar';
@@ -1645,7 +1570,7 @@ SlmdLayoutView >> topAppBarDisplay: aBoolean [
 { #category : #topAppBar }
 SlmdLayoutView >> topAppBarFind [
 
-	^ CpHtmlElement documentBody firstDescendantMatching: '#smdTopAppBar'
+	^ self shadowedElementWithId: 'smdTopAppBar'
 ]
 
 { #category : #topAppBar }

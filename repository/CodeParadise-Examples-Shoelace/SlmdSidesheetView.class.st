@@ -1,0 +1,61 @@
+Class {
+	#name : #SlmdSidesheetView,
+	#superclass : #CpView,
+	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
+}
+
+{ #category : #'web resources' }
+SlmdSidesheetView class >> style [
+
+	<webResource: #css>
+
+	^ '
+.smd-sidesheet {
+  padding: 0;
+  margin-left: auto;
+  max-width: 400px;
+  background: var(--sl-color-primary-100);
+}
+
+.smd-sidesheet-container {
+  padding: 0;
+  margin: 0;
+}
+
+.smd-sidesheet-content {
+  padding: 16px 16px 16px 0;
+  width: 300px;
+  height: 100%;
+  background: var(--sl-color-primary-100);
+}
+
+.smd-sidesheet-card {
+  border-radius: 16px;
+  padding: 8px;
+  background: var(--sl-color-primary-200);
+}
+'
+]
+
+{ #category : #'web resources' }
+SlmdSidesheetView class >> template [
+
+	<webResource: #html>
+
+	^ '
+<div id="component" class="smd-sidesheet-container">
+  <div class="smd-sidesheet-content">
+    <div class="smd-sidesheet-card">
+      <slot name="content"></slot>
+    </div>
+  </div>
+</div>
+'
+]
+
+{ #category : #rendering }
+SlmdSidesheetView >> renderContent: aString [
+
+	self replaceAllChildrenWith: (aString inHtmlTag: #span) atSlotNamed: 'content'.
+
+]

@@ -1,7 +1,7 @@
 Class {
 	#name : #TBBlogView,
 	#superclass : #CpView,
-	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
+	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
 { #category : #'web resources' }

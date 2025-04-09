@@ -8,7 +8,7 @@ Class {
 		'category',
 		'visible'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
+	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
 { #category : #'instance creation' }
