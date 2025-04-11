@@ -55,10 +55,3 @@ TBPostView >> renderCardTitle: title text: text date: date category: category vi
 	self replaceAllChildrenWith: card atSlotNamed: 'card'.
 
 ]
-
-{ #category : #rendering }
-TBPostView >> renderTextSlot: slotName value: aString [
-
-	(self firstChildAtSlotNamed: slotName)
-		textContent: aString
-]

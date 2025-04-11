@@ -1,7 +1,7 @@
 Class {
 	#name : #SlmdPaneView,
 	#superclass : #CpView,
-	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
 { #category : #'web resources' }

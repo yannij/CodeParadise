@@ -7,7 +7,7 @@ Class {
 		'iconLabel',
 		'arg1'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
 { #category : #'instance creation' }

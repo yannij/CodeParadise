@@ -9,5 +9,6 @@ TBBlogPresenter >> renderView [
 
 	self
 		renderAllChildViewsForModels: self model allBlogPosts
+		usingPresenter: TBPostListItemPresenter
 		atSlotNamed: #posts
 ]

@@ -5,7 +5,7 @@ Class {
 		'id',
 		'content'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
 { #category : #'instance creation' }

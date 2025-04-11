@@ -62,7 +62,7 @@ TBBlogModel >> allVisibleBlogPostsFromCategory: aCategory [
 { #category : #actions }
 TBBlogModel >> handleActionRequest: aBasicEvent [
 
-	Transcript crShow: (aBasicEvent parameterAt: #to).
+	"Transcript crShow: (aBasicEvent parameterAt: #to)."
 
 ]
 
@@ -70,6 +70,11 @@ TBBlogModel >> handleActionRequest: aBasicEvent [
 TBBlogModel >> initialize [
    super initialize.
    posts := OrderedCollection new
+]
+
+{ #category : #queries }
+TBBlogModel >> posts [
+   ^ posts
 ]
 
 { #category : #actions }

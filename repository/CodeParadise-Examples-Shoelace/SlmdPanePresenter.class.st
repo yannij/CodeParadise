@@ -1,7 +1,7 @@
 Class {
 	#name : #SlmdPanePresenter,
 	#superclass : #CpPresenter,
-	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
 { #category : #rendering }
