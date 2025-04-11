@@ -23,7 +23,7 @@ SlmdPaneView class >> template [
 	<webResource: #html>
 
 	^ '
-<div id="container">
+<div id="container" class="smd-pane-content">
   <slot name="content"></slot>
 </div>
 '

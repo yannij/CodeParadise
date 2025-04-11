@@ -532,7 +532,7 @@ SlmdLayoutView >> buildNavdrawerItem: aNavAction [
 	^ #div asHtmlTag
 		addClass: 'smd-navdrawer-item';
 		addClass: 'smd-nav-font';
-		when: CpClickEvent basicPrimary do: [ self setCurrentPage: arg1 ] for: self;
+		when: CpClickEvent basicPrimary do: [ self navigateTo: arg1 ] for: self;
 		appendChild: ((SlIconButton named: iconName) addClass: 'smd-navdrawer-icon'; yourself);
 		appendChild: (#div asHtmlTag
 			addClass: 'smd-navdrawer-labelText';
@@ -550,7 +550,7 @@ SlmdLayoutView >> buildNavrailItem: aNavAction [
 
 	^ #div asHtmlTag
 		addClass: 'smd-navrail-item';
-		when: CpClickEvent basicPrimary do: [ self setCurrentPage: arg1 ] for: self;
+		when: CpClickEvent basicPrimary do: [ self navigateTo: arg1 ] for: self;
 		appendChild: (
 			(SlIconButton named: iconName)
 				addClass: 'smd-navrail-icon';
@@ -1216,6 +1216,13 @@ SlmdLayoutView >> navdrawerBuild [
 		yourself
 ]
 
+{ #category : #nav }
+SlmdLayoutView >> navigateTo: aString [
+
+	self serverAnnounce: (CpActionRequested id: #navigate parameters: { #to -> aString } asDictionary).
+
+]
+
 { #category : #'nav - rail' }
 SlmdLayoutView >> navrailBuild [
 	| element drawer |
@@ -1288,18 +1295,6 @@ SlmdLayoutView >> resizeSetUp [
 	resize when: SlResizeEvent send: #handleResizeEvent: to: self.
 	target replaceChild: div with: resize.
 	resize appendChild: div.
-
-]
-
-{ #category : #pages }
-SlmdLayoutView >> setCurrentPage: aString [
-	| element |
-
-	currentPage := aString.
-
-	element := CpHtmlElement documentBody firstDescendantMatching: '#smdPane1Content'.
-	element notNil ifTrue: [
-		element replaceAllChildrenWith: (currentPage inHtmlTag: #h1) ]
 
 ]
 

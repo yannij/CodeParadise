@@ -25,6 +25,13 @@ SlmdLayoutPresenter >> navSetUp [
 ]
 
 { #category : #view }
+SlmdLayoutPresenter >> navigateTo: anObject [
+
+	self application pane1Model handleActionRequest: anObject; valueChanged.
+
+]
+
+{ #category : #view }
 SlmdLayoutPresenter >> renderView [
 
 	self view renderTopAppBar.
@@ -55,6 +62,13 @@ SlmdLayoutPresenter >> setTopAppBar [
 	self view
 		headline: self application class appName;
 		trailingActions: { '1-square'. '2-square' . '3-square'. '4-square' }.
+
+]
+
+{ #category : #view }
+SlmdLayoutPresenter >> viewCreated [
+
+	self view when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self.
 
 ]
 

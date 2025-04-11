@@ -56,7 +56,8 @@ TBRootApplication >> initialize [
 	super initialize.
 
 	pane1Model := TBBlogModel current.
-	pane2Model := SlmdPaneModel id: 'zsmdPane2' content: 'Pane2...'..
+	"pane2Model := SlmdPaneModel id: 'zsmdPane2' content: 'Pane2...'."
+	pane2Model := TBBlogModel current allBlogPosts first.
 	layout := SlmdLayoutModel new.
 	navActions := OrderedCollection new
 		add: (SlmdNavAction id: #home iconName: 'house' iconLabel: 'Home' arg1: 'Home Page');

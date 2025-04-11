@@ -59,23 +59,30 @@ TBBlogModel >> allVisibleBlogPostsFromCategory: aCategory [
 		p category = aCategory and: [ p isVisible ] ]
 ]
 
+{ #category : #actions }
+TBBlogModel >> handleActionRequest: aBasicEvent [
+
+	Transcript crShow: (aBasicEvent parameterAt: #to).
+
+]
+
 { #category : #initialization }
 TBBlogModel >> initialize [
    super initialize.
    posts := OrderedCollection new
 ]
 
-{ #category : #removing }
+{ #category : #actions }
 TBBlogModel >> removeAllPosts [
    posts := OrderedCollection new
 ]
 
-{ #category : #removing }
+{ #category : #actions }
 TBBlogModel >> size [
    ^ posts size
 ]
 
-{ #category : #removing }
+{ #category : #actions }
 TBBlogModel >> writeBlogPost: aPost [
    "Add the blog post to the list of posts."
    posts add: aPost

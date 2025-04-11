@@ -29,6 +29,13 @@ SlmdPaneModel >> content: anObject [
 	content := anObject
 ]
 
+{ #category : #actions }
+SlmdPaneModel >> handleActionRequest: aBasicEvent [
+
+	self content: (aBasicEvent parameterAt: #to).
+
+]
+
 { #category : #accessing }
 SlmdPaneModel >> id [
 

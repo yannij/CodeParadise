@@ -60,8 +60,8 @@ MD3ExampleApplication >> initialize [
 
 	super initialize.
 
-	pane1Model := SlmdPaneModel id: 'zsmdPane1' content: 'Pane1...'.
-	pane2Model := SlmdPaneModel id: 'zsmdPane2' content: 'Pane2...'.
+	pane1Model := SlmdPaneModel id: 'smdPane1Content' content: 'Initial Pane1...'.
+	pane2Model := SlmdPaneModel id: 'smdPane2Content' content: 'Initial Pane2...'.
 	sidesheetModel := SlmdSidesheetModel new.
 	layout := SlmdLayoutModel new.
 	navActions := OrderedCollection new
