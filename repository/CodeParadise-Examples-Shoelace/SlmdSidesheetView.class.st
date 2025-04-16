@@ -1,6 +1,6 @@
 Class {
 	#name : #SlmdSidesheetView,
-	#superclass : #CpView,
+	#superclass : #SlmdView,
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 

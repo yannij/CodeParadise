@@ -1,6 +1,6 @@
 Class {
 	#name : #SlmdPaneModel,
-	#superclass : #CpModel,
+	#superclass : #SlmdModel,
 	#instVars : [
 		'id',
 		'content'

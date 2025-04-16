@@ -1,14 +1,10 @@
 Class {
 	#name : #SlmdLayoutView,
-	#superclass : #CpView,
+	#superclass : #SlmdView,
 	#instVars : [
 		'width',
 		'height',
 		'currentLayout',
-		'currentPage',
-		'leadingAction',
-		'trailingActions',
-		'headline',
 		'iconButtons',
 		'fab',
 		'colorThemeName',
@@ -23,7 +19,6 @@ SlmdLayoutView class >> globalStyle [
 	<webResource: #css>
 
 	^ self globalStyleNav
-, self globalStyleTopAppBar
 , self globalStyleBottomAppBar
 ]
 
@@ -147,51 +142,6 @@ SlmdLayoutView class >> globalStyleNav [
 ]
 
 { #category : #'web resources' }
-SlmdLayoutView class >> globalStyleTopAppBar [
-
-	<webResource: #css>
-
-	^ '
-.smd-header {
-  border-radius: 16px;
-  margin-bottom: 16px;
-  flex: 0 0 64px;
-  display: flex;  
-  flex-direction: column;
-  background: var(--sl-color-primary-200);
-}
-
-.smd-topAppBar {
-  display: flex;
-  flex-flow: row wrap;
-  padding: 8px 4px 8px 4px;
-}
-
-.smd-topAppBar-leadingAction {
-  margin-top: 4px;
-  height: 48px;
-  width: 48px;
-  font-size: 24px;
-}
-
-.smd-topAppBar-headline {
-  margin-top: 4px;
-  padding-top: 8px;
-  padding-left: 8px;
-  height: 48px;
-  font-size: 24px;
-}
-
-.smd-topAppBar-trailingActions {
-  margin-left: auto;
-  margin-top: 4px;
-  height: 48px;
-  font-size: 24px;
-}
-'
-]
-
-{ #category : #'web resources' }
 SlmdLayoutView class >> style [
 
 	<webResource: #css>
@@ -212,35 +162,6 @@ SlmdLayoutView class >> style [
   flex-direction: row;
   background: var(--sl-color-primary-100);
 }
-
-.smd-pane-layout {
-  overflow-y: auto;
-  flex: 100%;
-}
-
-.smd-pane {
-  flex: 100%;
-  display: flex;  
-  flex-direction: column;
-  padding: 8px;
-  margin: 0;
-  text-align: left;
-  overflow-x: auto;
-  overflow-y: auto;
-}
-
-.smd-body-split-panel {
-  height: 100%;
-}
-
-.smd-split-div {
-  flex: 100%;
-  margin: 0;
-}
-
-.smd-pane-layout sl-split-panel::part(divider) {
-  background-color: var(--sl-color-primary-50);
-}
 '
 ]
 
@@ -248,7 +169,8 @@ SlmdLayoutView class >> style [
 SlmdLayoutView class >> template [
 
 	<webResource: #html>
-
+"
+"
 	^ '
 <div id="smdLayout" class="smd-layout">
   <div style="display: flex; flex-direction: column">
@@ -257,16 +179,8 @@ SlmdLayoutView class >> template [
         <slot name="navRegion"></slot>
       </div>
       <div id="smdBodyRegion" class="smd-body-region">
-        <div class="smd-pane-layout">
-          <div id="smdPane1" class="smd-pane">
-            <div id="smdTopAppBar">
-              <slot name="topAppBar"></slot>
-            </div>
-            <slot name="pane1"></slot>
-          </div>
-          <div id="smdPane2" class="smd-pane">
-            <slot name="pane2"></slot>
-          </div>
+        <div style="flex: 100%">
+          <slot name="paneLayout"></slot>
         </div>
       </div>
       <div id="smdSidesheet">
@@ -281,6 +195,17 @@ SlmdLayoutView class >> template [
   <slot name="settings"></slot>
 </div>
 '
+]
+
+{ #category : #events }
+SlmdLayoutView >> adaptWithAspect: aspect value: anObject [
+
+	self serverAnnounce: (CpActionRequested
+		id: #adapt
+		parameters: {
+			#aspect -> aspect.
+			#value -> anObject
+		} asDictionary).
 ]
 
 { #category : #utilities }
@@ -324,23 +249,17 @@ SlmdLayoutView >> bodyFind [
 	^ CpHtmlElement documentBody
 ]
 
-{ #category : #body }
-SlmdLayoutView >> bodyPanesAdapt: aBoolean [
+{ #category : #events }
+SlmdLayoutView >> bodyPanesAdapt: anObject [
 
-"true ifTrue: [ ^ self ]."
-"self bodyUseTwoPanes."
-	aBoolean
-		ifTrue: [ self bodyUseTwoPanes ]
-		ifFalse: [ self bodyUseOnePane ].
-
-	"self adjustBodyHeight."
+	self adaptWithAspect: #bodyPanes value: anObject
 
 ]
 
 { #category : #body }
 SlmdLayoutView >> bodyRegionFind [
 
-	^ self shadowedElementWithId: 'smdBodyRegion'
+	^ self findByIdInShadowDom: 'smdBodyRegion'
 ]
 
 { #category : #body }
@@ -352,79 +271,8 @@ SlmdLayoutView >> bodySetUp [
 
 { #category : #body }
 SlmdLayoutView >> bodySplitPanelAdapt [
-	| split |
 
-	split := self smdBodySplitPanelFind.
-	split ifNil: [ ^ self ].
-
-	split attributeAt: 'position-in-pixels' put: self pane1WidthCompute printString.
-
-]
-
-{ #category : #body }
-SlmdLayoutView >> bodySplitPanelDividerWidth [
-
-	^ 24
-]
-
-{ #category : #body }
-SlmdLayoutView >> bodySplitPanelSetUp [
-	| split bodyLayout |
-
-	split := SlSplitPanel new
-		id: 'smdBodySplitPanel';
-		addClass: 'smd-body-split-panel';
-		attributeAt: 'primary' put: 'start';
-		"attributeAt: 'position-in-pixels' put: self pane1WidthCompute printString;"
-		customPropertyAt: 'divider-width' put: self bodySplitPanelDividerWidth printString, 'px';
-		customPropertyAt: 'min' put: self pane1WidthMin printString, 'px';
-		"customPropertyAt: 'max' put: 'calc(100% - 150px)';"
-		yourself.
-
-	split replaceAllChildrenWith: (SlIcon named: 'grip-vertical') atSlotNamed: #'divider'.
-
-	bodyLayout := self smdPaneLayoutFind.
-	bodyLayout appendChild: split.
-
-	^ split
-
-]
-
-{ #category : #body }
-SlmdLayoutView >> bodyUseOnePane [
-	| split pane1Element pane2Element paneLayout |
-
-	paneLayout := self smdPaneLayoutFind.
-
-	pane1Element := self shadowedElementWithId: 'smdPane1'.
-	pane1Element ifNotNil: [
-		paneLayout appendChild: pane1Element ].
-
-	pane2Element := self shadowedElementWithId: 'smdPane2'.
-	pane2Element ifNotNil: [
-		paneLayout appendChild: pane2Element ].
-
-	split := self smdBodySplitPanelFind.
-	split ifNotNil: [
-		split destroy ].
-
-]
-
-{ #category : #body }
-SlmdLayoutView >> bodyUseTwoPanes [
-	| split pane1Element pane2Element |
-
-	pane1Element := self findByIdInShadowDom: 'smdPane1'.
-	pane1Element ifNil: [ ^ self ].
-	pane2Element := self findByIdInShadowDom: 'smdPane2'.
-	pane2Element ifNil: [ ^ self ].
-
-	split := self smdBodySplitPanelFind.
-	split ifNil: [
-		split := self bodySplitPanelSetUp ].
-
-	split replaceAllChildrenWith: pane1Element atSlotNamed: 'start'.
-	split replaceAllChildrenWith: pane2Element atSlotNamed: 'end'.
+	self adaptWithAspect: #twoPaneSplitPosition value: self pane1WidthCompute
 
 ]
 
@@ -508,18 +356,6 @@ SlmdLayoutView >> buildIconButton: iconName class: cssClass [
 		addClass: cssClass;
 		appendChild: (SlIconButton named: iconName);
 		yourself
-]
-
-{ #category : #topAppBar }
-SlmdLayoutView >> buildLeadingAction [
-	| drawer |
-
-	drawer := self navModalPaneFind.
-
-	^ (SlIconButton named: self leadingAction)
-		when: CpClickEvent basicPrimary send: #show to: drawer;
-		yourself
-
 ]
 
 { #category : #'nav - drawer' }
@@ -637,18 +473,6 @@ SlmdLayoutView >> currentLayout: anObject [
 	currentLayout := anObject
 ]
 
-{ #category : #accessing }
-SlmdLayoutView >> currentPage [
-
-	^ currentPage
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> currentPage: anObject [
-
-	currentPage := anObject
-]
-
 { #category : #'color theme' }
 SlmdLayoutView >> defaultColorThemeName [
 
@@ -689,18 +513,6 @@ SlmdLayoutView >> fab [
 SlmdLayoutView >> fab: anObject [
 
 	fab := anObject
-]
-
-{ #category : #utilities }
-SlmdLayoutView >> findByIdInLightDom: anId [
-
-	^ CpHtmlElement documentBody firstDescendantMatching: '#', anId
-]
-
-{ #category : #utilities }
-SlmdLayoutView >> findByIdInShadowDom: anId [
-
-	^ self shadowedElementWithId: anId
 ]
 
 { #category : #typography }
@@ -752,24 +564,8 @@ SlmdLayoutView >> handleResizeEvent: anEvent [
 	self useAutoLayout not ifTrue: [
 		^ self ].
 
-	width < 600 ifTrue: [ ^ self layoutTypeChangeAutoResize: #compact ].
-	width < 840 ifTrue: [ ^ self layoutTypeChangeAutoResize: #medium ].
-	width < 1200 ifTrue: [ ^ self layoutTypeChangeAutoResize: #expanded ].
-	width < 1600 ifTrue: [ ^ self layoutTypeChangeAutoResize: #large ].
-	self layoutTypeChangeAutoResize: #'extra-large'.
+	self layoutAdaptToWidth.
 
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> headline [
-
-	^ headline
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> headline: anObject [
-
-	headline := anObject
 ]
 
 { #category : #accessing }
@@ -803,16 +599,23 @@ SlmdLayoutView >> initialize [
 
 	colorThemeName := self defaultColorThemeName.
 	width := 0.
-	headline := ''.
-	leadingAction := 'list'.
 
 	"#layoutSetUp will set the value later. DO NOT set it here."
 	"layoutType := nil."
 
-	currentPage := ''.
-
 	navActions := Dictionary new.
 	navItems := OrderedCollection new.
+
+]
+
+{ #category : #layout }
+SlmdLayoutView >> layoutAdaptToWidth [
+
+	width < 600 ifTrue: [ ^ self layoutTypeChangeAutoResize: #compact ].
+	width < 840 ifTrue: [ ^ self layoutTypeChangeAutoResize: #medium ].
+	width < 1200 ifTrue: [ ^ self layoutTypeChangeAutoResize: #expanded ].
+	width < 1600 ifTrue: [ ^ self layoutTypeChangeAutoResize: #large ].
+	self layoutTypeChangeAutoResize: #'extra-large'.
 
 ]
 
@@ -919,18 +722,6 @@ SlmdLayoutView >> layoutTypeDefault [
 ]
 
 { #category : #accessing }
-SlmdLayoutView >> leadingAction [
-
-	^ leadingAction
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> leadingAction: anObject [
-
-	leadingAction := anObject
-]
-
-{ #category : #accessing }
 SlmdLayoutView >> navActions [
 
 	^ navActions
@@ -997,12 +788,6 @@ SlmdLayoutView >> navModalPaneContentFind [
 ]
 
 { #category : #nav }
-SlmdLayoutView >> navModalPaneFind [
-
-	^ CpHtmlElement documentBody firstDescendantMatching: '#smdNavModalPane'
-]
-
-{ #category : #nav }
 SlmdLayoutView >> navModalPaneSetUp [
 
 	self replaceAllChildrenWith: self navModalPaneBuild atSlotNamed: #'navModalPane'
@@ -1016,8 +801,8 @@ SlmdLayoutView >> navRegionDisplay: aBoolean [
 	element := self navRegionFind.
 	element ifNotNil: [
 		aBoolean
-			ifTrue: [ element styleAt: 'display' put: 'none' ]
-			ifFalse: [ element removeStyleAt: 'display' ] ].
+			ifTrue: [ element removeStyleAt: 'display' ]
+			ifFalse: [ element styleAt: 'display' put: 'none' ] ].
 
 ]
 
@@ -1033,11 +818,11 @@ SlmdLayoutView >> navRegionModalAdapt: isOn [
 
 	isOn
 		ifTrue: [
-			self navRegionDisplay: true.
-			self topAppBarMenuDisplay: false ]
-		ifFalse: [
 			self navRegionDisplay: false.
-			self topAppBarMenuDisplay: true ].
+			self topAppBarMenuDisplay: true ]
+		ifFalse: [
+			self navRegionDisplay: true.
+			self topAppBarMenuDisplay: false ].
 
 	self navSetUp.
 	self bodySplitPanelAdapt.
@@ -1235,6 +1020,10 @@ SlmdLayoutView >> navrailBuild [
 			navItem := self buildNavrailItem: (navActions at: eachItem asSymbol).
 			navItem when: CpClickEvent basicPrimary send: #hide to: drawer.
 			element appendChild: navItem ] ].
+	"element appendChild: (
+		(SlIconButton named: 'gear')
+			when: CpClickEvent basicPrimary send: #settingsOpen to: self;
+			yourself)."
 
 	^ #nav asHtmlTag
 		styleAt: 'height' put: '100%';
@@ -1262,7 +1051,7 @@ SlmdLayoutView >> newToggleId: id label: label do: aBlock [
 SlmdLayoutView >> pane1WidthCompute [
 	| w |
 
-	w := ((width "- self bodySplitPanelDividerWidth") / 2) asInteger.
+	w := ((self width "- self bodySplitPanelDividerWidth") / 2) asInteger.
 	self useModalNav ifFalse: [  w := w - self navTypeWidth ].
 	w < self pane1WidthMin ifTrue: [ w := self pane1WidthMin ].
 	^ w
@@ -1272,17 +1061,6 @@ SlmdLayoutView >> pane1WidthCompute [
 SlmdLayoutView >> pane1WidthMin [
 
 	^ 300
-]
-
-{ #category : #topAppBar }
-SlmdLayoutView >> renderTopAppBar [
-
-	self
-		replaceAllChildrenWith: self topAppBarBuild
-		atSlotNamed: 'topAppBar'.
-
-	self topAppBarDisplay: self showTopAppBarIsOn.
-
 ]
 
 { #category : #layout }
@@ -1295,20 +1073,6 @@ SlmdLayoutView >> resizeSetUp [
 	resize when: SlResizeEvent send: #handleResizeEvent: to: self.
 	target replaceChild: div with: resize.
 	resize appendChild: div.
-
-]
-
-{ #category : #layout }
-SlmdLayoutView >> settingsFind [
-
-	^ CpHtmlElement documentBody firstDescendantMatching: '#smdSettings'
-
-]
-
-{ #category : #layout }
-SlmdLayoutView >> settingsOpen [
-
-	self settingsFind beOpen
 
 ]
 
@@ -1419,32 +1183,8 @@ SlmdLayoutView >> showTopAppBarBuildToggle [
 		newToggleId: 'showTopAppBar'
 		label: 'Show TopAppBar'
 		do: [
-			self topAppBarDisplay: self showTopAppBarFind isChecked.
+			self topAppBarDisplay: self showTopAppBar.
 			self useAutoLayout: false ].
-
-]
-
-{ #category : #settings }
-SlmdLayoutView >> showTopAppBarFind [
-
-	^ CpHtmlElement documentBody firstDescendantMatching: '#showTopAppBar'
-
-]
-
-{ #category : #settings }
-SlmdLayoutView >> showTopAppBarIsOff [
-	| element |
-
-	element := self showTopAppBarFind.
-	^ element ifNil: [ true ] ifNotNil: [ element isChecked not ]
-]
-
-{ #category : #settings }
-SlmdLayoutView >> showTopAppBarIsOn [
-	| element |
-
-	element := self showTopAppBarFind.
-	^ element ifNil: [ false ] ifNotNil: [ element isChecked ]
 
 ]
 
@@ -1506,96 +1246,18 @@ SlmdLayoutView >> sidesheetSetUp [
 		atSlotNamed: 'sidesheet'
 ]
 
-{ #category : #body }
-SlmdLayoutView >> smdBodySplitPanelFind [
+{ #category : #events }
+SlmdLayoutView >> topAppBarDisplay: anObject [
 
-	^ self shadowedElementWithId: 'smdBodySplitPanel'
-]
-
-{ #category : #body }
-SlmdLayoutView >> smdPaneLayoutFind [
-
-	^ self shadowedFirstDescendantMatching: '.smd-pane-layout'.
+	self adaptWithAspect: #topAppBarDisplay value: anObject
 
 ]
 
-{ #category : #topAppBar }
-SlmdLayoutView >> topAppBarBuild [
-	| trailing |
+{ #category : #events }
+SlmdLayoutView >> topAppBarMenuDisplay: anObject [
 
-	trailing := self trailingActions.
+	self adaptWithAspect: #topAppBarMenuDisplay value: anObject
 
-	^ #header asHtmlTag
-		addClass: 'smd-header';
-		appendChild: (#div asHtmlTag
-			addClass: 'smd-topAppBar';
-			appendChild: (#div asHtmlTag
-				addClass: 'smd-topAppBar-leadingAction';
-				appendChild: self buildLeadingAction;
-				yourself);
-			appendChild: (#div asHtmlTag
-				addClass: 'smd-topAppBar-headline';
-				appendChild: (self headline inHtmlTag: #span);
-				yourself);
-			appendChild: (#div asHtmlTag
-				addClass: 'smd-topAppBar-trailingActions';
-				appendChild: (SlIconButton named: trailing first);
-				appendChild: (
-					(SlIconButton named: 'gear')
-						when: CpClickEvent basicPrimary send: #settingsOpen to: self;
-						yourself);
-				appendChild: (SlIconButton named: trailing third);
-				yourself);
-			yourself);
-		yourself
-]
-
-{ #category : #topAppBar }
-SlmdLayoutView >> topAppBarDisplay: aBoolean [
-	| element |
-
-	element := self topAppBarFind.
-	element ifNotNil: [
-		aBoolean
-			ifTrue: [ element removeStyleAt: 'display' ]
-			ifFalse: [ element styleAt: 'display' put: 'none' ] ].
-
-]
-
-{ #category : #topAppBar }
-SlmdLayoutView >> topAppBarFind [
-
-	^ self shadowedElementWithId: 'smdTopAppBar'
-]
-
-{ #category : #topAppBar }
-SlmdLayoutView >> topAppBarMenuDisplay: aBoolean [
-	| element |
-
-	element := self topAppBarMenuFind.
-	element ifNotNil: [
-		aBoolean
-			ifTrue: [ element styleAt: 'display' put: 'none' ]
-			ifFalse: [ element removeStyleAt: 'display' ] ].
-
-]
-
-{ #category : #topAppBar }
-SlmdLayoutView >> topAppBarMenuFind [
-
-	^ CpHtmlElement documentBody firstDescendantMatching: '.smd-topAppBar-leadingAction'
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> trailingActions [
-
-	^ trailingActions
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> trailingActions: anObject [
-
-	trailingActions := anObject
 ]
 
 { #category : #initialization }
@@ -1623,7 +1285,7 @@ SlmdLayoutView >> useAutoLayoutBuildToggle [
 	^ self
 		newToggleId: 'useAutoLayout'
 		label: 'Use auto layout'
-		do: [].
+		do: [ self layoutAdaptToWidth ].
 
 ]
 

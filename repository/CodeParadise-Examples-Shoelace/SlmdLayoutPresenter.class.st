@@ -1,14 +1,40 @@
 Class {
 	#name : #SlmdLayoutPresenter,
-	#superclass : #CpPresenter,
+	#superclass : #SlmdPresenter,
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
+
+{ #category : #view }
+SlmdLayoutPresenter >> handleAdapt: anObject [
+	| aspect aspectValue |
+
+	anObject printString crTrace.
+
+	aspect := anObject parameterAt: #aspect.
+	aspectValue := anObject parameterAt: #value.
+
+	aspect = #bodyPanes ifTrue: [
+		'aspect = #bodyPanes' crTrace.
+		^ self model useTwoPaneBody: aspectValue; valueChanged ].
+
+	aspect = #twoPaneSplitPosition ifTrue: [
+		'aspect = #twoPaneSplitPosition' crTrace.
+		"^ self model twoPaneSplitPosition: aspectValue; valueChanged" ].
+
+	aspect = #topAppBarMenuDisplay ifTrue: [
+		'aspect = #topAppBarMenuDisplay' crTrace.
+		^ self model paneLayout topAppBarModel topAppBarMenuDisplay: aspectValue; valueChanged ].
+
+	aspect = #topAppBarDisplay ifTrue: [
+		'aspect = #topAppBarDisplay' crTrace.
+		^ self model paneLayout topAppBarDisplayed: aspectValue; valueChanged ].
+
+]
 
 { #category : #view }
 SlmdLayoutPresenter >> layoutSetUp [
 
 	self navSetUp.
-	self setTopAppBar.
 	self setBottomAppBar.
 
 ]
@@ -34,13 +60,14 @@ SlmdLayoutPresenter >> navigateTo: anObject [
 { #category : #view }
 SlmdLayoutPresenter >> renderView [
 
-	self view renderTopAppBar.
-
-	self application pane1Model ifNotNil: [ :value |
-		self renderChildViewForModel: value atSlotNamed: #pane1 ].
-
-	self application pane2Model ifNotNil: [ :value |
-		self renderChildViewForModel: value atSlotNamed: #pane2 ].
+	self model paneLayout ifNotNil: [ :value |
+		self
+			renderChildViewForModel: value
+			usingPresenter: (
+				self model useTwoPaneBody
+					ifTrue: [ SlmdTwoPanePresenter ]
+					ifFalse: [ SlmdOnePanePresenter ])
+			atSlotNamed: #paneLayout ].
 
 	self application sidesheetModel ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: #sidesheet ].
@@ -56,17 +83,10 @@ SlmdLayoutPresenter >> setBottomAppBar [
 
 ]
 
-{ #category : #rendering }
-SlmdLayoutPresenter >> setTopAppBar [
-
-	self view
-		headline: self application class appName;
-		trailingActions: { '1-square'. '2-square' . '3-square'. '4-square' }.
-
-]
-
 { #category : #view }
 SlmdLayoutPresenter >> viewCreated [
+
+	self view when: (CpActionRequested id: #adapt) send: #handleAdapt: to: self.
 
 	self view when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self.
 
@@ -77,4 +97,6 @@ SlmdLayoutPresenter >> viewInitialized [
 
 	self layoutSetUp.
 	self view layoutSetUp.
+	self view adjustBodyHeight.
+
 ]

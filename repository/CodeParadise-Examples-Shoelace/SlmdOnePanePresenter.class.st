@@ -1,5 +1,5 @@
 Class {
-	#name : #SlmdSidesheetModel,
-	#superclass : #SlmdModel,
+	#name : #SlmdOnePanePresenter,
+	#superclass : #SlmdPaneLayoutPresenter,
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }

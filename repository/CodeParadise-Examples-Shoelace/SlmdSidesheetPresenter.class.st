@@ -1,6 +1,6 @@
 Class {
 	#name : #SlmdSidesheetPresenter,
-	#superclass : #CpPresenter,
+	#superclass : #SlmdPresenter,
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
