@@ -21,6 +21,7 @@ SlmdPaneLayoutView class >> style [
 }
 
 .smd-pane-layout {
+  height: 100%;
   overflow-y: auto;
 }
 
@@ -30,7 +31,9 @@ SlmdPaneLayoutView class >> style [
   flex-direction: column;
   padding: 8px;
   margin: 0;
-  text-align: left;
+}
+
+.smd-pane-content {
   overflow-x: auto;
   overflow-y: auto;
 }
@@ -56,10 +59,14 @@ SlmdPaneLayoutView class >> template [
       <div id="smdTopAppBar">
         <slot name="topAppBar"></slot>
       </div>
-      <slot name="pane1"></slot>
+      <div class="smd-pane-content">
+        <slot name="pane1"></slot>
+      </div>
     </div>
     <div class="smd-pane">
-      <slot name="pane2"></slot>
+      <div class="smd-pane-content">
+        <slot name="pane2"></slot>
+      </div>
     </div>
   </div>
   <div id="smdTwoPaneLayout">

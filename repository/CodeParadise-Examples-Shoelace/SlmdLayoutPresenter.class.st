@@ -34,7 +34,7 @@ SlmdLayoutPresenter >> handleAdapt: anObject [
 SlmdLayoutPresenter >> layoutSetUp [
 
 	self navSetUp.
-	self setBottomAppBar.
+
 
 ]
 
@@ -67,15 +67,6 @@ SlmdLayoutPresenter >> renderView [
 
 	self application sidesheetModel ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: #sidesheet ]
-]
-
-{ #category : #rendering }
-SlmdLayoutPresenter >> setBottomAppBar [
-
-	self view
-		iconButtons: {'1-circle'. '2-circle' . '3-circle'. '4-circle'};
-		fab: 'plus'.
-
 ]
 
 { #category : #view }

@@ -5,8 +5,6 @@ Class {
 		'width',
 		'height',
 		'currentLayout',
-		'iconButtons',
-		'fab',
 		'colorThemeName',
 		'navActions',
 		'navItems',
@@ -430,18 +428,6 @@ SlmdLayoutView >> elementId: id propertyAt: key put: value [
 		element propertyAt: key put: value ]
 ]
 
-{ #category : #accessing }
-SlmdLayoutView >> fab [
-
-	^ fab
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> fab: anObject [
-
-	fab := anObject
-]
-
 { #category : #typography }
 SlmdLayoutView >> fontFamilyAdapt: aFontFamily [
 	| element |
@@ -512,18 +498,6 @@ SlmdLayoutView >> height [
 SlmdLayoutView >> height: anObject [
 
 	height := anObject
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> iconButtons [
-
-	^ iconButtons
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> iconButtons: anObject [
-
-	iconButtons := anObject
 ]
 
 { #category : #initialization }
