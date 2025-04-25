@@ -43,7 +43,7 @@ SlmdSidesheetView class >> template [
 	<webResource: #html>
 
 	^ '
-<div id="component" class="smd-sidesheet-container">
+<div id="container" class="smd-sidesheet-container">
   <div class="smd-sidesheet-content">
     <div class="smd-sidesheet-card">
       <slot name="content"></slot>

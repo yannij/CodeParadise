@@ -55,9 +55,9 @@ TBRootApplication >> initialize [
 
 	super initialize.
 
-	pane1Model := TBBlogModel current.
-	"pane2Model := SlmdPaneModel id: 'zsmdPane2' content: 'Pane2...'."
-	pane2Model := TBBlogModel current allBlogPosts first.
+	pane1Model := SlmdListDetailModel new.
+	pane1Model listSet: TBBlogModel current allBlogPosts.
+	self setDetailWithIndex: 1.
 	layout := SlmdLayoutModel new.
 	navActions := OrderedCollection new
 		add: (SlmdNavAction id: #home iconName: 'house' iconLabel: 'Home' arg1: 'Home Page');
@@ -111,6 +111,19 @@ TBRootApplication >> pane2Model [
 TBRootApplication >> pane2Model: anObject [
 
 	pane2Model := anObject
+]
+
+{ #category : #accessing }
+TBRootApplication >> setDetailWithIndex: index [
+	| list detail |
+
+	list := self pane1Model list.
+	detail := list at: index.
+	"detail := list at: (list size atRandom \\ list size) + 1."
+
+	self pane1Model detail: detail.
+	self pane2Model: detail.
+
 ]
 
 { #category : #accessing }

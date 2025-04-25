@@ -59,22 +59,10 @@ TBBlogModel >> allVisibleBlogPostsFromCategory: aCategory [
 		p category = aCategory and: [ p isVisible ] ]
 ]
 
-{ #category : #actions }
-TBBlogModel >> handleActionRequest: aBasicEvent [
-
-	"Transcript crShow: (aBasicEvent parameterAt: #to)."
-
-]
-
 { #category : #initialization }
 TBBlogModel >> initialize [
    super initialize.
    posts := OrderedCollection new
-]
-
-{ #category : #queries }
-TBBlogModel >> posts [
-   ^ posts
 ]
 
 { #category : #actions }

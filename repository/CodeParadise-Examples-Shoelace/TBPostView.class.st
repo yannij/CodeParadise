@@ -4,6 +4,12 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
+{ #category : #'class initialization' }
+TBPostView class >> beLoaded [
+
+	SlCard beLoaded
+]
+
 { #category : #'web resources' }
 TBPostView class >> globalStyle [
 

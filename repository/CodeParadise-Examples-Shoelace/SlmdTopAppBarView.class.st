@@ -60,7 +60,7 @@ SlmdTopAppBarView class >> template [
 	<webResource: #html>
 
 	^ '
-<div id="component">
+<div id="container">
   <div class="smd-topAppBar">
     <div class="smd-topAppBar-leadingAction">
       <slot name="leadingAction"></slot>
@@ -114,17 +114,6 @@ SlmdTopAppBarView >> renderLeadingAction: aString [
 ]
 
 { #category : #topAppBar }
-SlmdTopAppBarView >> renderTopAppBar [
-
-	self
-		replaceAllChildrenWith: self topAppBarBuild
-		atSlotNamed: 'content'.
-
-	"self topAppBarDisplay: self showTopAppBarIsOn."
-
-]
-
-{ #category : #topAppBar }
 SlmdTopAppBarView >> renderTrailingActions [
 	| gear |
 
@@ -143,42 +132,11 @@ SlmdTopAppBarView >> renderTrailingActions [
 ]
 
 { #category : #topAppBar }
-SlmdTopAppBarView >> topAppBarBuild [
-	| trailing |
-
-	trailing := self trailingActions.
-
-	^ #header asHtmlTag
-		addClass: 'smd-header';
-		appendChild: (#div asHtmlTag
-			addClass: 'smd-topAppBar';
-			appendChild: (#div asHtmlTag
-				addClass: 'smd-topAppBar-leadingAction';
-				appendChild: self buildLeadingAction;
-				yourself);
-			appendChild: (#div asHtmlTag
-				addClass: 'smd-topAppBar-headline';
-				appendChild: (self headline inHtmlTag: #span);
-				yourself);
-			appendChild: (#div asHtmlTag
-				addClass: 'smd-topAppBar-trailingActions';
-				appendChild: (SlIconButton named: trailing first);
-				appendChild: (
-					(SlIconButton named: 'gear')
-						when: CpClickEvent basicPrimary send: #settingsOpen to: self;
-						yourself);
-				appendChild: (SlIconButton named: trailing third);
-				yourself);
-			yourself);
-		yourself
-]
-
-{ #category : #topAppBar }
 SlmdTopAppBarView >> topAppBarMenuDisplay: aBoolean [
 	| element |
 
 	element := self topAppBarMenuFind.
-	element ifNil: [ self error: 'topAppBarMenuFind answered nil' ].
+	element ifNil: [ self error: '**** topAppBarMenuFind answered nil' ].
 	element ifNotNil: [
 		aBoolean
 			ifTrue: [ element removeStyleAt: 'display' ]

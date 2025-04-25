@@ -8,27 +8,26 @@ Class {
 SlmdLayoutPresenter >> handleAdapt: anObject [
 	| aspect aspectValue |
 
-	anObject printString crTrace.
-
+	"anObject printString traceCr."
 	aspect := anObject parameterAt: #aspect.
 	aspectValue := anObject parameterAt: #value.
 
-	aspect = #bodyPanes ifTrue: [
-		'aspect = #bodyPanes' crTrace.
-		^ self model useTwoPaneBody: aspectValue; valueChanged ].
+	aspect = #paneLayout ifTrue: [
+		"('#paneLayout -> ' , aspectValue asString) traceCr."
+		self model paneLayout useTwoPaneBody: aspectValue.
+		^ self ].
 
 	aspect = #twoPaneSplitPosition ifTrue: [
-		'aspect = #twoPaneSplitPosition' crTrace.
-		"^ self model twoPaneSplitPosition: aspectValue; valueChanged" ].
+		"('#twoPaneSplitPosition -> ' , aspectValue asString) traceCr."
+		^ self model paneLayout pane1Width: aspectValue"; valueChanged" ].
 
 	aspect = #topAppBarMenuDisplay ifTrue: [
-		'aspect = #topAppBarMenuDisplay' crTrace.
-		^ self model paneLayout topAppBarModel topAppBarMenuDisplay: aspectValue; valueChanged ].
+		"('#topAppBarMenuDisplay -> ' , aspectValue asString) traceCr."
+		^ self model paneLayout topAppBarModel topAppBarMenuDisplay: aspectValue"; valueChanged" ].
 
 	aspect = #topAppBarDisplay ifTrue: [
-		'aspect = #topAppBarDisplay' crTrace.
-		^ self model paneLayout topAppBarDisplayed: aspectValue; valueChanged ].
-
+		"('#topAppBarDisplay -> ' , aspectValue asString) traceCr."
+		^ self model paneLayout topAppBarDisplayed: aspectValue"; valueChanged" ]
 ]
 
 { #category : #view }
@@ -61,17 +60,10 @@ SlmdLayoutPresenter >> navigateTo: anObject [
 SlmdLayoutPresenter >> renderView [
 
 	self model paneLayout ifNotNil: [ :value |
-		self
-			renderChildViewForModel: value
-			usingPresenter: (
-				self model useTwoPaneBody
-					ifTrue: [ SlmdTwoPanePresenter ]
-					ifFalse: [ SlmdOnePanePresenter ])
-			atSlotNamed: #paneLayout ].
+		self renderChildViewForModel: value atSlotNamed: #paneLayout ].
 
 	self application sidesheetModel ifNotNil: [ :value |
-		self renderChildViewForModel: value atSlotNamed: #sidesheet ].
-
+		self renderChildViewForModel: value atSlotNamed: #sidesheet ]
 ]
 
 { #category : #rendering }

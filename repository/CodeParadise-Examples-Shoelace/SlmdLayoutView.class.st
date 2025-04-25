@@ -9,10 +9,18 @@ Class {
 		'fab',
 		'colorThemeName',
 		'navActions',
-		'navItems'
+		'navItems',
+		'debounceTransition'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
+
+{ #category : #'class initialization' }
+SlmdLayoutView class >> beLoaded [
+
+	CpTransition beLoaded.
+
+]
 
 { #category : #'web resources' }
 SlmdLayoutView class >> globalStyle [
@@ -172,7 +180,7 @@ SlmdLayoutView class >> template [
 "
 "
 	^ '
-<div id="smdLayout" class="smd-layout">
+<div id="container" class="smd-layout">
   <div style="display: flex; flex-direction: column">
     <div style="height: 100%; flex: 1; display: flex; flex-direction: row">
       <div id="smdNavRegion" class="smd-navRegion">
@@ -200,6 +208,8 @@ SlmdLayoutView class >> template [
 { #category : #events }
 SlmdLayoutView >> adaptWithAspect: aspect value: anObject [
 
+	self traceCr: aspect printString, ' -> ', anObject printString.
+
 	self serverAnnounce: (CpActionRequested
 		id: #adapt
 		parameters: {
@@ -218,10 +228,10 @@ SlmdLayoutView >> addAttributeContainerStyle: element [
 SlmdLayoutView >> addNavActionId: id key: key value: value [
 	| item |
 
-	(navActions includesKey: id asSymbol) ifFalse: [
-		navActions at: id asSymbol put: Dictionary new ].
-	item := navActions at: id asSymbol.
-	item at: key asSymbol put: value
+	(navActions includesKey: id "asSymbol") ifFalse: [
+		navActions at: id "asSymbol" put: Dictionary new ].
+	item := navActions at: id "asSymbol".
+	item at: key "asSymbol" put: value
 ]
 
 { #category : #nav }
@@ -249,13 +259,6 @@ SlmdLayoutView >> bodyFind [
 	^ CpHtmlElement documentBody
 ]
 
-{ #category : #events }
-SlmdLayoutView >> bodyPanesAdapt: anObject [
-
-	self adaptWithAspect: #bodyPanes value: anObject
-
-]
-
 { #category : #body }
 SlmdLayoutView >> bodyRegionFind [
 
@@ -263,17 +266,16 @@ SlmdLayoutView >> bodyRegionFind [
 ]
 
 { #category : #body }
-SlmdLayoutView >> bodySetUp [
-
-	self bodyPanesAdapt: self useTwoPaneBody.
-
-]
-
-{ #category : #body }
 SlmdLayoutView >> bodySplitPanelAdapt [
+	| paneLayout w |
 
-	self adaptWithAspect: #twoPaneSplitPosition value: self pane1WidthCompute
+	paneLayout := SlmdPaneLayoutView first.
+	w := self pane1WidthCompute.
 
+	paneLayout ifNotNil: [
+		paneLayout pane1WidthSet: w ].
+
+	self adaptWithAspect: #twoPaneSplitPosition value: w
 ]
 
 { #category : #bottomAppBar }
@@ -473,6 +475,24 @@ SlmdLayoutView >> currentLayout: anObject [
 	currentLayout := anObject
 ]
 
+{ #category : #layout }
+SlmdLayoutView >> debounceResizeEvent: anEvent [
+
+	"If a running debounce transition is available, we're done"
+	(debounceTransition isNotNil and: [ debounceTransition isRunning ])
+		ifTrue: [ ^ self ].
+
+	"Create new debounce transition, run it once"
+	debounceTransition
+		ifNotNil: [ debounceTransition stop ]
+		ifNil: [
+			debounceTransition := (CpTransition onBlock: [ self handleResizeEvent: anEvent ])
+				duration: 0 "Execute once" ].
+
+	"Set timeout for the debounce"
+	debounceTransition startDelayedBy: 100.
+]
+
 { #category : #'color theme' }
 SlmdLayoutView >> defaultColorThemeName [
 
@@ -552,20 +572,27 @@ nil -> 'Default'.
 
 { #category : #layout }
 SlmdLayoutView >> handleResizeEvent: anEvent [
+	| newWidth |
+
+	debounceTransition := nil.
 
 	anEvent detail valuesDo: [ :eachDetail |
-		eachDetail do: [ :eachEntry | | rect |
+		eachDetail do: [ :eachEntry |
+			| rect |
 			rect := eachEntry apply: 'contentRect'.
-			width := rect apply: 'width'.
+			newWidth := rect apply: 'width'
 			"Don't bother with height. It seems to report 0. Probably no browser support"
 			"height := rect apply: 'height'." ] ].
 
+	width = newWidth ifTrue: [
+		^ self ].
+
+	width := newWidth.
 	self bodySplitPanelAdapt.
 	self useAutoLayout not ifTrue: [
 		^ self ].
 
-	self layoutAdaptToWidth.
-
+	self layoutAdaptToWidth
 ]
 
 { #category : #accessing }
@@ -620,19 +647,13 @@ SlmdLayoutView >> layoutAdaptToWidth [
 ]
 
 { #category : #layout }
-SlmdLayoutView >> layoutFind [
-
-	^ CpHtmlElement documentBody firstDescendantMatching: '#smdLayout'
-]
-
-{ #category : #layout }
 SlmdLayoutView >> layoutSetUp [
 	"Invoked by presenter's viewInitialize"
 
 	self settingsSetUp.
 	self navModalPaneSetUp.
 	self navSetUp.
-	self bodySetUp.
+	"self bodySetUp."
 	self sidesheetSetUp.
 	self bottomAppBarSetUp.
 
@@ -701,9 +722,11 @@ SlmdLayoutView >> layoutTypeBuildChooser [
 { #category : #layout }
 SlmdLayoutView >> layoutTypeChangeAutoResize: aLayoutType [
 
-	self layoutType: aLayoutType.
-	self layoutTypeAdapt: aLayoutType.
+	aLayoutType = self layoutType ifTrue: [
+		^ self ].
 
+	self layoutType: aLayoutType.
+	self layoutTypeAdapt: aLayoutType
 ]
 
 { #category : #layout }
@@ -1063,17 +1086,31 @@ SlmdLayoutView >> pane1WidthMin [
 	^ 300
 ]
 
+{ #category : #events }
+SlmdLayoutView >> paneLayoutAdapt: anObject [
+	| paneLayout |
+
+	paneLayout := SlmdPaneLayoutView first.
+
+	paneLayout ifNotNil: [
+		anObject
+			ifTrue: [ paneLayout useTwoPaneLayout ]
+			ifFalse: [ paneLayout useOnePaneLayout ] ].
+
+	self adaptWithAspect: #paneLayout value: anObject
+
+]
+
 { #category : #layout }
 SlmdLayoutView >> resizeSetUp [
-	| target div resize |
 
-	target := (self shadowedElementWithId: 'smdLayout').
+	| target div resize |
+	target := self shadowedElementWithId: 'container'.
 	div := target firstChild.
 	resize := SlResizeObserver new.
-	resize when: SlResizeEvent send: #handleResizeEvent: to: self.
+	resize when: SlResizeEvent send: #debounceResizeEvent: to: self.
 	target replaceChild: div with: resize.
-	resize appendChild: div.
-
+	resize appendChild: div
 ]
 
 { #category : #settings }
@@ -1248,6 +1285,11 @@ SlmdLayoutView >> sidesheetSetUp [
 
 { #category : #events }
 SlmdLayoutView >> topAppBarDisplay: anObject [
+	| component |
+
+	component := SlmdPaneLayoutView first.
+	component ifNotNil: [
+		component topAppBarDisplay: anObject ].
 
 	self adaptWithAspect: #topAppBarDisplay value: anObject
 
@@ -1255,6 +1297,11 @@ SlmdLayoutView >> topAppBarDisplay: anObject [
 
 { #category : #events }
 SlmdLayoutView >> topAppBarMenuDisplay: anObject [
+	| components |
+
+	components := SlmdTopAppBarView all.
+	components do: [ :each |
+		each topAppBarMenuDisplay: anObject ].
 
 	self adaptWithAspect: #topAppBarMenuDisplay value: anObject
 
@@ -1332,7 +1379,7 @@ SlmdLayoutView >> useTwoPaneBodyBuildToggle [
 		newToggleId: 'useTwoPaneBody'
 		label: 'Use two pane layout'
 		do: [
-			self bodyPanesAdapt: self useTwoPaneBody ].
+			self paneLayoutAdapt: self useTwoPaneBody ].
 
 ]
 
@@ -1343,7 +1390,7 @@ SlmdLayoutView >> useTwoPanesChangeAutoResize: aBoolean [
 		^ self ].
 
 	self useTwoPaneBody: aBoolean.
-	self bodyPanesAdapt: aBoolean.
+	self paneLayoutAdapt: aBoolean.
 
 ]
 

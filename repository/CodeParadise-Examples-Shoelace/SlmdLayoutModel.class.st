@@ -3,7 +3,7 @@ Class {
 	#superclass : #SlmdModel,
 	#instVars : [
 		'paneLayout',
-		'useTwoPaneBody'
+		'twoPaneSplitPosition'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
@@ -13,7 +13,7 @@ SlmdLayoutModel >> initialize [
 
 	super initialize.
 
-	useTwoPaneBody := true.
+	twoPaneSplitPosition := 300.
 	paneLayout := SlmdPaneLayoutModel new.
 
 ]
@@ -31,13 +31,13 @@ SlmdLayoutModel >> paneLayout: anObject [
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> useTwoPaneBody [
+SlmdLayoutModel >> twoPaneSplitPosition [
 
-	^ useTwoPaneBody
+	^ twoPaneSplitPosition
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> useTwoPaneBody: anObject [
+SlmdLayoutModel >> twoPaneSplitPosition: anObject [
 
-	useTwoPaneBody := anObject
+	twoPaneSplitPosition := anObject
 ]

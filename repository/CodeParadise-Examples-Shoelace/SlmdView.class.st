@@ -46,6 +46,15 @@ SlmdView >> findByIdInShadowDom: anId ifNone: aBlock [
 
 ]
 
+{ #category : #topAppBar }
+SlmdView >> moveChildrenFromSlot: fromSlot to: toSlot [
+	| list |
+
+	list := self childrenAtSlotNamed: fromSlot.
+	list do: [ :each | self appendChild: each atSlotNamed: toSlot ].
+
+]
+
 { #category : #nav }
 SlmdView >> navModalPaneFind [
 
@@ -63,5 +72,20 @@ SlmdView >> settingsFind [
 SlmdView >> settingsOpen [
 
 	self settingsFind beOpen
+
+]
+
+{ #category : #topAppBar }
+SlmdView >> shadowElementId: elementId show: aBoolean [
+	| element |
+
+	element := self findByIdInShadowDom: elementId ifNone: [ nil ].
+	element ifNotNil: [
+		aBoolean
+			ifTrue: [ element removeStyleAt: 'display' ]
+			ifFalse: [ element styleAt: 'display' put: 'none' ] ].
+	"aBoolean
+		ifTrue: [ element removeClass: #'smd-hidden' ]
+		ifFalse: [ element addClass: #'smd-hidden' ]"
 
 ]

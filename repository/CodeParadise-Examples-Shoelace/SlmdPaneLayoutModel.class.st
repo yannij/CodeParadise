@@ -69,3 +69,14 @@ SlmdPaneLayoutModel >> useTwoPaneBody: anObject [
 
 	useTwoPaneBody := anObject
 ]
+
+{ #category : #accessing }
+SlmdPaneLayoutModel >> useTwoPaneBodySet: anObject [
+
+	self useTwoPaneBody = anObject ifTrue: [
+		^ self ].
+
+	self useTwoPaneBody: anObject.
+	self valueChanged.
+
+]

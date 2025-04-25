@@ -1,11 +1,11 @@
 Class {
-	#name : #TBBlogView,
+	#name : #SlmdListDetailView,
 	#superclass : #CpView,
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
 { #category : #'web resources' }
-TBBlogView class >> style [
+SlmdListDetailView class >> style [
 
 	<webResource: #css>
 
@@ -22,7 +22,7 @@ TBBlogView class >> style [
 ]
 
 { #category : #'web resources' }
-TBBlogView class >> template [
+SlmdListDetailView class >> template [
 
 	<webResource: #html>
 

@@ -88,6 +88,15 @@ MD3ExampleApplication >> layout: anObject [
 	layout := anObject
 ]
 
+{ #category : #actions }
+MD3ExampleApplication >> load [
+
+	super load.
+
+	"Add development tools"
+	self addViewInspector
+]
+
 { #category : #accessing }
 MD3ExampleApplication >> navActions [
 

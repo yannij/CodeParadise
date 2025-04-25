@@ -1,21 +1,21 @@
 Class {
-	#name : #TBPostListItemView,
+	#name : #SlmdListItemView,
 	#superclass : #CpView,
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
 { #category : #'web resources' }
-TBPostListItemView class >> template [
+SlmdListItemView class >> template [
 
 	<webResource: #html>
 
 	^ '<div id="container">
-  <slot name="card"></slot>
+  <slot name="listItem"></slot>
 </div>'
 ]
 
 { #category : #rendering }
-TBPostListItemView >> renderTextSlot: slotName value: aString index: index [
+SlmdListItemView >> renderTextSlot: slotName value: aString index: index [
 	| div |
 
 	div := #div asHtmlTag
@@ -28,13 +28,11 @@ TBPostListItemView >> renderTextSlot: slotName value: aString index: index [
 			yourself);
 		yourself.
 
-	"(self firstChildAtSlotNamed: slotName)
-		textContent: aString"
-	self replaceAllChildrenWith: div atSlotNamed: 'card'.
+	self replaceAllChildrenWith: div atSlotNamed: 'listItem'.
 ]
 
 { #category : #rendering }
-TBPostListItemView >> setDetail: index [
+SlmdListItemView >> setDetail: index [
 
 	self serverAnnounce: (CpActionRequested id: #detail parameters: { #index -> index } asDictionary).
 
