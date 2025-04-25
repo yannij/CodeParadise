@@ -27,41 +27,6 @@ SlmdLayoutView class >> globalStyle [
 	<webResource: #css>
 
 	^ self globalStyleNav
-, self globalStyleBottomAppBar
-]
-
-{ #category : #'web resources' }
-SlmdLayoutView class >> globalStyleBottomAppBar [
-
-	<webResource: #css>
-
-	^ '
-.smd-footer {
-  flex: 0 0 72px;
-  background: var(--sl-color-primary-200);
-}
-
-.smd-bottomAppBar {
-  z-index: 10;
-  display: flex;
-  flex-flow: row wrap;
-  padding: 12px 16px 12px 4px;
-}
-
-.smd-bottomAppBar-button {
-  height: 48px;
-  width: 48px;
-  font-size: 24px;
-}
-
-.smd-bottomAppBar-fab {
-  margin-left: auto;
-  height: 48px;
-  width: 48px;
-  font-size: 24px;
-  background: var(--sl-color-primary-300);
-}
-'
 ]
 
 { #category : #'web resources' }
@@ -177,8 +142,7 @@ SlmdLayoutView class >> style [
 SlmdLayoutView class >> template [
 
 	<webResource: #html>
-"
-"
+
 	^ '
 <div id="container" class="smd-layout">
   <div style="display: flex; flex-direction: column">
@@ -279,49 +243,10 @@ SlmdLayoutView >> bodySplitPanelAdapt [
 ]
 
 { #category : #bottomAppBar }
-SlmdLayoutView >> bottomAppBarBuild [
-	| element icons |
-
-	icons := self iconButtons.
-
-	element := #div asHtmlTag addClass: 'smd-bottomAppBar'; yourself.
-	icons size >= 1 ifTrue: [
-		element appendChild: (
-			self buildIconButton: icons first class: 'smd-bottomAppBar-button') ].
-	icons size >= 2 ifTrue: [
-		element appendChild: (
-			self buildIconButton: icons second class: 'smd-bottomAppBar-button') ].
-	icons size >= 3 ifTrue: [
-		element appendChild: (
-			self buildIconButton: icons third class: 'smd-bottomAppBar-button') ].
-
-	self fab notNil ifTrue: [
-		element appendChild: (
-			self buildIconButton: self fab class: 'smd-bottomAppBar-fab') ].
-
-	^ #footer asHtmlTag
-		addClass: 'smd-footer';
-		appendChild: element;
-		yourself
-
-]
-
-{ #category : #bottomAppBar }
 SlmdLayoutView >> bottomAppBarDisplay: aBoolean [
-	| element |
 
-	element := self bottomAppBarFind.
-	element ifNotNil: [
-		aBoolean
-			ifTrue: [ element removeStyleAt: 'display' ]
-			ifFalse: [ element styleAt: 'display' put: 'none' ] ].
+	self shadowElementId: 'smdBottomAppBar' show: aBoolean
 
-]
-
-{ #category : #bottomAppBar }
-SlmdLayoutView >> bottomAppBarFind [
-
-	^ self shadowedElementWithId: 'smdBottomAppBar'
 ]
 
 { #category : #bottomAppBar }
@@ -340,24 +265,6 @@ SlmdLayoutView >> bottomAppBarOn [
 	self bottomAppBarDisplay: true.
 	self adjustBodyHeight.
 
-]
-
-{ #category : #bottomAppBar }
-SlmdLayoutView >> bottomAppBarSetUp [
-
-	self
-		replaceAllChildrenWith: self bottomAppBarBuild
-		atSlotNamed: 'bottomAppBar'.
-
-]
-
-{ #category : #bottomAppBar }
-SlmdLayoutView >> buildIconButton: iconName class: cssClass [
-
-	^ (CpHtmlElement newWithTag: #div)
-		addClass: cssClass;
-		appendChild: (SlIconButton named: iconName);
-		yourself
 ]
 
 { #category : #'nav - drawer' }
@@ -655,7 +562,7 @@ SlmdLayoutView >> layoutSetUp [
 	self navSetUp.
 	"self bodySetUp."
 	self sidesheetSetUp.
-	self bottomAppBarSetUp.
+	"self bottomAppBarSetUp."
 
 	self colorThemeAdapt: self defaultColorThemeName.
 	self fontFamilyAdapt: self defaultFontFamily.
@@ -690,7 +597,7 @@ SlmdLayoutView >> layoutTypeAdapt: aLayoutType [
 	aLayoutType = #expanded ifTrue: [
 		self navRegionModalOff; navTypeUseRail; bottomAppBarOff; sidesheetOff; useTwoPanesChangeAutoResize: true  ].
 	aLayoutType = #large ifTrue: [
-		 self navRegionModalOff; navTypeUseDrawer; bottomAppBarOff; sidesheetOff; useTwoPanesChangeAutoResize: true  ].
+		 self navRegionModalOff; navTypeUseRail; bottomAppBarOff; sidesheetOff; useTwoPanesChangeAutoResize: true  ].
 	aLayoutType = #'extra-large' ifTrue: [
 		self navRegionModalOff; navTypeUseDrawer; bottomAppBarOff; sidesheetOn; useTwoPanesChangeAutoResize: true  ].
 
@@ -1088,14 +995,13 @@ SlmdLayoutView >> pane1WidthMin [
 
 { #category : #events }
 SlmdLayoutView >> paneLayoutAdapt: anObject [
-	| paneLayout |
+	| component |
 
-	paneLayout := SlmdPaneLayoutView first.
-
-	paneLayout ifNotNil: [
+	component := SlmdPaneLayoutView first.
+	component ifNotNil: [
 		anObject
-			ifTrue: [ paneLayout useTwoPaneLayout ]
-			ifFalse: [ paneLayout useOnePaneLayout ] ].
+			ifTrue: [ component useTwoPaneLayout ]
+			ifFalse: [ component useOnePaneLayout ] ].
 
 	self adaptWithAspect: #paneLayout value: anObject
 
