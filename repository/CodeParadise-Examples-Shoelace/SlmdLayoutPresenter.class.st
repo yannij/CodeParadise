@@ -17,6 +17,12 @@ SlmdLayoutPresenter >> handleAdapt: anObject [
 		self model paneLayout useTwoPaneBody: aspectValue.
 		^ self ].
 
+	aspect = #navType ifTrue: [
+		^ self model nav navType: aspectValue ].
+
+	aspect = #navModal ifTrue: [
+		^ self model nav isModal: aspectValue ].
+
 	aspect = #twoPaneSplitPosition ifTrue: [
 		"('#twoPaneSplitPosition -> ' , aspectValue asString) traceCr."
 		^ self model paneLayout pane1Width: aspectValue"; valueChanged" ].
@@ -31,25 +37,6 @@ SlmdLayoutPresenter >> handleAdapt: anObject [
 ]
 
 { #category : #view }
-SlmdLayoutPresenter >> layoutSetUp [
-
-	self navSetUp.
-
-
-]
-
-{ #category : #rendering }
-SlmdLayoutPresenter >> navSetUp [
-	| v |
-
-	v := self view.
-	self application navActions do: [ :eachNavAction |
-		eachNavAction asDictionary keysAndValuesDo: [ :key :value |
-			v addNavActionId: eachNavAction id key: key value: value ].
-		v addNavItem: eachNavAction id ]
-]
-
-{ #category : #view }
 SlmdLayoutPresenter >> navigateTo: anObject [
 
 	self application pane1Model handleActionRequest: anObject; valueChanged.
@@ -59,14 +46,20 @@ SlmdLayoutPresenter >> navigateTo: anObject [
 { #category : #view }
 SlmdLayoutPresenter >> renderView [
 
+	self model nav ifNotNil: [ :value |
+		"Render the nav before the panes, so TopAppBar can find
+		the model nav pane for menu button to open"
+		self renderChildViewForModel: value atSlotNamed: #navRegion ].
+
 	self model paneLayout ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: #paneLayout ].
+
+	self application sidesheetModel ifNotNil: [ :value |
+		self renderChildViewForModel: value atSlotNamed: #sidesheet ].
 
 	self model bottomAppBar ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: #bottomAppBar ].
 
-	self application sidesheetModel ifNotNil: [ :value |
-		self renderChildViewForModel: value atSlotNamed: #sidesheet ]
 ]
 
 { #category : #view }
@@ -81,7 +74,6 @@ SlmdLayoutPresenter >> viewCreated [
 { #category : #view }
 SlmdLayoutPresenter >> viewInitialized [
 
-	self layoutSetUp.
 	self view layoutSetUp.
 	self view adjustBodyHeight.
 

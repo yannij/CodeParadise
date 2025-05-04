@@ -24,90 +24,9 @@ SlmdLayoutView class >> beLoaded [
 SlmdLayoutView class >> globalStyle [
 	<webResource: #css>
 
-	^ self globalStyleNav
-]
-
-{ #category : #'web resources' }
-SlmdLayoutView class >> globalStyleNav [
-
-	<webResource: #css>
-
 	^ '
-.smd-navRegion {
-  flex: 0 0 80px;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-}
-
-.smd-nav-font {
-  line-height: var(--sl-line-height-normal);
-  font-size: var(--sl-font-size-medium);
-  font-weight: var(--sl-font-weight-bold);
-}
-
-.smd-navrail {
-  height: 100%;
-  overflow-y: auto;
-  padding: 0;
-  margin: 0;
-  background: var(--sl-color-primary-100);
-}
-
-.smd-navrail-item {
-  display: flex;
-  flex-flow: column;
-  height: 56px;
-  width: 80px;
-  padding-top: 12px;
-}
-
-.smd-navrail-icon {
-  padding: 0 16px;
-  font-size: 24px;
-}
-
-.smd-navrail-labelText {
-  padding: 0;
-  line-height: 16pt;
-  font-size: var(--sl-font-size-x-small);
-  text-align: center;
-  overflow-x: clip;
-}
-
-.smd-navdrawer {
-  height: 100%;
-  padding: 0 4px 0 12px;
-  margin: 0;
-  background: var(--sl-color-primary-100);
-  flow-direction: row;
-}
-
-.smd-nav-drawer::part(panel) {
-  background: var(--sl-color-primary-100);
-}
-
-.smd-navdrawer-headline {
-  padding: 12px 4px 12px 12px;
-}
-
-.smd-navdrawer-item {
-  display: flex;
-  border-radius: 28px;
-  height: 56px;
-  background: var(--sl-color-primary-100);
-}
-
-.smd-navdrawer-icon {
-  padding-top: 8px;
-  padding-left: 4px;
-  font-size: 24px;
-}
-
-.smd-navdrawer-labelText {
-  padding-top: 12px;
-  padding-left: 12px;
-  width: 236px;
+.smd-hidden {
+  display: none;
 }
 '
 ]
@@ -161,7 +80,6 @@ SlmdLayoutView class >> template [
       <slot name="bottomAppBar"></slot>
     </footer>
   </div>
-  <slot name="navModalPane"></slot>
   <slot name="settings"></slot>
 </div>
 '
@@ -184,22 +102,6 @@ SlmdLayoutView >> adaptWithAspect: aspect value: anObject [
 SlmdLayoutView >> addAttributeContainerStyle: element [
 
 	^ element styleAt: 'padding-bottom' put: '12px'; yourself
-]
-
-{ #category : #nav }
-SlmdLayoutView >> addNavActionId: id key: key value: value [
-	| item |
-
-	(navActions includesKey: id "asSymbol") ifFalse: [
-		navActions at: id "asSymbol" put: Dictionary new ].
-	item := navActions at: id "asSymbol".
-	item at: key "asSymbol" put: value
-]
-
-{ #category : #nav }
-SlmdLayoutView >> addNavItem: aNavActionId [
-
-	self navItems add: aNavActionId asSymbol
 ]
 
 { #category : #body }
@@ -263,47 +165,6 @@ SlmdLayoutView >> bottomAppBarOn [
 	self bottomAppBarDisplay: true.
 	self adjustBodyHeight.
 
-]
-
-{ #category : #'nav - drawer' }
-SlmdLayoutView >> buildNavdrawerItem: aNavAction [
-	| iconName arg1 |
-
-	iconName := aNavAction at: #iconName.
-	arg1 := aNavAction at: #arg1.
-
-	^ #div asHtmlTag
-		addClass: 'smd-navdrawer-item';
-		addClass: 'smd-nav-font';
-		when: CpClickEvent basicPrimary do: [ self navigateTo: arg1 ] for: self;
-		appendChild: ((SlIconButton named: iconName) addClass: 'smd-navdrawer-icon'; yourself);
-		appendChild: (#div asHtmlTag
-			addClass: 'smd-navdrawer-labelText';
-			textContent: (aNavAction at: #iconLabel);
-			yourself);
-		yourself
-]
-
-{ #category : #'nav - rail' }
-SlmdLayoutView >> buildNavrailItem: aNavAction [
-	| iconName arg1 |
-
-	iconName := aNavAction at: #iconName.
-	arg1 := aNavAction at: #arg1.
-
-	^ #div asHtmlTag
-		addClass: 'smd-navrail-item';
-		when: CpClickEvent basicPrimary do: [ self navigateTo: arg1 ] for: self;
-		appendChild: (
-			(SlIconButton named: iconName)
-				addClass: 'smd-navrail-icon';
-				yourself);
-		appendChild: (
-			#div asHtmlTag
-				addClass: 'smd-navrail-labelText';
-				textContent: (aNavAction at: #iconLabel);
-				yourself);
-		yourself
 ]
 
 { #category : #'color theme' }
@@ -532,11 +393,7 @@ SlmdLayoutView >> layoutSetUp [
 	"Invoked by presenter's viewInitialize"
 
 	self settingsSetUp.
-	self navModalPaneSetUp.
-	self navSetUp.
-	"self bodySetUp."
 	self sidesheetSetUp.
-	"self bottomAppBarSetUp."
 
 	self colorThemeAdapt: self defaultColorThemeName.
 	self fontFamilyAdapt: self defaultFontFamily.
@@ -637,15 +494,6 @@ SlmdLayoutView >> navActions: anObject [
 	navActions := anObject
 ]
 
-{ #category : #nav }
-SlmdLayoutView >> navContentBuild [
-
-	self navTypeIsDrawer ifTrue: [
-		^ self navdrawerBuild ].
-
-	^ self navrailBuild
-]
-
 { #category : #accessing }
 SlmdLayoutView >> navItems [
 
@@ -658,43 +506,20 @@ SlmdLayoutView >> navItems: anObject [
 	navItems := anObject
 ]
 
-{ #category : #nav }
-SlmdLayoutView >> navModalPaneBuild [
-	| drawer |
+{ #category : #events }
+SlmdLayoutView >> navModalSet: anObject [
 
-	drawer := SlDrawer new
-		id: 'smdNavModalPane';
-		addClass: 'smd-nav-drawer';
-		placement: 'start';
-		beNoHeader;
-		customPropertyAt: 'size' put: self navTypeWidth printString;
-		customPropertyAt: 'body-spacing' put: '0';
-		customPropertyAt: 'header-spacing' put: '0';
-		customPropertyAt: 'footer-spacing' put: '0';
-		appendChild: ((CpHtmlElement newWithTag: #div)
-			id: 'smdNavModalPaneContent';
-			"contentText: 'Lorem ipsum...';"
-			yourself);
-		yourself.
-	
-	"drawer footer: (
-		(SlButton label: 'Close')
-			when: CpClickEvent basicPrimary send: #hide to: drawer;
-			yourself)."
+	"Set type in nav view"
+	SlmdNavView first isModal: anObject.
 
-	^ drawer
-]
+	"Set type in settings view"
+	self useModalNav: anObject.
 
-{ #category : #nav }
-SlmdLayoutView >> navModalPaneContentFind [
+	"Adapt layout"
+	self navRegionModalAdapt: anObject.
 
-	^ CpHtmlElement documentBody firstDescendantMatching: '#smdNavModalPaneContent'
-]
-
-{ #category : #nav }
-SlmdLayoutView >> navModalPaneSetUp [
-
-	self replaceAllChildrenWith: self navModalPaneBuild atSlotNamed: #'navModalPane'
+	"Set type in nav model"
+	self adaptWithAspect: #navModal value: anObject
 
 ]
 
@@ -728,7 +553,6 @@ SlmdLayoutView >> navRegionModalAdapt: isOn [
 			self navRegionDisplay: true.
 			self topAppBarMenuDisplay: false ].
 
-	self navSetUp.
 	self bodySplitPanelAdapt.
 
 ]
@@ -749,21 +573,6 @@ SlmdLayoutView >> navRegionModalOn [
 
 ]
 
-{ #category : #nav }
-SlmdLayoutView >> navSetUp [
-
-	self useModalNav
-		ifTrue: [ | el |
-			self removeChildrenAtSlotNamed: 'navRegion'.
-			el := self navModalPaneContentFind.
-			el ifNotNil: [
-				el replaceAllChildrenWith: self navContentBuild ]]
-		ifFalse: [ 
-			self
-				replaceAllChildrenWith: self navContentBuild
-				atSlotNamed: 'navRegion' ]
-]
-
 { #category : #settings }
 SlmdLayoutView >> navType [
 
@@ -778,16 +587,21 @@ SlmdLayoutView >> navType: aNavType [
 
 { #category : #nav }
 SlmdLayoutView >> navTypeAdapt: aNavType [
+	| modalElement navComponent |
+
+	"Set type in nav view"
+	navComponent := SlmdNavView first.
+	navComponent ifNotNil: [ navComponent navType: aNavType ].
 
 	self navRegionFind
 		styleAt: 'flex'
 		put: '0 0 ', self navTypeWidth printString, 'px'.
 
-	self navModalPaneFind
-		customPropertyAt: 'size'
-		put: self navTypeWidth printString.
+	modalElement := self navModalPaneFind.
+	modalElement ifNotNil: [
+		modalElement customPropertyAt: 'size' put: self navTypeWidth printString.
+		SlmdNavView first navSetUp ].
 
-	self navSetUp.
 	self bodySplitPanelAdapt.
 
 ]
@@ -820,7 +634,7 @@ SlmdLayoutView >> navTypeBuildChooser [
 		propertyAt: 'value' put: self navTypeDefault;
 		yourself.
 
-	radioGroup when: SlChangeEvent do: [ self navTypeAdapt: radioGroup value ] for: self.
+	radioGroup when: SlChangeEvent do: [ self navTypeSet: radioGroup value ] for: self.
 
 	radioGroup appendChild: (SlRadio new value: #rail; textContent: 'Rail'; yourself).
 	radioGroup appendChild: (SlRadio new value: #drawer; textContent: 'Drawer'; yourself).
@@ -853,11 +667,25 @@ SlmdLayoutView >> navTypeIsRail [
 	^ self navType = #rail
 ]
 
+{ #category : #events }
+SlmdLayoutView >> navTypeSet: anObject [
+
+	"Adapt layout"
+	self navTypeAdapt: anObject.
+
+	"Set type in settings view"
+	self navType: anObject.
+
+	"Set type in nav model"
+	self adaptWithAspect: #navType value: anObject
+
+]
+
 { #category : #nav }
 SlmdLayoutView >> navTypeUseDrawer [
 
 	self navTypeBeDrawer.
-	self navTypeAdapt: #drawer.
+	self navTypeSet: #drawer.
 
 ]
 
@@ -865,7 +693,7 @@ SlmdLayoutView >> navTypeUseDrawer [
 SlmdLayoutView >> navTypeUseRail [
 
 	self navTypeBeRail.
-	self navTypeAdapt: #rail.
+	self navTypeSet: #rail.
 
 ]
 
@@ -876,64 +704,6 @@ SlmdLayoutView >> navTypeWidth [
 	self navTypeIsDrawer ifTrue: [ ^ 360 ].
 	self navTypeIsBar ifTrue: [ ^ 0 ].
 	^ 80
-]
-
-{ #category : #'nav - drawer' }
-SlmdLayoutView >> navdrawerBuild [
-	| element drawer |
-
-	drawer := self navModalPaneFind.
-
-	element := #div asHtmlTag
-		addClass: 'smd-navdrawer';
-		appendChild: (#div asHtmlTag
-			addClass: 'smd-navdrawer-headline';
-			addClass: 'smd-nav-font';
-			textContent: 'Headline';
-			yourself);
-		yourself.
-	navItems ifNotNil: [
-		navItems do: [ :eachItem | | navItem |
-			navItem := self buildNavdrawerItem: (navActions at: eachItem).
-			navItem when: CpClickEvent basicPrimary send: #hide to: drawer.
-			element appendChild: navItem ] ].
-
-	^ #nav asHtmlTag
-		styleAt: 'height' put: '100%';
-		"styleAt: 'overflow-y' put: 'auto';"
-		appendChild: element;
-		yourself
-]
-
-{ #category : #nav }
-SlmdLayoutView >> navigateTo: aString [
-
-	self serverAnnounce: (CpActionRequested id: #navigate parameters: { #to -> aString } asDictionary).
-
-]
-
-{ #category : #'nav - rail' }
-SlmdLayoutView >> navrailBuild [
-	| element drawer |
-
-	drawer := self navModalPaneFind.
-
-	element := #div asHtmlTag addClass: 'smd-navrail'; yourself.
-	navItems ifNotNil: [
-		navItems do: [ :eachItem | | navItem |
-			navItem := self buildNavrailItem: (navActions at: eachItem asSymbol).
-			navItem when: CpClickEvent basicPrimary send: #hide to: drawer.
-			element appendChild: navItem ] ].
-	"element appendChild: (
-		(SlIconButton named: 'gear')
-			when: CpClickEvent basicPrimary send: #settingsOpen to: self;
-			yourself)."
-
-	^ #nav asHtmlTag
-		styleAt: 'height' put: '100%';
-		"styleAt: 'overflow-y' put: 'auto';"
-		appendChild: element;
-		yourself
 ]
 
 { #category : #utilities }

@@ -33,6 +33,17 @@ SlmdBottomAppBarModel >> iconButtons: anObject [
 	iconButtons := anObject
 ]
 
+{ #category : #initialization }
+SlmdBottomAppBarModel >> initialize [
+
+	super initialize.
+
+	self
+		iconButtons: {'1-circle'. '2-circle' . '3-circle'. '4-circle'};
+		fab: 'plus'.
+
+]
+
 { #category : #accessing }
 SlmdBottomAppBarModel >> isVisible [
 

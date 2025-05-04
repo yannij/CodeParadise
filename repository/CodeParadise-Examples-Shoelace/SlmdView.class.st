@@ -56,9 +56,27 @@ SlmdView >> moveChildrenFromSlot: fromSlot to: toSlot [
 ]
 
 { #category : #nav }
-SlmdView >> navModalPaneFind [
+SlmdView >> navModalDivFind [
 
-	^ CpHtmlElement documentBody firstDescendantMatching: '#smdNavModalPane'
+	"^ CpHtmlElement documentBody firstDescendantMatching: '#smdNavModalDiv'"
+	^ SlmdLayoutView first findByIdInShadowDom: 'smdNavModalDiv'
+
+]
+
+{ #category : #nav }
+SlmdView >> navModalPaneFind [
+	| component |
+
+	"^ CpHtmlElement documentBody firstDescendantMatching: '#smdNavModalPane'"
+	component := SlmdNavView first.
+	^ component ifNil: [ nil ] ifNotNil: [ component drawer ].
+]
+
+{ #category : #nav }
+SlmdView >> navigateTo: aString [
+
+	self serverAnnounce: (CpActionRequested id: #navigate parameters: { #to -> aString } asDictionary).
+
 ]
 
 { #category : #layout }

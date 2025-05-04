@@ -4,6 +4,7 @@ Class {
 	#instVars : [
 		'paneLayout',
 		'twoPaneSplitPosition',
+		'nav',
 		'bottomAppBar'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
@@ -28,9 +29,21 @@ SlmdLayoutModel >> initialize [
 
 	twoPaneSplitPosition := 300.
 	paneLayout := SlmdPaneLayoutModel new.
+	nav := SlmdNavModel new.
 	bottomAppBar := SlmdBottomAppBarModel new.
-	self setBottomAppBar.
 
+]
+
+{ #category : #accessing }
+SlmdLayoutModel >> nav [
+
+	^ nav
+]
+
+{ #category : #accessing }
+SlmdLayoutModel >> nav: anObject [
+
+	nav := anObject
 ]
 
 { #category : #accessing }
@@ -43,15 +56,6 @@ SlmdLayoutModel >> paneLayout [
 SlmdLayoutModel >> paneLayout: anObject [
 
 	paneLayout := anObject
-]
-
-{ #category : #initialization }
-SlmdLayoutModel >> setBottomAppBar [
-
-	self bottomAppBar
-		iconButtons: {'1-circle'. '2-circle' . '3-circle'. '4-circle'};
-		fab: 'plus'.
-
 ]
 
 { #category : #accessing }

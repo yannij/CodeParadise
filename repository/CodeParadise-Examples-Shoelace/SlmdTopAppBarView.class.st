@@ -76,6 +76,12 @@ SlmdTopAppBarView class >> template [
 '
 ]
 
+{ #category : #topAppBar }
+SlmdTopAppBarView >> foobar [
+
+	self traceCr: '>>>> menu icon clicked <<<<'
+]
+
 { #category : #accessing }
 SlmdTopAppBarView >> leadingAction [
 
@@ -103,8 +109,10 @@ SlmdTopAppBarView >> renderLeadingAction: aString [
 
 	leadingAction ifNil: [
 		drawer := self navModalPaneFind.
+		drawer ifNil: [ self error: 'nav model drawer is nil' ].
 		leadingAction := (SlIconButton named: aString)
 			when: CpClickEvent basicPrimary send: #show to: drawer;
+			when: CpClickEvent basicPrimary send: #foobar to: self;
 			yourself ].
 
 	self

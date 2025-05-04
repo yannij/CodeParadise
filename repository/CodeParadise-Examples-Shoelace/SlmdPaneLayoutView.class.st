@@ -16,10 +16,6 @@ SlmdPaneLayoutView class >> style [
 
 	<webResource: #css>
 	^ '
-.smd-hidden {
-  display: none;
-}
-
 .smd-pane-layout {
   height: 100%;
   overflow-y: auto;
