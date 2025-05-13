@@ -46,6 +46,9 @@ SlmdLayoutPresenter >> navigateTo: anObject [
 { #category : #view }
 SlmdLayoutPresenter >> renderView [
 
+	self model layoutSettings ifNotNil: [ :value |
+		self renderChildViewForModel: value atSlotNamed: nil ].
+
 	self model nav ifNotNil: [ :value |
 		"Render the nav before the panes, so TopAppBar can find
 		the model nav pane for menu button to open"
@@ -65,16 +68,10 @@ SlmdLayoutPresenter >> renderView [
 { #category : #view }
 SlmdLayoutPresenter >> viewCreated [
 
-	self view when: (CpActionRequested id: #adapt) send: #handleAdapt: to: self.
+	super viewCreated.
 
-	self view when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self.
-
-]
-
-{ #category : #view }
-SlmdLayoutPresenter >> viewInitialized [
-
-	self view layoutSetUp.
-	self view adjustBodyHeight.
+	self view
+		when: (CpActionRequested id: #adapt) send: #handleAdapt: to: self;
+		when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self.
 
 ]

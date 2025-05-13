@@ -5,12 +5,6 @@ Class {
 }
 
 { #category : #utilities }
-SlmdView >> checkElementIsNil [
-
-	^ true
-]
-
-{ #category : #utilities }
 SlmdView >> findByIdInLightDom: anId [
 
 	^ self
@@ -46,7 +40,51 @@ SlmdView >> findByIdInShadowDom: anId ifNone: aBlock [
 
 ]
 
-{ #category : #topAppBar }
+{ #category : #utilities }
+SlmdView >> layoutViewFind [
+
+	^ SlmdLayoutView first
+]
+
+{ #category : #logging }
+SlmdView >> log: aString [
+
+	self traceCr: '**** ', self class name, ': ', aString
+]
+
+{ #category : #utilities }
+SlmdView >> modalDivFind [
+	"Locate the div where modal components can attach"
+
+	^ SlmdLayoutView first findByIdInShadowDom: 'smdModalDiv'
+
+]
+
+{ #category : #nav }
+SlmdView >> modalNavElementOrNil [
+	| component |
+
+	component := SlmdNavView first.
+	^ component ifNil: [ nil ] ifNotNil: [ component drawer ].
+]
+
+{ #category : #settings }
+SlmdView >> modalSettingsElement [
+	| component |
+
+	component := SlmdLayoutSettingsView first.
+	^ component ifNil: [ self error: 'Not found: layout settings view' ] ifNotNil: [ component drawer ].
+]
+
+{ #category : #settings }
+SlmdView >> modalSettingsOpen [
+
+	self traceCr: 'settingsOpen'.
+	self modalSettingsElement beOpen
+
+]
+
+{ #category : #utilities }
 SlmdView >> moveChildrenFromSlot: fromSlot to: toSlot [
 	| list |
 
@@ -56,44 +94,13 @@ SlmdView >> moveChildrenFromSlot: fromSlot to: toSlot [
 ]
 
 { #category : #nav }
-SlmdView >> navModalDivFind [
-
-	"^ CpHtmlElement documentBody firstDescendantMatching: '#smdNavModalDiv'"
-	^ SlmdLayoutView first findByIdInShadowDom: 'smdNavModalDiv'
-
-]
-
-{ #category : #nav }
-SlmdView >> navModalPaneFind [
-	| component |
-
-	"^ CpHtmlElement documentBody firstDescendantMatching: '#smdNavModalPane'"
-	component := SlmdNavView first.
-	^ component ifNil: [ nil ] ifNotNil: [ component drawer ].
-]
-
-{ #category : #nav }
 SlmdView >> navigateTo: aString [
 
 	self serverAnnounce: (CpActionRequested id: #navigate parameters: { #to -> aString } asDictionary).
 
 ]
 
-{ #category : #layout }
-SlmdView >> settingsFind [
-
-	^ CpHtmlElement documentBody firstDescendantMatching: '#smdSettings'
-
-]
-
-{ #category : #layout }
-SlmdView >> settingsOpen [
-
-	self settingsFind beOpen
-
-]
-
-{ #category : #topAppBar }
+{ #category : #utilities }
 SlmdView >> shadowElementId: elementId show: aBoolean [
 	| element |
 

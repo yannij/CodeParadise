@@ -25,5 +25,7 @@ SlmdPaneLayoutPresenter >> renderView [
 { #category : #rendering }
 SlmdPaneLayoutPresenter >> viewInitialized [
 
+	super viewInitialized.
+
 	self view bodySetUp
 ]

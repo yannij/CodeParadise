@@ -108,7 +108,7 @@ SlmdTopAppBarView >> renderLeadingAction: aString [
 	| drawer |
 
 	leadingAction ifNil: [
-		drawer := self navModalPaneFind.
+		drawer := self modalNavElementOrNil.
 		drawer ifNil: [ self error: 'nav model drawer is nil' ].
 		leadingAction := (SlIconButton named: aString)
 			when: CpClickEvent basicPrimary send: #show to: drawer;
@@ -126,7 +126,7 @@ SlmdTopAppBarView >> renderTrailingActions [
 	| gear |
 
 	gear := (SlIconButton named: 'gear')
-		when: CpClickEvent basicPrimary send: #settingsOpen to: self;
+		when: CpClickEvent basicPrimary send: #modalSettingsOpen to: self;
 		yourself.
 
 	self removeChildrenAtSlotNamed: 'trailingActions'.

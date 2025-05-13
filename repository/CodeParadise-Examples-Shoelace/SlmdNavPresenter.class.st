@@ -25,12 +25,16 @@ SlmdNavPresenter >> navigateTo: anObject [
 { #category : #view }
 SlmdNavPresenter >> viewCreated [
 
+	super viewCreated.
+
 	self view when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self.
 
 ]
 
 { #category : #view }
 SlmdNavPresenter >> viewInitialized [
+
+	super viewInitialized.
 
 	self navSetUp.
 

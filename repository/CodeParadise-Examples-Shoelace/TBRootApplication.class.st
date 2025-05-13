@@ -5,7 +5,8 @@ Class {
 		'layout',
 		'navActions',
 		'pane1Model',
-		'pane2Model'
+		'pane2Model',
+		'sidesheetModel'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
@@ -57,6 +58,7 @@ TBRootApplication >> initialize [
 
 	pane1Model := SlmdListDetailModel new.
 	pane1Model listSet: TBBlogModel current allBlogPosts.
+	sidesheetModel := SlmdSidesheetModel new.
 	self setDetailWithIndex: 1.
 	layout := SlmdLayoutModel new.
 	navActions := OrderedCollection new
@@ -129,5 +131,11 @@ TBRootApplication >> setDetailWithIndex: index [
 { #category : #accessing }
 TBRootApplication >> sidesheetModel [
 
-	^ nil
+	^ sidesheetModel
+]
+
+{ #category : #accessing }
+TBRootApplication >> sidesheetModel: anObject [
+
+	sidesheetModel := anObject
 ]

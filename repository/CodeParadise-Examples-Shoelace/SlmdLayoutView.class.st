@@ -2,13 +2,9 @@ Class {
 	#name : #SlmdLayoutView,
 	#superclass : #SlmdView,
 	#instVars : [
-		'width',
-		'height',
-		'currentLayout',
-		'colorThemeName',
-		'navActions',
-		'navItems',
-		'debounceTransition'
+		'debounceTransition',
+		'layoutSettingsView',
+		'layoutWidthCached'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
@@ -80,7 +76,7 @@ SlmdLayoutView class >> template [
       <slot name="bottomAppBar"></slot>
     </footer>
   </div>
-  <slot name="settings"></slot>
+  <div id="smdModalDiv"></div>
 </div>
 '
 ]
@@ -96,12 +92,6 @@ SlmdLayoutView >> adaptWithAspect: aspect value: anObject [
 			#aspect -> aspect.
 			#value -> anObject
 		} asDictionary).
-]
-
-{ #category : #utilities }
-SlmdLayoutView >> addAttributeContainerStyle: element [
-
-	^ element styleAt: 'padding-bottom' put: '12px'; yourself
 ]
 
 { #category : #body }
@@ -170,28 +160,10 @@ SlmdLayoutView >> bottomAppBarOn [
 { #category : #'color theme' }
 SlmdLayoutView >> colorThemeAdapt: aColorName [
 
-	self colorThemeName: aColorName.
+	self traceCr: 'colorThemeAdapt: ', aColorName printString.
+	aColorName ifNil: [ ^ self ].
 	self updateGlobalStyle.
 
-]
-
-{ #category : #settings }
-SlmdLayoutView >> colorThemeBuildChooser [
-	| chooser |
-
-	chooser := SlSelect new
-		id: 'smdColorThemeChooser';
-		labelText: 'Use color theme:';
-		propertyAt: 'value' put: self defaultColorThemeName asString;
-		yourself.
-
-	chooser when: SlChangeEvent do: [ self colorThemeAdapt: chooser value ] for: self.
-
-	#(gray red orange amber yellow lime green emerald teal cyan sky blue indigo violet purple fuchsia pink rose)
-		do: [ :each |
-			chooser appendChild: (SlOption new value: each; textContent: each capitalized; yourself) ].
-
-	^ chooser
 ]
 
 { #category : #'color theme' }
@@ -217,28 +189,10 @@ SlmdLayoutView >> colorThemeFrom: base [
 ' ]
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing - settings' }
 SlmdLayoutView >> colorThemeName [
 
-	^ colorThemeName
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> colorThemeName: anObject [
-
-	colorThemeName := anObject
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> currentLayout [
-
-	^ currentLayout
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> currentLayout: anObject [
-
-	currentLayout := anObject
+	^ self layoutSettingsView colorThemeName
 ]
 
 { #category : #layout }
@@ -259,69 +213,18 @@ SlmdLayoutView >> debounceResizeEvent: anEvent [
 	debounceTransition startDelayedBy: 100.
 ]
 
-{ #category : #'color theme' }
-SlmdLayoutView >> defaultColorThemeName [
-
-	^ #sky
-]
-
-{ #category : #typography }
-SlmdLayoutView >> defaultFontFamily [
-
-	^ nil
-]
-
-{ #category : #utilities }
-SlmdLayoutView >> elementId: id propertyAt: key ifNotFound: defaultValue [
-	| element |
-
-	element := CpHtmlElement documentBody firstDescendantMatching: id.
-	element ifNil: [ ^ defaultValue ].
-	^ element propertyAt: key
-]
-
-{ #category : #utilities }
-SlmdLayoutView >> elementId: id propertyAt: key put: value [
-	| element |
-
-	element := CpHtmlElement documentBody firstDescendantMatching: id.
-	element ifNotNil: [
-		element propertyAt: key put: value ]
-]
-
 { #category : #typography }
 SlmdLayoutView >> fontFamilyAdapt: aFontFamily [
 	| element |
+
+	aFontFamily ifNil: [ ^ self ].
+	"aFontFamily = self fontFamily ifTrue: [ ^ self ]."
 
 	element := self bodyFind.
 	element ifNil: [ ^ self ].
 
 	element styleAt: 'font-family' put: aFontFamily
 
-]
-
-{ #category : #settings }
-SlmdLayoutView >> fontFamilyChooserBuild [
-	| chooser |
-
-	chooser := SlSelect new
-		id: 'smdFontFamilyChooser';
-		labelText: 'Use font family:';
-		propertyAt: 'value' put: self defaultFontFamily asString;
-		yourself.
-
-	chooser when: SlChangeEvent do: [ self fontFamilyAdapt: chooser value ] for: self.
-
-	{
-nil -> 'Default'.
-#'var(--sl-font-sans)' -> 'Sans'.
-#'var(--sl-font-serif)' -> 'Serif'.
-#'var(--sl-font-mono)' -> 'Mono'
-}
-		do: [ :each |
-			chooser appendChild: (SlOption new value: each key; textContent: each value capitalized; yourself) ].
-
-	^ chooser
 ]
 
 { #category : #layout }
@@ -338,10 +241,10 @@ SlmdLayoutView >> handleResizeEvent: anEvent [
 			"Don't bother with height. It seems to report 0. Probably no browser support"
 			"height := rect apply: 'height'." ] ].
 
-	width = newWidth ifTrue: [
+	layoutWidthCached = newWidth ifTrue: [
 		^ self ].
 
-	width := newWidth.
+	layoutWidthCached := newWidth.
 	self bodySplitPanelAdapt.
 	self useAutoLayout not ifTrue: [
 		^ self ].
@@ -349,78 +252,77 @@ SlmdLayoutView >> handleResizeEvent: anEvent [
 	self layoutAdaptToWidth
 ]
 
-{ #category : #accessing }
-SlmdLayoutView >> height [
-
-	^ height
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> height: anObject [
-
-	height := anObject
-]
-
 { #category : #initialization }
 SlmdLayoutView >> initialize [
 
 	super initialize.
 
-	colorThemeName := self defaultColorThemeName.
-	width := 0.
+	"colorThemeName := self defaultColorThemeName."
+	layoutWidthCached := 0.
 
 	"#layoutSetUp will set the value later. DO NOT set it here."
 	"layoutType := nil."
-
-	navActions := Dictionary new.
-	navItems := OrderedCollection new.
 
 ]
 
 { #category : #layout }
 SlmdLayoutView >> layoutAdaptToWidth [
 
-	width < 600 ifTrue: [ ^ self layoutTypeChangeAutoResize: #compact ].
-	width < 840 ifTrue: [ ^ self layoutTypeChangeAutoResize: #medium ].
-	width < 1200 ifTrue: [ ^ self layoutTypeChangeAutoResize: #expanded ].
-	width < 1600 ifTrue: [ ^ self layoutTypeChangeAutoResize: #large ].
+	layoutWidthCached < 600 ifTrue: [ ^ self layoutTypeChangeAutoResize: #compact ].
+	layoutWidthCached < 840 ifTrue: [ ^ self layoutTypeChangeAutoResize: #medium ].
+	layoutWidthCached < 1200 ifTrue: [ ^ self layoutTypeChangeAutoResize: #expanded ].
+	layoutWidthCached < 1600 ifTrue: [ ^ self layoutTypeChangeAutoResize: #large ].
 	self layoutTypeChangeAutoResize: #'extra-large'.
 
 ]
 
 { #category : #layout }
-SlmdLayoutView >> layoutSetUp [
-	"Invoked by presenter's viewInitialize"
+SlmdLayoutView >> layoutInitialSetUp: props [
+	"Invoked by presenter's viewCreated"
 
-	self settingsSetUp.
-	self sidesheetSetUp.
-
-	self colorThemeAdapt: self defaultColorThemeName.
-	self fontFamilyAdapt: self defaultFontFamily.
-	self layoutTypeAdapt: self layoutTypeDefault.
+	self traceCr: ('layoutInitialSetUp: ', props printString).
+	self colorThemeAdapt: (props at: #colorThemeName ifAbsent: []).
+	self fontFamilyAdapt: (props at: #fontFamily ifAbsent: []).
+	self layoutTypeAdapt: (props at: #layoutType ifAbsent: []).
 	self resizeSetUp.
+	self adjustBodyHeight.
 
 ]
 
-{ #category : #settings }
+{ #category : #accessing }
+SlmdLayoutView >> layoutSettingsView [
+
+	layoutSettingsView ifNil: [
+		layoutSettingsView := SlmdLayoutSettingsView first ]
+.
+	^ layoutSettingsView
+]
+
+{ #category : #accessing }
+SlmdLayoutView >> layoutSettingsView: anObject [
+
+	layoutSettingsView := anObject
+]
+
+{ #category : #'accessing - settings' }
 SlmdLayoutView >> layoutType [
 
-	^ self elementId: '#smdLayoutTypeChooser' propertyAt: #value ifNotFound: self layoutTypeDefault
+	^ self layoutSettingsView layoutType
+
 ]
 
-{ #category : #settings }
-SlmdLayoutView >> layoutType: aLayoutType [
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> layoutType: anObject [
 
-	self elementId: '#smdLayoutTypeChooser' propertyAt: #value put: aLayoutType
+	self layoutSettingsView layoutType: anObject
 ]
 
 { #category : #layout }
 SlmdLayoutView >> layoutTypeAdapt: aLayoutType [
 
-	self currentLayout = aLayoutType ifTrue: [
-		^ self ].
+	"self layoutType = aLayoutType ifTrue: [
+		^ self ]."
 
-	self currentLayout: aLayoutType.
 	aLayoutType = #compact ifTrue: [
 		self navRegionModalOn; navTypeUseRail; bottomAppBarOn; sidesheetOff; useTwoPanesChangeAutoResize: false ].
 	aLayoutType = #medium ifTrue: [
@@ -436,74 +338,30 @@ SlmdLayoutView >> layoutTypeAdapt: aLayoutType [
 
 ]
 
-{ #category : #settings }
-SlmdLayoutView >> layoutTypeBuildChooser [
-	| radioGroup |
-
-	radioGroup := SlRadioGroup new
-		id: 'smdLayoutTypeChooser';
-		propertyAt: 'label' put: 'Use layout style:';
-		propertyAt: 'value' put: self layoutTypeDefault;
-		yourself.
-
-	radioGroup when: SlChangeEvent do: [ self layoutTypeChangeManual: radioGroup value ] for: self.
-
-	radioGroup appendChild: (SlRadio new value: #compact; textContent: 'Compact'; yourself).
-	radioGroup appendChild: (SlRadio new value: #medium; textContent: 'Medium'; yourself).
-	radioGroup appendChild: (SlRadio new value: #expanded; textContent: 'Expanded'; yourself).
-	radioGroup appendChild: (SlRadio new value: #large; textContent: 'Large'; yourself).
-	radioGroup appendChild: (SlRadio new value: #'extra-large'; textContent: 'Extra-large'; yourself).
-
-	^ radioGroup
-]
-
 { #category : #layout }
 SlmdLayoutView >> layoutTypeChangeAutoResize: aLayoutType [
 
-	aLayoutType = self layoutType ifTrue: [
-		^ self ].
-
-	self layoutType: aLayoutType.
 	self layoutTypeAdapt: aLayoutType
 ]
 
 { #category : #layout }
 SlmdLayoutView >> layoutTypeChangeManual: aLayoutType [
 
-	self layoutTypeAdapt: aLayoutType.
 	self useAutoLayout: false.
-	self currentLayout: nil.
+	self layoutTypeAdapt: aLayoutType.
 
 ]
 
 { #category : #accessing }
-SlmdLayoutView >> layoutTypeDefault [
+SlmdLayoutView >> layoutWidthCached [
 
-	^ #expanded
+	^ layoutWidthCached
 ]
 
 { #category : #accessing }
-SlmdLayoutView >> navActions [
+SlmdLayoutView >> layoutWidthCached: anObject [
 
-	^ navActions
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> navActions: anObject [
-
-	navActions := anObject
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> navItems [
-
-	^ navItems
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> navItems: anObject [
-
-	navItems := anObject
+	layoutWidthCached := anObject
 ]
 
 { #category : #events }
@@ -512,14 +370,8 @@ SlmdLayoutView >> navModalSet: anObject [
 	"Set type in nav view"
 	SlmdNavView first isModal: anObject.
 
-	"Set type in settings view"
-	self useModalNav: anObject.
-
 	"Adapt layout"
 	self navRegionModalAdapt: anObject.
-
-	"Set type in nav model"
-	self adaptWithAspect: #navModal value: anObject
 
 ]
 
@@ -573,16 +425,16 @@ SlmdLayoutView >> navRegionModalOn [
 
 ]
 
-{ #category : #settings }
+{ #category : #'accessing - settings' }
 SlmdLayoutView >> navType [
 
-	^ self elementId: '#smdNavTypeChooser' propertyAt: #value ifNotFound: self navTypeDefault
+	^ self layoutSettingsView navType
 ]
 
-{ #category : #settings }
-SlmdLayoutView >> navType: aNavType [
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> navType: anObject [
 
-	^ self elementId: '#smdNavTypeChooser' propertyAt: #value put: aNavType
+	self layoutSettingsView navType: anObject
 ]
 
 { #category : #nav }
@@ -597,50 +449,13 @@ SlmdLayoutView >> navTypeAdapt: aNavType [
 		styleAt: 'flex'
 		put: '0 0 ', self navTypeWidth printString, 'px'.
 
-	modalElement := self navModalPaneFind.
+	modalElement := self modalNavElementOrNil.
 	modalElement ifNotNil: [
 		modalElement customPropertyAt: 'size' put: self navTypeWidth printString.
 		SlmdNavView first navSetUp ].
 
 	self bodySplitPanelAdapt.
 
-]
-
-{ #category : #nav }
-SlmdLayoutView >> navTypeBeBar [
-
-	self navType: #bar
-]
-
-{ #category : #nav }
-SlmdLayoutView >> navTypeBeDrawer [
-
-	self navType: #drawer
-]
-
-{ #category : #nav }
-SlmdLayoutView >> navTypeBeRail [
-
-	self navType: #rail
-]
-
-{ #category : #settings }
-SlmdLayoutView >> navTypeBuildChooser [
-	| radioGroup |
-
-	radioGroup := SlRadioGroup new
-		id: 'smdNavTypeChooser';
-		propertyAt: 'label' put: 'Use navigation type:';
-		propertyAt: 'value' put: self navTypeDefault;
-		yourself.
-
-	radioGroup when: SlChangeEvent do: [ self navTypeSet: radioGroup value ] for: self.
-
-	radioGroup appendChild: (SlRadio new value: #rail; textContent: 'Rail'; yourself).
-	radioGroup appendChild: (SlRadio new value: #drawer; textContent: 'Drawer'; yourself).
-	radioGroup appendChild: (SlRadio new value: #bar; textContent: 'Bar'; propertyAt: #disabled put: true; yourself).
-
-	^ radioGroup
 ]
 
 { #category : #nav }
@@ -684,7 +499,7 @@ SlmdLayoutView >> navTypeSet: anObject [
 { #category : #nav }
 SlmdLayoutView >> navTypeUseDrawer [
 
-	self navTypeBeDrawer.
+	self navType: #drawer.
 	self navTypeSet: #drawer.
 
 ]
@@ -692,7 +507,7 @@ SlmdLayoutView >> navTypeUseDrawer [
 { #category : #nav }
 SlmdLayoutView >> navTypeUseRail [
 
-	self navTypeBeRail.
+	self navType: #rail.
 	self navTypeSet: #rail.
 
 ]
@@ -706,26 +521,11 @@ SlmdLayoutView >> navTypeWidth [
 	^ 80
 ]
 
-{ #category : #utilities }
-SlmdLayoutView >> newToggleId: id label: label do: aBlock [
-	| toggle |
-
-	toggle := SlSwitch new
-		id: id;
-		label: label;
-		checked: true;
-		when: SlChangeEvent do: aBlock for: self;
-		yourself.
-
-	^ (CpHtmlElement newWithTag: #div) appendChild: toggle; yourself.
-
-]
-
 { #category : #body }
 SlmdLayoutView >> pane1WidthCompute [
 	| w |
 
-	w := ((self width "- self bodySplitPanelDividerWidth") / 2) asInteger.
+	w := (self layoutWidthCached / 2) asInteger.
 	self useModalNav ifFalse: [  w := w - self navTypeWidth ].
 	w < self pane1WidthMin ifTrue: [ w := self pane1WidthMin ].
 	^ w
@@ -763,150 +563,35 @@ SlmdLayoutView >> resizeSetUp [
 	resize appendChild: div
 ]
 
-{ #category : #settings }
-SlmdLayoutView >> settingsPaneBuild [
-	| element |
-
-	element := #div asHtmlTag
-		addClass: 'smd-settings-pane';
-		appendChild: (self addAttributeContainerStyle: self useAutoLayoutBuildToggle);
-		appendChild: (self addAttributeContainerStyle: self layoutTypeBuildChooser);
-		appendChild: (self addAttributeContainerStyle: self navTypeBuildChooser);
-		appendChild: (self addAttributeContainerStyle: self useModalNavBuildToggle);
-		appendChild: (self addAttributeContainerStyle: self useTwoPaneBodyBuildToggle);
-		appendChild: (self addAttributeContainerStyle: self showTopAppBarBuildToggle);
-		appendChild: (self addAttributeContainerStyle: self showBottomAppBarBuildToggle);
-		appendChild: (self addAttributeContainerStyle: self showSidesheetBuildToggle);
-		appendChild: (self addAttributeContainerStyle: self colorThemeBuildChooser);
-		appendChild: (self addAttributeContainerStyle: self fontFamilyChooserBuild);
-		yourself.
-
-	^ element
-]
-
-{ #category : #layout }
-SlmdLayoutView >> settingsSetUp [
-	| element |
-
-	element := #div asHtmlTag
-		appendChild: (SlDrawer new
-			id: 'smdSettings';
-			label: 'Layout settings';
-			"placement: 'top';"
-			appendChild: self settingsPaneBuild;
-			yourself);
-		yourself.
-
-	self replaceAllChildrenWith: element atSlotNamed: #'settings'.
-
-]
-
-{ #category : #settings }
+{ #category : #'accessing - settings' }
 SlmdLayoutView >> showBottomAppBar [
 
-	^ self elementId: '#showBottomAppBar' propertyAt: #checked ifNotFound: true
+	^ self layoutSettingsView showBottomAppBar
 ]
 
-{ #category : #settings }
-SlmdLayoutView >> showBottomAppBar: aBoolean [
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> showBottomAppBar: anObject [
 
-	self elementId: '#showBottomAppBar' propertyAt: #checked put: aBoolean
+	self layoutSettingsView showBottomAppBar: anObject
 ]
 
-{ #category : #settings }
-SlmdLayoutView >> showBottomAppBarBuildToggle [
-
-	^ self
-		newToggleId: 'showBottomAppBar'
-		label: 'Show BottomAppBar'
-		do: [
-			self showBottomAppBar
-				ifTrue: [ self bottomAppBarOn ]
-				ifFalse: [ self bottomAppBarOff ].
-			self useAutoLayout: false ].
-
-]
-
-{ #category : #settings }
+{ #category : #'accessing - settings' }
 SlmdLayoutView >> showSidesheet [
 
-	^ self elementId: '#showSidesheet' propertyAt: #checked ifNotFound: true
+	^ self layoutSettingsView showSidesheet
 ]
 
-{ #category : #settings }
-SlmdLayoutView >> showSidesheet: aBoolean [
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> showSidesheet: anObject [
 
-	self elementId: '#showSidesheet' propertyAt: #checked put: aBoolean
-]
-
-{ #category : #settings }
-SlmdLayoutView >> showSidesheetBuildToggle [
-
-	^ self
-		newToggleId: 'showSidesheet'
-		label: 'Show Sidesheet'
-		do: [
-			self sidesheetDisplay: self showSidesheet.
-			self useAutoLayout: false ].
-
-]
-
-{ #category : #settings }
-SlmdLayoutView >> showTopAppBar [
-
-	^ self elementId: '#showTopAppBar' propertyAt: #checked ifNotFound: true
-]
-
-{ #category : #settings }
-SlmdLayoutView >> showTopAppBar: aBoolean [
-
-	self elementId: '#showTopAppBar' propertyAt: #checked put: aBoolean
-]
-
-{ #category : #settings }
-SlmdLayoutView >> showTopAppBarBuildToggle [
-
-	^ self
-		newToggleId: 'showTopAppBar'
-		label: 'Show TopAppBar'
-		do: [
-			self topAppBarDisplay: self showTopAppBar.
-			self useAutoLayout: false ].
-
-]
-
-{ #category : #sidesheet }
-SlmdLayoutView >> sidesheetBuild [
-
-	^ #div asHtmlTag
-		addClass: 'smd-sidesheet-container';
-		appendChild: (#div asHtmlTag
-			addClass: 'smd-sidesheet-content';
-			appendChild: (#div asHtmlTag
-				addClass: 'smd-sidesheet-card';
-				appendChild: ('Sidesheet content...' inHtmlTag: #span);
-				yourself);
-			yourself);
-		yourself
-
+	self layoutSettingsView showSidesheet: anObject
 ]
 
 { #category : #sidesheet }
 SlmdLayoutView >> sidesheetDisplay: aBoolean [
-	| element |
 
-	element := self sidesheetFind.
-	element ifNotNil: [
-		aBoolean
-			ifTrue: [ element removeStyleAt: 'display' ]
-			ifFalse: [ element styleAt: 'display' put: 'none' ] ].
+	self shadowElementId: 'smdSidesheet' show: aBoolean
 
-]
-
-{ #category : #sidesheet }
-SlmdLayoutView >> sidesheetFind [
-
-	^ self shadowedElementWithId: 'smdSidesheet'
 ]
 
 { #category : #sidesheet }
@@ -923,14 +608,6 @@ SlmdLayoutView >> sidesheetOn [
 	self showSidesheet: true.
 	self sidesheetDisplay: true.
 
-]
-
-{ #category : #sidesheet }
-SlmdLayoutView >> sidesheetSetUp [
-
-	self
-		replaceAllChildrenWith: self sidesheetBuild
-		atSlotNamed: 'sidesheet'
 ]
 
 { #category : #events }
@@ -960,77 +637,45 @@ SlmdLayoutView >> topAppBarMenuDisplay: anObject [
 { #category : #initialization }
 SlmdLayoutView >> updateGlobalStyle [
 
-	CpHtmlElement documentAddStyle: (self colorThemeFrom: self colorThemeName).
+	self traceCr: 'updateGlobalStyle... colorThemeName = ', self colorThemeName printString.
+	CpHtmlElement documentAddStyle: (self colorThemeFrom: self colorThemeName asString).
 
 ]
 
-{ #category : #settings }
+{ #category : #'accessing - settings' }
 SlmdLayoutView >> useAutoLayout [
 
-	^ self elementId: '#useAutoLayout' propertyAt: #checked ifNotFound: true
+	^ self layoutSettingsView useAutoLayout
 ]
 
-{ #category : #settings }
-SlmdLayoutView >> useAutoLayout: aBoolean [
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> useAutoLayout: anObject [
 
-	self elementId: '#useAutoLayout' propertyAt: #checked put: aBoolean
+	self layoutSettingsView useAutoLayout: anObject
 ]
 
-{ #category : #settings }
-SlmdLayoutView >> useAutoLayoutBuildToggle [
-
-	^ self
-		newToggleId: 'useAutoLayout'
-		label: 'Use auto layout'
-		do: [ self layoutAdaptToWidth ].
-
-]
-
-{ #category : #settings }
+{ #category : #'accessing - settings' }
 SlmdLayoutView >> useModalNav [
 
-	^ self elementId: '#useModalNav' propertyAt: #checked ifNotFound: false
+	^ self layoutSettingsView useModalNav
 ]
 
-{ #category : #settings }
-SlmdLayoutView >> useModalNav: aBoolean [
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> useModalNav: anObject [
 
-	self elementId: '#useModalNav' propertyAt: #checked put: aBoolean
+	self layoutSettingsView useModalNav: anObject
 ]
 
-{ #category : #settings }
-SlmdLayoutView >> useModalNavBuildToggle [
-
-	^ self
-		newToggleId: 'useModalNav'
-		label: 'Use modal navigation'
-		do: [
-			self navRegionModalAdapt: self useModalNav.
-			self useAutoLayout: false ].
-
-]
-
-{ #category : #settings }
+{ #category : #'accessing - settings' }
 SlmdLayoutView >> useTwoPaneBody [
 
-	^ self elementId: '#useTwoPaneBody' propertyAt: #checked ifNotFound: true
+	^ self layoutSettingsView useTwoPaneBody
 ]
 
-{ #category : #settings }
-SlmdLayoutView >> useTwoPaneBody: aBoolean [
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> useTwoPaneBody: anObject [
 
-	self elementId: '#useTwoPaneBody' propertyAt: #checked put: aBoolean
-]
-
-{ #category : #settings }
-SlmdLayoutView >> useTwoPaneBodyBuildToggle [
-
-	^ self
-		newToggleId: 'useTwoPaneBody'
-		label: 'Use two pane layout'
-		do: [
-			self paneLayoutAdapt: self useTwoPaneBody ].
-
+	self layoutSettingsView useTwoPaneBody: anObject
 ]
 
 { #category : #body }
@@ -1042,16 +687,4 @@ SlmdLayoutView >> useTwoPanesChangeAutoResize: aBoolean [
 	self useTwoPaneBody: aBoolean.
 	self paneLayoutAdapt: aBoolean.
 
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> width [
-
-	^ width
-]
-
-{ #category : #accessing }
-SlmdLayoutView >> width: anObject [
-
-	width := anObject
 ]

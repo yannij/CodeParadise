@@ -94,7 +94,7 @@ MD3ExampleApplication >> load [
 	super load.
 
 	"Add development tools"
-	self addViewInspector
+	"self addViewInspector"
 ]
 
 { #category : #accessing }

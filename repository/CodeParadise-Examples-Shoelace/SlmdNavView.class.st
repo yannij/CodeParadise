@@ -52,7 +52,7 @@ SlmdNavView class >> globalStyle [
 
 .smd-navrail-labelText {
   padding: 0;
-  line-height: 16pt;
+  line-height: 16px;
   font-size: var(--sl-font-size-x-small);
   text-align: center;
   overflow-x: clip;
@@ -259,7 +259,7 @@ SlmdNavView >> navModalPaneBuild [
 { #category : #nav }
 SlmdNavView >> navModalPaneContentFind [
 
-	^ "CpHtmlElement documentBody" self navModalPaneFind firstDescendantMatching: '#smdNavModalPaneContent'
+	^ self modalNavElementOrNil firstDescendantMatching: '#smdNavModalPaneContent'
 
 ]
 
@@ -267,7 +267,8 @@ SlmdNavView >> navModalPaneContentFind [
 SlmdNavView >> navModalPaneSetUp [
 	"Add modal nav element as sibling of layout's navRegion"
 
-	SlmdLayoutView first navRegionFind parent
+	"SlmdLayoutView first navRegionFind parent"
+	self modalDivFind
 		appendChild: self navModalPaneBuild
 ]
 
@@ -282,21 +283,6 @@ SlmdNavView >> navSetUp [
 		replaceAllChildrenWith: self navContentBuild
 		atSlotNamed: 'navRegion'.
 
-]
-
-{ #category : #nav }
-SlmdNavView >> navSetUpOLD [
-
-	self isModal
-		ifTrue: [ | el |
-			self removeChildrenAtSlotNamed: 'navRegion'.
-			el := self navModalPaneContentFind.
-			el ifNotNil: [
-				el replaceAllChildrenWith: self navContentBuild ]]
-		ifFalse: [ 
-			self
-				replaceAllChildrenWith: self navContentBuild
-				atSlotNamed: 'navRegion' ]
 ]
 
 { #category : #accessing }
