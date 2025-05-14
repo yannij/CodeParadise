@@ -1,5 +1,5 @@
 Class {
-	#name : #SlmdTopAppBarView,
+	#name : #SlmdAppBarView,
 	#superclass : #SlmdView,
 	#instVars : [
 		'headline',
@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : #'web resources' }
-SlmdTopAppBarView class >> style [
+SlmdAppBarView class >> style [
 
 	<webResource: #css>
 
@@ -24,20 +24,20 @@ SlmdTopAppBarView class >> style [
   background: var(--sl-color-primary-200);
 }
 
-.smd-topAppBar {
+.smd-appBar {
   display: flex;
   flex-flow: row wrap;
   padding: 8px 4px 8px 4px;
 }
 
-.smd-topAppBar-leadingAction {
+.smd-appBar-leadingAction {
   margin-top: 4px;
   height: 48px;
   width: 48px;
   font-size: 24px;
 }
 
-.smd-topAppBar-headline {
+.smd-appBar-headline {
   margin-top: 4px;
   padding-top: 8px;
   padding-left: 8px;
@@ -45,7 +45,7 @@ SlmdTopAppBarView class >> style [
   font-size: 24px;
 }
 
-.smd-topAppBar-trailingActions {
+.smd-appBar-trailingActions {
   margin-left: auto;
   margin-top: 4px;
   height: 48px;
@@ -55,20 +55,20 @@ SlmdTopAppBarView class >> style [
 ]
 
 { #category : #'web resources' }
-SlmdTopAppBarView class >> template [
+SlmdAppBarView class >> template [
 
 	<webResource: #html>
 
 	^ '
 <div id="container">
-  <div class="smd-topAppBar">
-    <div class="smd-topAppBar-leadingAction">
+  <div class="smd-appBar">
+    <div class="smd-appBar-leadingAction">
       <slot name="leadingAction"></slot>
     </div>
-    <div class="smd-topAppBar-headline">
+    <div class="smd-appBar-headline">
       <slot name="headline"></slot>
     </div>
-    <div class="smd-topAppBar-trailingActions">
+    <div class="smd-appBar-trailingActions">
       <slot name="trailingActions"></slot>
     </div>
   </div>
@@ -77,25 +77,38 @@ SlmdTopAppBarView class >> template [
 ]
 
 { #category : #topAppBar }
-SlmdTopAppBarView >> foobar [
+SlmdAppBarView >> appBarMenuDisplay: aBoolean [
+	| element |
 
-	self traceCr: '>>>> menu icon clicked <<<<'
+	element := self appBarMenuFind.
+	element ifNil: [ self error: '**** appBarMenuFind answered nil' ].
+	element ifNotNil: [
+		aBoolean
+			ifTrue: [ element removeStyleAt: 'display' ]
+			ifFalse: [ element styleAt: 'display' put: 'none' ] ].
+
+]
+
+{ #category : #topAppBar }
+SlmdAppBarView >> appBarMenuFind [
+
+	^ self shadowedFirstDescendantMatching: '.smd-appBar-leadingAction'
 ]
 
 { #category : #accessing }
-SlmdTopAppBarView >> leadingAction [
+SlmdAppBarView >> leadingAction [
 
 	^ leadingAction
 ]
 
 { #category : #accessing }
-SlmdTopAppBarView >> leadingAction: anObject [
+SlmdAppBarView >> leadingAction: anObject [
 
 	leadingAction := anObject
 ]
 
 { #category : #topAppBar }
-SlmdTopAppBarView >> renderHeadline: aString [
+SlmdAppBarView >> renderHeadline: aString [
 
 	self
 		replaceAllChildrenWith: (aString inHtmlTag: #span)
@@ -104,7 +117,7 @@ SlmdTopAppBarView >> renderHeadline: aString [
 ]
 
 { #category : #topAppBar }
-SlmdTopAppBarView >> renderLeadingAction: aString [
+SlmdAppBarView >> renderLeadingAction: aString [
 	| drawer |
 
 	leadingAction ifNil: [
@@ -122,7 +135,7 @@ SlmdTopAppBarView >> renderLeadingAction: aString [
 ]
 
 { #category : #topAppBar }
-SlmdTopAppBarView >> renderTrailingActions [
+SlmdAppBarView >> renderTrailingActions [
 	| gear |
 
 	gear := (SlIconButton named: 'gear')
@@ -139,33 +152,14 @@ SlmdTopAppBarView >> renderTrailingActions [
 
 ]
 
-{ #category : #topAppBar }
-SlmdTopAppBarView >> topAppBarMenuDisplay: aBoolean [
-	| element |
-
-	element := self topAppBarMenuFind.
-	element ifNil: [ self error: '**** topAppBarMenuFind answered nil' ].
-	element ifNotNil: [
-		aBoolean
-			ifTrue: [ element removeStyleAt: 'display' ]
-			ifFalse: [ element styleAt: 'display' put: 'none' ] ].
-
-]
-
-{ #category : #topAppBar }
-SlmdTopAppBarView >> topAppBarMenuFind [
-
-	^ self shadowedFirstDescendantMatching: '.smd-topAppBar-leadingAction'
-]
-
 { #category : #accessing }
-SlmdTopAppBarView >> trailingActions [
+SlmdAppBarView >> trailingActions [
 
 	^ trailingActions
 ]
 
 { #category : #accessing }
-SlmdTopAppBarView >> trailingActions: anObject [
+SlmdAppBarView >> trailingActions: anObject [
 
 	trailingActions := anObject
 ]

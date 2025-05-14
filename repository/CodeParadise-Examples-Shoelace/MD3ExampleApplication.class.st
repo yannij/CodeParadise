@@ -36,7 +36,7 @@ MD3ExampleApplication class >> app [
 
 { #category : #accessing }
 MD3ExampleApplication class >> appName [
-	"Answer name to be shown in TopAppBar headline"
+	"Answer name to be shown in AppBar headline"
 
 	^ #'MD3 Example'
 ]

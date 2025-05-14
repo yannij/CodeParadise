@@ -7,10 +7,10 @@ Class {
 { #category : #rendering }
 SlmdPaneLayoutPresenter >> renderView [
 
-	self model topAppBarModel ifNotNil: [ :value |
-		self renderChildViewForModel: value atSlotNamed: #topAppBar.
-		self renderChildViewForModel: value atSlotNamed: #topAppBarP2 ].
-	self view topAppBarDisplay: self model topAppBarDisplayed.
+	self model appBarModel ifNotNil: [ :value |
+		self renderChildViewForModel: value atSlotNamed: #appBar.
+		self renderChildViewForModel: value atSlotNamed: #appBarP2 ].
+	self view appBarDisplay: self model appBarDisplayed.
 
 	self application pane1Model ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: #pane1.
@@ -20,12 +20,4 @@ SlmdPaneLayoutPresenter >> renderView [
 		self renderChildViewForModel: value atSlotNamed: #pane2.
 		self renderChildViewForModel: value atSlotNamed: #pane2P2 ].
 
-]
-
-{ #category : #rendering }
-SlmdPaneLayoutPresenter >> viewInitialized [
-
-	super viewInitialized.
-
-	self view bodySetUp
 ]

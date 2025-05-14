@@ -1,5 +1,5 @@
 Class {
-	#name : #SlmdBottomAppBarModel,
+	#name : #SlmdToolbarModel,
 	#superclass : #SlmdModel,
 	#instVars : [
 		'isVisible',
@@ -9,32 +9,32 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
-{ #category : #accessing }
-SlmdBottomAppBarModel >> fab [
+{ #category : #'as yet unclassified' }
+SlmdToolbarModel >> fab [
 
 	^ fab
 ]
 
-{ #category : #accessing }
-SlmdBottomAppBarModel >> fab: anObject [
+{ #category : #'as yet unclassified' }
+SlmdToolbarModel >> fab: anObject [
 
 	fab := anObject
 ]
 
 { #category : #accessing }
-SlmdBottomAppBarModel >> iconButtons [
+SlmdToolbarModel >> iconButtons [
 
 	^ iconButtons
 ]
 
 { #category : #accessing }
-SlmdBottomAppBarModel >> iconButtons: anObject [
+SlmdToolbarModel >> iconButtons: anObject [
 
 	iconButtons := anObject
 ]
 
 { #category : #initialization }
-SlmdBottomAppBarModel >> initialize [
+SlmdToolbarModel >> initialize [
 
 	super initialize.
 
@@ -45,13 +45,13 @@ SlmdBottomAppBarModel >> initialize [
 ]
 
 { #category : #accessing }
-SlmdBottomAppBarModel >> isVisible [
+SlmdToolbarModel >> isVisible [
 
 	^ isVisible
 ]
 
 { #category : #accessing }
-SlmdBottomAppBarModel >> isVisible: anObject [
+SlmdToolbarModel >> isVisible: anObject [
 
 	isVisible := anObject
 ]

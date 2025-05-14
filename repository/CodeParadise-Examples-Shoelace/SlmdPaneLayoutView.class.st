@@ -52,8 +52,8 @@ SlmdPaneLayoutView class >> template [
 <div id="container" class="smd-pane-layout">
   <div id="smdOnePaneLayout">
     <div class="smd-pane">
-      <div id="smdTopAppBar">
-        <slot name="topAppBar"></slot>
+      <div id="smdAppBar">
+        <slot name="appBar"></slot>
       </div>
       <div class="smd-pane-content">
         <slot name="pane1"></slot>
@@ -72,8 +72,8 @@ SlmdPaneLayoutView class >> template [
       <sl-icon slot="divider" name="grip-vertical"></sl-icon>
       <div slot="start">
         <div class="smd-pane">
-          <div id="smdTopAppBarP2">
-            <slot name="topAppBarP2"></slot>
+          <div id="smdAppBarP2">
+            <slot name="appBarP2"></slot>
           </div>
           <slot name="pane1P2"></slot>
         </div>
@@ -89,10 +89,11 @@ SlmdPaneLayoutView class >> template [
 '
 ]
 
-{ #category : #body }
-SlmdPaneLayoutView >> bodySetUp [
+{ #category : #topAppBar }
+SlmdPaneLayoutView >> appBarDisplay: aBoolean [
 
-	SlmdLayoutView first layoutAdaptToWidth.
+	self shadowElementId: 'smdAppBar' show: aBoolean.
+	self shadowElementId: 'smdAppBarP2' show: aBoolean.
 
 ]
 
@@ -107,20 +108,9 @@ SlmdPaneLayoutView >> pane1WidthSet: anInteger [
 ]
 
 { #category : #topAppBar }
-SlmdPaneLayoutView >> topAppBarDisplay: aBoolean [
-
-	self shadowElementId: 'smdTopAppBar' show: aBoolean.
-	self shadowElementId: 'smdTopAppBarP2' show: aBoolean.
-
-]
-
-{ #category : #topAppBar }
 SlmdPaneLayoutView >> useOnePaneLayout [
 
 	"self traceCr: 'View: useOnePaneLayout'."
-	"self moveChildrenFromSlot: 'topAppBarP2' to: 'topAppBar'.
-	self moveChildrenFromSlot: 'pane1P2' to: 'pane1'.
-	self moveChildrenFromSlot: 'pane2P2' to: 'pane2'."
 	self shadowElementId: 'smdTwoPaneLayout' show: false.
 	self shadowElementId: 'smdOnePaneLayout' show: true.
 
@@ -130,9 +120,6 @@ SlmdPaneLayoutView >> useOnePaneLayout [
 SlmdPaneLayoutView >> useTwoPaneLayout [
 
 	"self traceCr: 'View: useTwoPaneLayout'."
-	"self moveChildrenFromSlot: 'topAppBar' to: 'topAppBarP2'.
-	self moveChildrenFromSlot: 'pane1' to: 'pane1P2'.
-	self moveChildrenFromSlot: 'pane2' to: 'pane2P2'."
 	self shadowElementId: 'smdOnePaneLayout' show: false.
 	self shadowElementId: 'smdTwoPaneLayout' show: true.
 

@@ -1,11 +1,11 @@
 Class {
-	#name : #SlmdNavPresenter,
+	#name : #SlmdNavRailPresenter,
 	#superclass : #SlmdPresenter,
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
 { #category : #nav }
-SlmdNavPresenter >> navSetUp [
+SlmdNavRailPresenter >> navSetUp [
 	| v |
 
 	v := self view.
@@ -16,14 +16,14 @@ SlmdNavPresenter >> navSetUp [
 ]
 
 { #category : #nav }
-SlmdNavPresenter >> navigateTo: anObject [
+SlmdNavRailPresenter >> navigateTo: anObject [
 
 	self application pane1Model handleActionRequest: anObject; valueChanged.
 
 ]
 
 { #category : #view }
-SlmdNavPresenter >> viewCreated [
+SlmdNavRailPresenter >> viewCreated [
 
 	super viewCreated.
 
@@ -32,14 +32,14 @@ SlmdNavPresenter >> viewCreated [
 ]
 
 { #category : #view }
-SlmdNavPresenter >> viewInitialized [
+SlmdNavRailPresenter >> viewInitialized [
 
 	super viewInitialized.
 
 	self navSetUp.
 
 	self view
-		navType: self model navType;
+		isExpanded: self model isExpanded;
 		navModalPaneSetUp;
 		navSetUp;
 		yourself.

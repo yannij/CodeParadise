@@ -64,7 +64,7 @@ SlmdView >> modalDivFind [
 SlmdView >> modalNavElementOrNil [
 	| component |
 
-	component := SlmdNavView first.
+	component := SlmdNavRailView first.
 	^ component ifNil: [ nil ] ifNotNil: [ component drawer ].
 ]
 

@@ -2,16 +2,17 @@ Class {
 	#name : #SlmdLayoutSettingsModel,
 	#superclass : #SlmdModel,
 	#instVars : [
+		'useAutoLayout',
+		'colorThemeName',
+		'fontFamily',
 		'layoutWidth',
 		'layoutType',
-		'navType',
-		'showBottomAppBar',
-		'showSidesheet',
-		'useAutoLayout',
 		'useModalNav',
 		'useTwoPaneBody',
-		'colorThemeName',
-		'fontFamily'
+		'showNavBar',
+		'showSidesheet',
+		'showToolbar',
+		'navRailExpanded'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
@@ -23,9 +24,10 @@ SlmdLayoutSettingsModel >> asProperties [
 		at: #colorThemeName put: self colorThemeName;
 		at: #fontFamily put: self fontFamily;
 		at: #layoutType put: self layoutType;
-		at: #navType put: self navType;
-		at: #showBottomAppBar put: self showBottomAppBar;
+		at: #isExpanded put: self isExpanded;
+		at: #showNavBar put: self showNavBar;
 		at: #showSidesheet put: self showSidesheet;
+		at: #showToolbar put: self showToolbar;
 		at: #useAutoLayout put: self useAutoLayout;
 		at: #useModalNav put: self useModalNav;
 		at: #useTwoPaneBody put: self useTwoPaneBody;
@@ -75,14 +77,27 @@ SlmdLayoutSettingsModel >> initialize [
 
 	colorThemeName := self defaultColorThemeName.
 	fontFamily := self defaultFontFamily.
-	layoutType := SlmdLayoutModel layoutTypeDefault.
-	navType := SlmdNavModel navTypeDefault.
-	showBottomAppBar := false.
+	layoutType := self layoutTypeDefault.
+	navRailExpanded := false.
+	showNavBar := false.
 	showSidesheet := false.
+	showToolbar := false.
 	useAutoLayout := true.
 	useModalNav := false.
 	useTwoPaneBody := true.
 
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> isExpanded [
+
+	^ navRailExpanded
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> isExpanded: anObject [
+
+	navRailExpanded := anObject
 ]
 
 { #category : #accessing }
@@ -98,6 +113,12 @@ SlmdLayoutSettingsModel >> layoutType: anObject [
 ]
 
 { #category : #accessing }
+SlmdLayoutSettingsModel >> layoutTypeDefault [
+
+	^ #expanded
+]
+
+{ #category : #accessing }
 SlmdLayoutSettingsModel >> layoutWidth [
 
 	^ layoutWidth
@@ -110,27 +131,15 @@ SlmdLayoutSettingsModel >> layoutWidth: anObject [
 ]
 
 { #category : #accessing }
-SlmdLayoutSettingsModel >> navType [
+SlmdLayoutSettingsModel >> showNavBar [
 
-	^ navType
+	^ showNavBar
 ]
 
 { #category : #accessing }
-SlmdLayoutSettingsModel >> navType: anObject [
+SlmdLayoutSettingsModel >> showNavBar: anObject [
 
-	navType := anObject
-]
-
-{ #category : #accessing }
-SlmdLayoutSettingsModel >> showBottomAppBar [
-
-	^ showBottomAppBar
-]
-
-{ #category : #accessing }
-SlmdLayoutSettingsModel >> showBottomAppBar: anObject [
-
-	showBottomAppBar := anObject
+	showNavBar := anObject
 ]
 
 { #category : #accessing }
@@ -143,6 +152,18 @@ SlmdLayoutSettingsModel >> showSidesheet [
 SlmdLayoutSettingsModel >> showSidesheet: anObject [
 
 	showSidesheet := anObject
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> showToolbar [
+
+	^ showToolbar
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> showToolbar: anObject [
+
+	showToolbar := anObject
 ]
 
 { #category : #accessing }

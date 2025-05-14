@@ -2,21 +2,45 @@ Class {
 	#name : #SlmdPaneLayoutModel,
 	#superclass : #SlmdModel,
 	#instVars : [
-		'topAppBarModel',
-		'topAppBarDisplayed',
 		'useTwoPaneBody',
-		'pane1Width'
+		'pane1Width',
+		'appBarModel',
+		'appBarDisplayed'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
+
+{ #category : #accessing }
+SlmdPaneLayoutModel >> appBarDisplayed [
+
+	^ appBarDisplayed
+]
+
+{ #category : #accessing }
+SlmdPaneLayoutModel >> appBarDisplayed: anObject [
+
+	appBarDisplayed := anObject
+]
+
+{ #category : #accessing }
+SlmdPaneLayoutModel >> appBarModel [
+
+	^ appBarModel
+]
+
+{ #category : #accessing }
+SlmdPaneLayoutModel >> appBarModel: anObject [
+
+	appBarModel := anObject
+]
 
 { #category : #initialization }
 SlmdPaneLayoutModel >> initialize [
 
 	super initialize.
 
-	topAppBarDisplayed := true.
-	topAppBarModel := SlmdTopAppBarModel new.
+	appBarDisplayed := true.
+	appBarModel := SlmdAppBarModel new.
 	useTwoPaneBody := false.
 	pane1Width := 500.
 
@@ -32,30 +56,6 @@ SlmdPaneLayoutModel >> pane1Width [
 SlmdPaneLayoutModel >> pane1Width: anObject [
 
 	pane1Width := anObject
-]
-
-{ #category : #accessing }
-SlmdPaneLayoutModel >> topAppBarDisplayed [
-
-	^ topAppBarDisplayed
-]
-
-{ #category : #accessing }
-SlmdPaneLayoutModel >> topAppBarDisplayed: anObject [
-
-	topAppBarDisplayed := anObject
-]
-
-{ #category : #accessing }
-SlmdPaneLayoutModel >> topAppBarModel [
-
-	^ topAppBarModel
-]
-
-{ #category : #accessing }
-SlmdPaneLayoutModel >> topAppBarModel: anObject [
-
-	topAppBarModel := anObject
 ]
 
 { #category : #accessing }

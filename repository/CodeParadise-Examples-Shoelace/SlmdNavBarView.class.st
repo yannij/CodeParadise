@@ -1,62 +1,51 @@
 Class {
-	#name : #SlmdBottomAppBarView,
+	#name : #SlmdNavBarView,
 	#superclass : #SlmdView,
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
 { #category : #'web resources' }
-SlmdBottomAppBarView class >> style [
+SlmdNavBarView class >> style [
 
 	<webResource: #css>
 
 	^ '
-.smd-footer {
+.smd-navBar-footer {
   flex: 0 0 72px;
   background: var(--sl-color-primary-200);
 }
 
-.smd-bottomAppBar {
+.smd-navBar {
   z-index: 10;
   display: flex;
   flex-flow: row wrap;
   padding: 12px 16px 12px 4px;
 }
 
-.smd-bottomAppBar-button {
+.smd-navBar-button {
   height: 48px;
   width: 48px;
   font-size: 24px;
-}
-
-.smd-bottomAppBar-fab {
-  margin-left: auto;
-  height: 48px;
-  width: 48px;
-  font-size: 24px;
-  background: var(--sl-color-primary-300);
 }
 '
 ]
 
 { #category : #'web resources' }
-SlmdBottomAppBarView class >> template [
+SlmdNavBarView class >> template [
 
 	<webResource: #html>
 
 	^ '
-<div id="container" class="smd-footer">
-  <div class="smd-bottomAppBar">
-    <div class="smd-bottomAppBar-button">
+<div id="container" class="smd-navBar-footer">
+  <div class="smd-navBar">
+    <div class="smd-navBar-button">
       <slot name="item1"></slot>
     </div>
-    <div class="smd-bottomAppBar-button">
+    <div class="smd-navBar-button">
       <slot name="item2"></slot>
     </div>
-    <div class="smd-bottomAppBar-button">
+    <div class="smd-navBar-button">
       <slot name="item3"></slot>
-    </div>
-    <div class="smd-bottomAppBar-fab">
-      <slot name="fab"></slot>
     </div>
   </div>
 </div>
@@ -64,7 +53,7 @@ SlmdBottomAppBarView class >> template [
 ]
 
 { #category : #bottomAppBar }
-SlmdBottomAppBarView >> buildIconButton: iconName class: cssClass [
+SlmdNavBarView >> buildIconButton: iconName class: cssClass [
 
 	^ (CpHtmlElement newWithTag: #div)
 		addClass: cssClass;
@@ -73,7 +62,7 @@ SlmdBottomAppBarView >> buildIconButton: iconName class: cssClass [
 ]
 
 { #category : #rendering }
-SlmdBottomAppBarView >> renderIcon: iconName at: slotName with: cssClass [
+SlmdNavBarView >> renderIcon: iconName at: slotName with: cssClass [
 
 	self
 		replaceAllChildrenWith: (self buildIconButton: iconName class: cssClass)

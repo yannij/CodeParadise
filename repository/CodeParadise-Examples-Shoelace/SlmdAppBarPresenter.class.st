@@ -1,11 +1,11 @@
 Class {
-	#name : #SlmdTopAppBarPresenter,
+	#name : #SlmdAppBarPresenter,
 	#superclass : #SlmdPresenter,
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
 { #category : #accessing }
-SlmdTopAppBarPresenter >> renderView [
+SlmdAppBarPresenter >> renderView [
 
 	self view
 		renderLeadingAction: 'list';
@@ -13,12 +13,12 @@ SlmdTopAppBarPresenter >> renderView [
 		renderTrailingActions;
 		yourself.
 
-	self view topAppBarMenuDisplay: self model topAppBarMenuDisplay.
+	self view appBarMenuDisplay: self model appBarMenuDisplay.
 
 ]
 
 { #category : #accessing }
-SlmdTopAppBarPresenter >> viewInitialized [
+SlmdAppBarPresenter >> viewInitialized [
 
 	super viewInitialized.
 

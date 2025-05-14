@@ -14,6 +14,6 @@ SlmdLayoutSettingsPresenter >> viewInitialized [
 	self view
 		modalDivSetUp: props;
 		adaptToLayoutProperties: props;
-		layoutInitialSetUp: self model asProperties
+		layoutInitialSetUp: self model asProperties.
 
 ]

@@ -17,23 +17,23 @@ SlmdLayoutPresenter >> handleAdapt: anObject [
 		self model paneLayout useTwoPaneBody: aspectValue.
 		^ self ].
 
-	aspect = #navType ifTrue: [
-		^ self model nav navType: aspectValue ].
+	aspect = #isExpanded ifTrue: [
+		^ self model navRail isExpanded: aspectValue ].
 
 	aspect = #navModal ifTrue: [
-		^ self model nav isModal: aspectValue ].
+		^ self model navRail isModal: aspectValue ].
 
 	aspect = #twoPaneSplitPosition ifTrue: [
 		"('#twoPaneSplitPosition -> ' , aspectValue asString) traceCr."
 		^ self model paneLayout pane1Width: aspectValue"; valueChanged" ].
 
-	aspect = #topAppBarMenuDisplay ifTrue: [
-		"('#topAppBarMenuDisplay -> ' , aspectValue asString) traceCr."
-		^ self model paneLayout topAppBarModel topAppBarMenuDisplay: aspectValue"; valueChanged" ].
+	aspect = #appBarMenuDisplay ifTrue: [
+		"('#appBarMenuDisplay -> ' , aspectValue asString) traceCr."
+		^ self model paneLayout appBarModel appBarMenuDisplay: aspectValue"; valueChanged" ].
 
-	aspect = #topAppBarDisplay ifTrue: [
-		"('#topAppBarDisplay -> ' , aspectValue asString) traceCr."
-		^ self model paneLayout topAppBarDisplayed: aspectValue"; valueChanged" ]
+	aspect = #appBarDisplay ifTrue: [
+		"('#appBarDisplay -> ' , aspectValue asString) traceCr."
+		^ self model paneLayout appBarDisplayed: aspectValue"; valueChanged" ]
 ]
 
 { #category : #view }
@@ -49,10 +49,13 @@ SlmdLayoutPresenter >> renderView [
 	self model layoutSettings ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: nil ].
 
-	self model nav ifNotNil: [ :value |
-		"Render the nav before the panes, so TopAppBar can find
-		the model nav pane for menu button to open"
+	self model navRail ifNotNil: [ :value |
+		"Render the navRail before the panes, so AppBar can find
+		the modal navRail pane for menu button to open"
 		self renderChildViewForModel: value atSlotNamed: #navRegion ].
+
+	self model navBar ifNotNil: [ :value |
+		self renderChildViewForModel: value atSlotNamed: #navBar ].
 
 	self model paneLayout ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: #paneLayout ].
@@ -60,8 +63,8 @@ SlmdLayoutPresenter >> renderView [
 	self application sidesheetModel ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: #sidesheet ].
 
-	self model bottomAppBar ifNotNil: [ :value |
-		self renderChildViewForModel: value atSlotNamed: #bottomAppBar ].
+	self model toolbar ifNotNil: [ :value |
+		self renderChildViewForModel: value atSlotNamed: #toolbar ].
 
 ]
 
@@ -73,5 +76,15 @@ SlmdLayoutPresenter >> viewCreated [
 	self view
 		when: (CpActionRequested id: #adapt) send: #handleAdapt: to: self;
 		when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self.
+
+]
+
+{ #category : #view }
+SlmdLayoutPresenter >> viewInitialized [
+
+	super viewInitialized.
+
+	"self model layoutSettings useAutoLayout ifTrue: [
+		self view layoutAdaptToWidth ]."
 
 ]

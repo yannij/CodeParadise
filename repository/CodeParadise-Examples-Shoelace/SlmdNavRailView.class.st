@@ -1,18 +1,18 @@
 Class {
-	#name : #SlmdNavView,
+	#name : #SlmdNavRailView,
 	#superclass : #SlmdView,
 	#instVars : [
 		'navActions',
 		'navItems',
-		'navType',
 		'isModal',
-		'drawer'
+		'drawer',
+		'isExpanded'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
 { #category : #'web resources' }
-SlmdNavView class >> globalStyle [
+SlmdNavRailView class >> globalStyle [
 	<webResource: #css>
 
 	^ '
@@ -96,7 +96,7 @@ SlmdNavView class >> globalStyle [
 ]
 
 { #category : #'web resources' }
-SlmdNavView class >> template [
+SlmdNavRailView class >> template [
 	<webResource: #html>
 
 	^ '
@@ -107,7 +107,7 @@ SlmdNavView class >> template [
 ]
 
 { #category : #nav }
-SlmdNavView >> addNavActionId: id key: key value: value [
+SlmdNavRailView >> addNavActionId: id key: key value: value [
 	| item |
 
 	(navActions includesKey: id) ifFalse: [
@@ -117,13 +117,13 @@ SlmdNavView >> addNavActionId: id key: key value: value [
 ]
 
 { #category : #nav }
-SlmdNavView >> addNavItem: aNavActionId [
+SlmdNavRailView >> addNavItem: aNavActionId [
 
 	self navItems add: aNavActionId asSymbol
 ]
 
 { #category : #'nav - drawer' }
-SlmdNavView >> buildNavdrawerItem: aNavAction [
+SlmdNavRailView >> buildNavdrawerItem: aNavAction [
 	| iconName arg1 |
 
 	iconName := aNavAction at: #iconName.
@@ -142,7 +142,7 @@ SlmdNavView >> buildNavdrawerItem: aNavAction [
 ]
 
 { #category : #'nav - rail' }
-SlmdNavView >> buildNavrailItem: aNavAction [
+SlmdNavRailView >> buildNavrailItem: aNavAction [
 	| iconName arg1 |
 
 	iconName := aNavAction at: #iconName.
@@ -164,81 +164,94 @@ SlmdNavView >> buildNavrailItem: aNavAction [
 ]
 
 { #category : #accessing }
-SlmdNavView >> drawer [
+SlmdNavRailView >> drawer [
 
 	^ drawer
 ]
 
 { #category : #accessing }
-SlmdNavView >> drawer: anObject [
+SlmdNavRailView >> drawer: anObject [
 
 	drawer := anObject
 ]
 
 { #category : #'nav - drawer' }
-SlmdNavView >> initialize [
+SlmdNavRailView >> initialize [
 
 	super initialize.
 
+	isExpanded := false.
 	navActions := Dictionary new.
 	navItems := OrderedCollection new.
 
 ]
 
 { #category : #accessing }
-SlmdNavView >> isModal [
+SlmdNavRailView >> isExpanded [
+
+	^ isExpanded
+]
+
+{ #category : #accessing }
+SlmdNavRailView >> isExpanded: anObject [
+
+	isExpanded := anObject
+]
+
+{ #category : #accessing }
+SlmdNavRailView >> isModal [
 
 	^ isModal
 ]
 
 { #category : #accessing }
-SlmdNavView >> isModal: anObject [
+SlmdNavRailView >> isModal: anObject [
 
 	isModal := anObject
 ]
 
 { #category : #accessing }
-SlmdNavView >> navActions [
+SlmdNavRailView >> navActions [
 
 	^ navActions
 ]
 
 { #category : #accessing }
-SlmdNavView >> navActions: anObject [
+SlmdNavRailView >> navActions: anObject [
 
 	navActions := anObject
 ]
 
 { #category : #nav }
-SlmdNavView >> navContentBuild [
+SlmdNavRailView >> navContentBuild [
 
-	self navTypeIsDrawer ifTrue: [
+	self isExpanded ifTrue: [
 		^ self navdrawerBuild ].
 
 	^ self navrailBuild
 ]
 
 { #category : #accessing }
-SlmdNavView >> navItems [
+SlmdNavRailView >> navItems [
 
 	^ navItems
 ]
 
 { #category : #accessing }
-SlmdNavView >> navItems: anObject [
+SlmdNavRailView >> navItems: anObject [
 
 	navItems := anObject
 ]
 
 { #category : #nav }
-SlmdNavView >> navModalPaneBuild [
+SlmdNavRailView >> navModalPaneBuild [
 
 	drawer := SlDrawer new
 		id: 'smdNavModalPane';
 		addClass: 'smd-nav-drawer';
 		placement: 'start';
 		beNoHeader;
-		customPropertyAt: 'size' put: self navTypeWidth printString;
+		customPropertyAt: 'size' put: self navRailWidth printString;
 		customPropertyAt: 'body-spacing' put: '0';
 		customPropertyAt: 'header-spacing' put: '0';
 		customPropertyAt: 'footer-spacing' put: '0';
@@ -257,14 +270,14 @@ SlmdNavView >> navModalPaneBuild [
 ]
 
 { #category : #nav }
-SlmdNavView >> navModalPaneContentFind [
+SlmdNavRailView >> navModalPaneContentFind [
 
 	^ self modalNavElementOrNil firstDescendantMatching: '#smdNavModalPaneContent'
 
 ]
 
 { #category : #nav }
-SlmdNavView >> navModalPaneSetUp [
+SlmdNavRailView >> navModalPaneSetUp [
 	"Add modal nav element as sibling of layout's navRegion"
 
 	"SlmdLayoutView first navRegionFind parent"
@@ -273,7 +286,13 @@ SlmdNavView >> navModalPaneSetUp [
 ]
 
 { #category : #nav }
-SlmdNavView >> navSetUp [
+SlmdNavRailView >> navRailWidth [
+
+	^ self isExpanded ifTrue: [ 220 ] ifFalse: [ 80 ]
+]
+
+{ #category : #nav }
+SlmdNavRailView >> navSetUp [
 	| el |
 
 	el := self navModalPaneContentFind.
@@ -285,47 +304,8 @@ SlmdNavView >> navSetUp [
 
 ]
 
-{ #category : #accessing }
-SlmdNavView >> navType [
-
-	^ navType
-]
-
-{ #category : #accessing }
-SlmdNavView >> navType: anObject [
-
-	navType := anObject
-]
-
-{ #category : #nav }
-SlmdNavView >> navTypeIsBar [
-
-	^ self navType = #bar
-]
-
-{ #category : #nav }
-SlmdNavView >> navTypeIsDrawer [
-
-	^ self navType = #drawer
-]
-
-{ #category : #nav }
-SlmdNavView >> navTypeIsRail [
-
-	^ self navType = #rail
-]
-
-{ #category : #nav }
-SlmdNavView >> navTypeWidth [
-
-	self navTypeIsRail ifTrue: [ ^ 80 ].
-	self navTypeIsDrawer ifTrue: [ ^ 360 ].
-	self navTypeIsBar ifTrue: [ ^ 0 ].
-	^ 80
-]
-
 { #category : #'nav - drawer' }
-SlmdNavView >> navdrawerBuild [
+SlmdNavRailView >> navdrawerBuild [
 	| element |
 
 	element := #div asHtmlTag
@@ -350,7 +330,7 @@ SlmdNavView >> navdrawerBuild [
 ]
 
 { #category : #'nav - rail' }
-SlmdNavView >> navrailBuild [
+SlmdNavRailView >> navrailBuild [
 	| element |
 
 	element := #div asHtmlTag addClass: 'smd-navrail'; yourself.

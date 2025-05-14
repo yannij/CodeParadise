@@ -32,7 +32,7 @@ TBRootApplication class >> app [
 
 { #category : #accessing }
 TBRootApplication class >> appName [
-	"Answer name to be shown in TopAppBar headline"
+	"Answer name to be shown in AppBar headline"
 
 	^ #'Tiny Blog'
 ]

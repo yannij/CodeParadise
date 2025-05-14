@@ -5,29 +5,12 @@ Class {
 		'layoutSettings',
 		'paneLayout',
 		'twoPaneSplitPosition',
-		'nav',
-		'bottomAppBar'
+		'navRail',
+		'navBar',
+		'toolbar'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
-
-{ #category : #defaults }
-SlmdLayoutModel class >> layoutTypeDefault [
-
-	^ #expanded
-]
-
-{ #category : #accessing }
-SlmdLayoutModel >> bottomAppBar [
-
-	^ bottomAppBar
-]
-
-{ #category : #accessing }
-SlmdLayoutModel >> bottomAppBar: anObject [
-
-	bottomAppBar := anObject
-]
 
 { #category : #initialization }
 SlmdLayoutModel >> initialize [
@@ -37,8 +20,9 @@ SlmdLayoutModel >> initialize [
 	layoutSettings := SlmdLayoutSettingsModel new.
 	twoPaneSplitPosition := 300.
 	paneLayout := SlmdPaneLayoutModel new.
-	nav := SlmdNavModel new.
-	bottomAppBar := SlmdBottomAppBarModel new.
+	navRail := SlmdNavRailModel new.
+	navBar := SlmdNavBarModel new.
+	toolbar := SlmdToolbarModel new.
 
 ]
 
@@ -55,15 +39,27 @@ SlmdLayoutModel >> layoutSettings: anObject [
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> nav [
+SlmdLayoutModel >> navBar [
 
-	^ nav
+	^ navBar
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> nav: anObject [
+SlmdLayoutModel >> navBar: anObject [
 
-	nav := anObject
+	navBar := anObject
+]
+
+{ #category : #accessing }
+SlmdLayoutModel >> navRail [
+
+	^ navRail
+]
+
+{ #category : #accessing }
+SlmdLayoutModel >> navRail: anObject [
+
+	navRail := anObject
 ]
 
 { #category : #accessing }
@@ -76,6 +72,18 @@ SlmdLayoutModel >> paneLayout [
 SlmdLayoutModel >> paneLayout: anObject [
 
 	paneLayout := anObject
+]
+
+{ #category : #accessing }
+SlmdLayoutModel >> toolbar [
+
+	^ toolbar
+]
+
+{ #category : #accessing }
+SlmdLayoutModel >> toolbar: anObject [
+
+	toolbar := anObject
 ]
 
 { #category : #accessing }
