@@ -4,9 +4,27 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
+{ #category : #nav }
+SlmdNavBarPresenter >> navSetUp [
+	| v |
+
+	v := self view.
+	self application navActions do: [ :eachNavAction |
+		eachNavAction asDictionary keysAndValuesDo: [ :key :value |
+			v addNavActionId: eachNavAction id key: key value: value ].
+		v addNavItem: eachNavAction id ]
+]
+
+{ #category : #nav }
+SlmdNavBarPresenter >> navigateTo: anObject [
+
+	self application pane1Model handleActionRequest: anObject; valueChanged.
+
+]
+
 { #category : #rendering }
 SlmdNavBarPresenter >> renderView [
-	| icons |
+	"| icons |
 
 	icons := self model iconButtons.
 
@@ -16,5 +34,25 @@ SlmdNavBarPresenter >> renderView [
 		self view renderIcon: icons second at: 'item2' with: 'smd-navBar-button' ].
 	icons size >= 3 ifTrue: [
 		self view renderIcon: icons third at: 'item3' with: 'smd-navBar-button' ].
+"
+]
+
+{ #category : #view }
+SlmdNavBarPresenter >> viewCreated [
+
+	super viewCreated.
+
+	self view when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self.
+
+]
+
+{ #category : #view }
+SlmdNavBarPresenter >> viewInitialized [
+
+	super viewInitialized.
+
+	self navSetUp.
+
+	self view navSetUp.
 
 ]

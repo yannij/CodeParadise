@@ -11,7 +11,6 @@ SlmdToolbarView class >> style [
 
 	^ '
 .smd-toolbar-footer {
-  flex: 0 0 72px;
   background: var(--sl-color-primary-200);
 }
 
@@ -23,7 +22,7 @@ SlmdToolbarView class >> style [
 }
 
 .smd-toolbar-button {
-  height: 48px;
+  height: 60px;
   width: 48px;
   font-size: 24px;
 }
@@ -63,7 +62,7 @@ SlmdToolbarView class >> template [
 '
 ]
 
-{ #category : #bottomAppBar }
+{ #category : #'as yet unclassified' }
 SlmdToolbarView >> buildIconButton: iconName class: cssClass [
 
 	^ (CpHtmlElement newWithTag: #div)
@@ -72,7 +71,7 @@ SlmdToolbarView >> buildIconButton: iconName class: cssClass [
 		yourself
 ]
 
-{ #category : #rendering }
+{ #category : #'as yet unclassified' }
 SlmdToolbarView >> renderIcon: iconName at: slotName with: cssClass [
 
 	self

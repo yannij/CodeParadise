@@ -257,10 +257,10 @@ SlmdLayoutSettingsView >> modalDivContentWith: aDictionary [
 		appendChild: (self addAttributeContainerStyle: self navRailExpandedNewSwitch);
 		appendChild: (self addAttributeContainerStyle: self useModalNavNewSwitch);
 		appendChild: (self addAttributeContainerStyle: self useTwoPaneBodyNewSwitch);
+		appendChild: (self addAttributeContainerStyle: self showSidesheetNewSwitch);
 		appendChild: (self addAttributeContainerStyle: self showAppBarNewSwitch);
 		appendChild: (self addAttributeContainerStyle: self showNavBarNewSwitch);
 		appendChild: (self addAttributeContainerStyle: self showToolbarNewSwitch);
-		appendChild: (self addAttributeContainerStyle: self showSidesheetNewSwitch);
 		appendChild: (self addAttributeContainerStyle: (self colorThemeBuildChooser: (aDictionary at: #colorThemeName ifAbsent: [])));
 		appendChild: (self addAttributeContainerStyle: (self fontFamilyChooser: (aDictionary at: #fontFamily ifAbsent: [])));
 		yourself.
@@ -274,6 +274,7 @@ SlmdLayoutSettingsView >> modalDivSetUp: aDictionary [
 	drawer := SlDrawer new
 		id: 'smdSettings';
 		label: 'Layout settings';
+		customPropertyAt: 'size' put: '50vw';
 		"placement: 'top';"
 		appendChild: (self modalDivContentWith: aDictionary);
 		yourself.
@@ -293,7 +294,7 @@ SlmdLayoutSettingsView >> navRailExpandedNewSwitch [
 
 	^ self
 		switchNewWithId: self navRailExpandedId
-		label: 'Nav Rail Expanded'
+		label: 'Nav rail expanded'
 		do: [
 			self layoutView navRailExpandedAdapt: self isExpanded.
 			self useAutoLayout: false ].
@@ -323,7 +324,7 @@ SlmdLayoutSettingsView >> showAppBarNewSwitch [
 
 	^ self
 		switchNewWithId: self showAppBarId
-		label: 'Show AppBar'
+		label: 'Show App bar'
 		do: [
 			self layoutView appBarDisplay: self showAppBar.
 			self useAutoLayout: false ].
@@ -353,7 +354,7 @@ SlmdLayoutSettingsView >> showNavBarNewSwitch [
 
 	^ self
 		switchNewWithId: self showNavBarId
-		label: 'Show Nav Bar'
+		label: 'Show Nav bar'
 		do: [
 			self showNavBar
 				ifTrue: [ self layoutView navBarOn ]
@@ -502,7 +503,7 @@ SlmdLayoutSettingsView >> useModalNavNewSwitch [
 
 	^ self
 		switchNewWithId: self useModalNavId
-		label: 'Use modal navigation'
+		label: 'Nav rail modal'
 		do: [
 			self useAutoLayout: false.
 			self layoutView navRailModalSet: self useModalNav ].

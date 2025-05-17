@@ -1,8 +1,41 @@
 Class {
 	#name : #SlmdNavBarView,
-	#superclass : #SlmdView,
+	#superclass : #SlmdNavView,
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
+
+{ #category : #'web resources' }
+SlmdNavBarView class >> globalStyle [
+	<webResource: #css>
+
+	^ '
+.smd-navbar-font {
+  line-height: var(--sl-line-height-normal);
+  font-size: var(--sl-font-size-small);
+  font-weight: var(--sl-font-weight-normal);
+}
+
+.smd-navbar-item {
+  flex-basis: max-content;
+  display: flex;
+  border-radius: 20px;
+  height: 40px;
+  background: var(--sl-color-primary-100);
+}
+
+.smd-navbar-icon {
+  padding-top: 0;
+  padding-left: 4px;
+  font-size: 24px;
+}
+
+.smd-navbar-labelText {
+  padding-top: 8px;
+  padding-left: 4px;
+  padding-right: 16px;
+}
+'
+]
 
 { #category : #'web resources' }
 SlmdNavBarView class >> style [
@@ -11,21 +44,15 @@ SlmdNavBarView class >> style [
 
 	^ '
 .smd-navBar-footer {
-  flex: 0 0 72px;
   background: var(--sl-color-primary-200);
 }
 
 .smd-navBar {
   z-index: 10;
   display: flex;
-  flex-flow: row wrap;
-  padding: 12px 16px 12px 4px;
-}
-
-.smd-navBar-button {
-  height: 48px;
-  width: 48px;
-  font-size: 24px;
+  justify-content: space-between;
+  flex-flow: row nowrap;
+  padding: 12px;
 }
 '
 ]
@@ -38,34 +65,38 @@ SlmdNavBarView class >> template [
 	^ '
 <div id="container" class="smd-navBar-footer">
   <div class="smd-navBar">
-    <div class="smd-navBar-button">
-      <slot name="item1"></slot>
-    </div>
-    <div class="smd-navBar-button">
-      <slot name="item2"></slot>
-    </div>
-    <div class="smd-navBar-button">
-      <slot name="item3"></slot>
-    </div>
+    <slot name="navBar"></slot>
   </div>
 </div>
 '
 ]
 
-{ #category : #bottomAppBar }
-SlmdNavBarView >> buildIconButton: iconName class: cssClass [
+{ #category : #rendering }
+SlmdNavBarView >> navSetUp [
 
-	^ (CpHtmlElement newWithTag: #div)
-		addClass: cssClass;
-		appendChild: (SlIconButton named: iconName);
-		yourself
+	navItems ifNotNil: [
+		navItems withIndexDo: [ :eachItem :index | | navItem |
+			index <= 5 ifTrue: [
+				navItem := self navbarBuildItem: (navActions at: eachItem).
+				self appendChild: navItem atSlotNamed: 'navBar' ] ] ].
+
 ]
 
 { #category : #rendering }
-SlmdNavBarView >> renderIcon: iconName at: slotName with: cssClass [
+SlmdNavBarView >> navbarBuildItem: aNavAction [
+	| iconName arg1 |
 
-	self
-		replaceAllChildrenWith: (self buildIconButton: iconName class: cssClass)
-		atSlotNamed: slotName.
+	iconName := aNavAction at: #iconName.
+	arg1 := aNavAction at: #arg1.
 
+	^ #div asHtmlTag
+		addClass: 'smd-navbar-item';
+		addClass: 'smd-navbar-font';
+		when: CpClickEvent basicPrimary do: [ self navigateTo: arg1 ] for: self;
+		appendChild: ((SlIconButton named: iconName) addClass: 'smd-navbar-icon'; yourself);
+		appendChild: (#div asHtmlTag
+			addClass: 'smd-navbar-labelText';
+			textContent: (aNavAction at: #iconLabel);
+			yourself);
+		yourself
 ]

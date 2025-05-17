@@ -78,13 +78,3 @@ SlmdLayoutPresenter >> viewCreated [
 		when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self.
 
 ]
-
-{ #category : #view }
-SlmdLayoutPresenter >> viewInitialized [
-
-	super viewInitialized.
-
-	"self model layoutSettings useAutoLayout ifTrue: [
-		self view layoutAdaptToWidth ]."
-
-]

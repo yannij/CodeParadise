@@ -25,6 +25,7 @@ SlmdLayoutView class >> globalStyle [
   display: none;
 }
 '
+
 ]
 
 { #category : #'web resources' }
@@ -49,6 +50,8 @@ SlmdLayoutView class >> style [
   background: var(--sl-color-primary-100);
 }
 '
+, SlmdNavRailView styleNav
+
 ]
 
 { #category : #'web resources' }
@@ -61,7 +64,8 @@ SlmdLayoutView class >> template [
   <div style="display: flex; flex-direction: column">
     <div style="height: 100%; flex: 1; display: flex; flex-direction: row">
       <div id="smdNavRegion" class="smd-navRegion">
-        <slot name="navRegion"></slot>
+        <slot name="navRegion">
+        </slot>
       </div>
       <div id="smdBodyRegion" class="smd-body-region">
         <div style="flex: 100%">
@@ -105,7 +109,7 @@ SlmdLayoutView >> adjustBodyHeight [
 	bodyRegion ifNil: [ ^ self  ].
 
 	bodyHeight := (self showNavBar or: [self showToolbar])
-		ifTrue: [ 'calc(100vh - 72px)' ]
+		ifTrue: [ 'calc(100vh - 64px)' ]
 		ifFalse: [ '100vh' ].
 	bodyRegion styleAt: 'height' put: bodyHeight.
 	bodyRegion styleAt: 'max-height' put: bodyHeight.
@@ -426,7 +430,7 @@ SlmdLayoutView >> navRailExpandedAdapt: aBoolean [
 
 	modalElement := self modalNavElementOrNil.
 	modalElement ifNotNil: [
-		modalElement customPropertyAt: 'size' put: self navRailWidth printString.
+		modalElement customPropertyAt: 'size' put: self navRailWidth printString, 'px'.
 		SlmdNavRailView first navSetUp ].
 
 	"Set type in nav model"
@@ -464,8 +468,7 @@ SlmdLayoutView >> navRailModalSet: anObject [
 { #category : #navrail }
 SlmdLayoutView >> navRailWidth [
 
-	"self traceCr: '**** isExpanded=', self isExpanded printString."
-	^ self isExpanded ifTrue: [ 220 ] ifFalse: [ 80 ]
+	^ self isExpanded ifTrue: [ 220 ] ifFalse: [ 96 ]
 ]
 
 { #category : #navrail }
