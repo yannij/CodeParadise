@@ -27,20 +27,6 @@ SlmdLayoutSettingsView class >> template [
 '
 ]
 
-{ #category : #initalize }
-SlmdLayoutSettingsView >> adaptToLayoutProperties: aDictionary [
-	| component |
-
-	component := self layoutView.
-
-	(aDictionary includesKey: #colorThemeName) ifTrue: [
-		self colorThemeNameSet: (aDictionary at: #colorThemeName) ].
-
-	(aDictionary includesKey: #fontFamily) ifTrue: [
-		self fontFamilySet: (aDictionary at: #fontFamily) ].
-
-]
-
 { #category : #utilities }
 SlmdLayoutSettingsView >> addAttributeContainerStyle: element [
 
@@ -48,9 +34,10 @@ SlmdLayoutSettingsView >> addAttributeContainerStyle: element [
 ]
 
 { #category : #'settings - choosers' }
-SlmdLayoutSettingsView >> colorThemeBuildChooser: selectedItem [
-	| chooser |
+SlmdLayoutSettingsView >> colorThemeBuildChooser: props [
+	| chooser selectedItem |
 
+	selectedItem := props at: #colorThemeName ifAbsent: [].
 	chooser := SlSelect new
 		id: 'smdColorThemeChooser';
 		labelText: 'Use color theme:';
@@ -60,11 +47,12 @@ SlmdLayoutSettingsView >> colorThemeBuildChooser: selectedItem [
 
 	chooser when: SlChangeEvent do: [ self colorThemeNameSet: chooser value ] for: self.
 
-	#(gray red orange amber yellow lime green emerald teal cyan sky blue indigo violet purple fuchsia pink rose)
-		do: [ :each |
-			chooser appendChild: (SlOption new value: each; textContent: each capitalized; yourself) ].
+	#(
+gray red orange amber yellow lime green emerald teal cyan sky blue indigo violet purple fuchsia pink rose
+	) do: [ :each |
+		chooser appendChild: (SlOption new value: each; textContent: each capitalized; yourself) ].
 
-	^ chooser
+	^ self addAttributeContainerStyle: chooser
 ]
 
 { #category : #accessing }
@@ -79,14 +67,15 @@ SlmdLayoutSettingsView >> colorThemeName: anObject [
 	colorThemeName := anObject asString
 ]
 
-{ #category : #accessing }
+{ #category : #'settings - choosers' }
 SlmdLayoutSettingsView >> colorThemeNameSet: anObject [
 
 	self colorThemeName = anObject ifTrue: [
 		^ self ].
 
 	self colorThemeName: anObject.
-	self layoutView colorThemeAdapt: anObject.
+	self layoutViewLazy colorThemeAdapt: anObject.
+	self announceAspect: #colorThemeName value: anObject.
 
 ]
 
@@ -145,9 +134,10 @@ SlmdLayoutSettingsView >> fontFamily: anObject [
 ]
 
 { #category : #'settings - choosers' }
-SlmdLayoutSettingsView >> fontFamilyChooser: selectedItem [
-	| chooser |
+SlmdLayoutSettingsView >> fontFamilyChooser: props [
+	| chooser selectedItem |
 
+	selectedItem := props at: #fontFamily ifAbsent: [].
 	chooser := SlSelect new
 		id: 'smdFontFamilyChooser';
 		labelText: 'Use font family:';
@@ -161,21 +151,21 @@ nil -> 'Default'.
 #'var(--sl-font-sans)' -> 'Sans'.
 #'var(--sl-font-serif)' -> 'Serif'.
 #'var(--sl-font-mono)' -> 'Mono'
-}
-		do: [ :each |
-			chooser appendChild: (SlOption new value: each key; textContent: each value capitalized; yourself) ].
+	} do: [ :each |
+		chooser appendChild: (SlOption new value: each key; textContent: each value capitalized; yourself) ].
 
-	^ chooser
+	^ self addAttributeContainerStyle: chooser
 ]
 
-{ #category : #accessing }
+{ #category : #'settings - choosers' }
 SlmdLayoutSettingsView >> fontFamilySet: anObject [
 
 	self fontFamily = anObject ifTrue: [
 		^ self ].
 
 	self fontFamily: anObject.
-	self layoutView fontFamilyAdapt: anObject.
+	self layoutViewLazy fontFamilyAdapt: anObject.
+	self announceAspect: #fontFamily value: anObject.
 
 ]
 
@@ -194,7 +184,7 @@ SlmdLayoutSettingsView >> isExpanded: aBoolean [
 { #category : #initalize }
 SlmdLayoutSettingsView >> layoutInitialSetUp: props [
 
-	self layoutView layoutInitialSetUp: props.
+	self layoutViewLazy layoutInitialSetUp: props.
 
 ]
 
@@ -211,8 +201,10 @@ SlmdLayoutSettingsView >> layoutType: aLayoutType [
 ]
 
 { #category : #'settings - choosers' }
-SlmdLayoutSettingsView >> layoutTypeBuildChooser: selectedItem [
-	| radioGroup |
+SlmdLayoutSettingsView >> layoutTypeBuildChooser: props [
+	| radioGroup selectedItem |
+
+	selectedItem := props at: #layoutType ifAbsent: [].
 
 	radioGroup := SlRadioGroup new
 		id: 'smdLayoutTypeChooser';
@@ -220,7 +212,7 @@ SlmdLayoutSettingsView >> layoutTypeBuildChooser: selectedItem [
 		propertyAt: 'value' put: selectedItem asString;
 		yourself.
 
-	radioGroup when: SlChangeEvent do: [ self layoutView layoutTypeChangeManual: radioGroup value ] for: self.
+	radioGroup when: SlChangeEvent do: [ self layoutTypeSet: radioGroup value ] for: self.
 
 	radioGroup appendChild: (SlRadio new value: #compact; textContent: 'Compact'; yourself).
 	radioGroup appendChild: (SlRadio new value: #medium; textContent: 'Medium'; yourself).
@@ -228,14 +220,22 @@ SlmdLayoutSettingsView >> layoutTypeBuildChooser: selectedItem [
 	radioGroup appendChild: (SlRadio new value: #large; textContent: 'Large'; yourself).
 	radioGroup appendChild: (SlRadio new value: #'extra-large'; textContent: 'Extra-large'; yourself).
 
-	^ radioGroup
+	^ self addAttributeContainerStyle: radioGroup
+]
+
+{ #category : #'settings - choosers' }
+SlmdLayoutSettingsView >> layoutTypeSet: anObject [
+
+	self useAutoLayout: false.
+
+	self layoutType: anObject.
+	self layoutViewLazy layoutTypeAdapt: anObject.
+	self announceAspect: #layoutType value: anObject.
+
 ]
 
 { #category : #accessing }
 SlmdLayoutSettingsView >> layoutView [
-
-	layoutView ifNil: [
-		layoutView := self layoutViewFind ].
 
 	^ layoutView
 ]
@@ -246,23 +246,33 @@ SlmdLayoutSettingsView >> layoutView: anObject [
 	layoutView := anObject
 ]
 
+{ #category : #accessing }
+SlmdLayoutSettingsView >> layoutViewLazy [
+
+	layoutView ifNil: [
+		layoutView := self layoutViewFind ].
+
+	^ layoutView
+]
+
 { #category : #initalize }
-SlmdLayoutSettingsView >> modalDivContentWith: aDictionary [
+SlmdLayoutSettingsView >> modalDivContentWith: props [
 	| element |
 
 	element := #div asHtmlTag
 		addClass: 'smd-settings-pane';
-		appendChild: (self addAttributeContainerStyle: self useAutoLayoutNewSwitch);
-		appendChild: (self addAttributeContainerStyle: (self layoutTypeBuildChooser: (aDictionary at: #layoutType ifAbsent: [])));
-		appendChild: (self addAttributeContainerStyle: self navRailExpandedNewSwitch);
-		appendChild: (self addAttributeContainerStyle: self useModalNavNewSwitch);
-		appendChild: (self addAttributeContainerStyle: self useTwoPaneBodyNewSwitch);
-		appendChild: (self addAttributeContainerStyle: self showSidesheetNewSwitch);
-		appendChild: (self addAttributeContainerStyle: self showAppBarNewSwitch);
-		appendChild: (self addAttributeContainerStyle: self showNavBarNewSwitch);
-		appendChild: (self addAttributeContainerStyle: self showToolbarNewSwitch);
-		appendChild: (self addAttributeContainerStyle: (self colorThemeBuildChooser: (aDictionary at: #colorThemeName ifAbsent: [])));
-		appendChild: (self addAttributeContainerStyle: (self fontFamilyChooser: (aDictionary at: #fontFamily ifAbsent: [])));
+		appendChild: (self useAutoLayoutNewSwitch: props);
+		appendChild: (self layoutTypeBuildChooser: props);
+		appendChild: (self navRailExpandedNewSwitch: props);
+		appendChild: (self useModalNavNewSwitch: props);
+		appendChild: (self useTwoPaneBodyNewSwitch: props);
+		appendChild: (self showSidesheetNewSwitch: props);
+		appendChild: (self showAppBarNewSwitch: props);
+		appendChild: (self showAppBarLeadingButtonNewSwitch: props);
+		appendChild: (self showNavBarNewSwitch: props);
+		appendChild: (self showToolbarNewSwitch: props);
+		appendChild: (self colorThemeBuildChooser: props);
+		appendChild: (self fontFamilyChooser: props);
 		yourself.
 
 	^ element
@@ -290,14 +300,26 @@ SlmdLayoutSettingsView >> navRailExpandedId [
 ]
 
 { #category : #'settings - switches' }
-SlmdLayoutSettingsView >> navRailExpandedNewSwitch [
+SlmdLayoutSettingsView >> navRailExpandedNewSwitch: props [
+	| element |
 
-	^ self
+	element := self
 		switchNewWithId: self navRailExpandedId
 		label: 'Nav rail expanded'
-		do: [
-			self layoutView navRailExpandedAdapt: self isExpanded.
-			self useAutoLayout: false ].
+		checked: (props at: #navRailExpanded ifAbsent: [ false ])
+		do: [ self navRailExpandedSet: self isExpanded ].
+
+	^ self addAttributeContainerStyle: element
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> navRailExpandedSet: aBoolean [
+
+	self useAutoLayout: false.
+
+	self layoutViewLazy navRailExpandedAdapt: aBoolean.
+	self announceAspect: #navRailExpanded value: aBoolean.
 
 ]
 
@@ -320,14 +342,65 @@ SlmdLayoutSettingsView >> showAppBarId [
 ]
 
 { #category : #'settings - switches' }
-SlmdLayoutSettingsView >> showAppBarNewSwitch [
+SlmdLayoutSettingsView >> showAppBarLeadingButton [
+
+	^ self switchId: self showAppBarLeadingButtonId ifMissing: true
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showAppBarLeadingButton: aBoolean [
+
+	self switchId: self showAppBarLeadingButtonId put: aBoolean ifMissing: nil
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showAppBarLeadingButtonId [
+
+	^ 'showAppBarLeadingButton'
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showAppBarLeadingButtonNewSwitch: props [
+	| element |
+
+	element := self
+		switchNewWithId: self showAppBarLeadingButtonId
+		label: 'Show App bar leading button'
+		checked: (props at: #showAppBarLeadingButton ifAbsent: [ false ])
+		do: [ self showAppBarLeadingButtonSet: self showAppBarLeadingButton ].
+
+	^ self addAttributeContainerStyle: element
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showAppBarLeadingButtonSet: aBoolean [
+
+	self useAutoLayout: false.
+
+	self layoutViewLazy appBarMenuDisplay: aBoolean.
+	self announceAspect: #showAppBarLeadingButton value: aBoolean.
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showAppBarNewSwitch: props [
 
 	^ self
 		switchNewWithId: self showAppBarId
 		label: 'Show App bar'
-		do: [
-			self layoutView appBarDisplay: self showAppBar.
-			self useAutoLayout: false ].
+		checked: (props at: #showAppBar ifAbsent: [ false ])
+		do: [ self showAppBarSet: self showAppBar ].
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showAppBarSet: aBoolean [
+
+	self useAutoLayout: false.
+
+	self layoutViewLazy appBarDisplay: aBoolean.
+	self announceAspect: #showAppBar value: aBoolean.
 
 ]
 
@@ -350,16 +423,26 @@ SlmdLayoutSettingsView >> showNavBarId [
 ]
 
 { #category : #'settings - switches' }
-SlmdLayoutSettingsView >> showNavBarNewSwitch [
+SlmdLayoutSettingsView >> showNavBarNewSwitch: props [
 
 	^ self
 		switchNewWithId: self showNavBarId
 		label: 'Show Nav bar'
-		do: [
-			self showNavBar
-				ifTrue: [ self layoutView navBarOn ]
-				ifFalse: [ self layoutView navBarOff ].
-			self useAutoLayout: false ].
+		checked: (props at: #showNavBar ifAbsent: [ false ])
+		do: [ self showNavBarSet: self showNavBar ].
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showNavBarSet: aBoolean [
+
+	self useAutoLayout: false.
+
+	aBoolean
+		ifTrue: [ self layoutViewLazy navBarOn ]
+		ifFalse: [ self layoutViewLazy navBarOff ].
+
+	self announceAspect: #showNavBar value: aBoolean.
 
 ]
 
@@ -382,14 +465,23 @@ SlmdLayoutSettingsView >> showSidesheetId [
 ]
 
 { #category : #'settings - switches' }
-SlmdLayoutSettingsView >> showSidesheetNewSwitch [
+SlmdLayoutSettingsView >> showSidesheetNewSwitch: props [
 
 	^ self
 		switchNewWithId: self showSidesheetId
 		label: 'Show Sidesheet'
-		do: [
-			self layoutView sidesheetDisplay: self showSidesheet.
-			self useAutoLayout: false ].
+		checked: (props at: #showSidesheet ifAbsent: [ false ])
+		do: [ self showSidesheetSet: self showSidesheet ].
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showSidesheetSet: aBoolean [
+
+	self useAutoLayout: false.
+
+	self layoutViewLazy sidesheetDisplay: aBoolean.
+	self announceAspect: #showSidesheet value: aBoolean.
 
 ]
 
@@ -412,16 +504,25 @@ SlmdLayoutSettingsView >> showToolbarId [
 ]
 
 { #category : #'settings - switches' }
-SlmdLayoutSettingsView >> showToolbarNewSwitch [
+SlmdLayoutSettingsView >> showToolbarNewSwitch: props [
 
 	^ self
 		switchNewWithId: self showToolbarId
 		label: 'Show Toolbar'
-		do: [
-			self showToolbar
-				ifTrue: [ self layoutView toolbarOn ]
-				ifFalse: [ self layoutView toolbarOff ].
-			self useAutoLayout: false ].
+		checked: (props at: #showToolbar ifAbsent: [ false ])
+		do: [ self showToolbarSet: self showToolbar ].
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showToolbarSet: aBoolean [
+
+	self useAutoLayout: false.
+
+	aBoolean
+		ifTrue: [ self layoutViewLazy toolbarOn ]
+		ifFalse: [ self layoutViewLazy toolbarOff ].
+	self announceAspect: #showToolbar value: aBoolean.
 
 ]
 
@@ -438,17 +539,20 @@ SlmdLayoutSettingsView >> switchId: id put: value ifMissing: aBlock [
 ]
 
 { #category : #utilities }
-SlmdLayoutSettingsView >> switchNewWithId: id label: label do: aBlock [
+SlmdLayoutSettingsView >> switchNewWithId: id label: label checked: checked do: aBlock [
 	| toggle |
 
 	toggle := SlSwitch new
 		id: id;
 		label: label;
-		checked: true;
+		checked: checked;
 		when: SlChangeEvent do: aBlock for: self;
 		yourself.
 
-	^ (CpHtmlElement newWithTag: #div) appendChild: toggle; yourself.
+	^ (CpHtmlElement newWithTag: #div)
+		styleAt: 'padding-bottom' put: '12px';
+		appendChild: toggle;
+		yourself.
 
 ]
 
@@ -471,12 +575,21 @@ SlmdLayoutSettingsView >> useAutoLayoutId [
 ]
 
 { #category : #'settings - switches' }
-SlmdLayoutSettingsView >> useAutoLayoutNewSwitch [
+SlmdLayoutSettingsView >> useAutoLayoutNewSwitch: props [
 
 	^ self
 		switchNewWithId: self useAutoLayoutId
 		label: 'Use auto layout'
-		do: [ self layoutView layoutAdaptToWidth ].
+		checked: (props at: #useAutoLayout ifAbsent: [ false ])
+		do: [ self useAutoLayoutSet: self useAutoLayout ].
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> useAutoLayoutSet: aBoolean [
+
+	aBoolean ifTrue: [ self layoutViewLazy layoutAdaptToWidth ].
+	self announceAspect: #useAutoLayout value: aBoolean.
 
 ]
 
@@ -499,14 +612,23 @@ SlmdLayoutSettingsView >> useModalNavId [
 ]
 
 { #category : #'settings - switches' }
-SlmdLayoutSettingsView >> useModalNavNewSwitch [
+SlmdLayoutSettingsView >> useModalNavNewSwitch: props [
 
 	^ self
 		switchNewWithId: self useModalNavId
 		label: 'Nav rail modal'
-		do: [
-			self useAutoLayout: false.
-			self layoutView navRailModalSet: self useModalNav ].
+		checked: (props at: #useModalNav ifAbsent: [ false ])
+		do: [ self useModalNavSet: self useModalNav ].
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> useModalNavSet: aBoolean [
+
+	self useAutoLayout: false.
+
+	self layoutViewLazy navRailModalSet: aBoolean.
+	self announceAspect: #useModalNav value: aBoolean.
 
 ]
 
@@ -529,12 +651,22 @@ SlmdLayoutSettingsView >> useTwoPaneBodyId [
 ]
 
 { #category : #'settings - switches' }
-SlmdLayoutSettingsView >> useTwoPaneBodyNewSwitch [
+SlmdLayoutSettingsView >> useTwoPaneBodyNewSwitch: props [
 
 	^ self
 		switchNewWithId: self useTwoPaneBodyId
 		label: 'Use two pane layout'
-		do: [
-			self layoutView paneLayoutAdapt: self useTwoPaneBody ].
+		checked: (props at: #useTwoPaneBody ifAbsent: [ false ])
+		do: [ self useTwoPaneBodySet: self useTwoPaneBody ].
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> useTwoPaneBodySet: aBoolean [
+
+	self useAutoLayout: false.
+
+	self layoutViewLazy paneLayoutAdapt: aBoolean.
+	self announceAspect: #useTwoPaneBody value: aBoolean.
 
 ]

@@ -5,38 +5,6 @@ Class {
 }
 
 { #category : #view }
-SlmdLayoutPresenter >> handleAdapt: anObject [
-	| aspect aspectValue |
-
-	"anObject printString traceCr."
-	aspect := anObject parameterAt: #aspect.
-	aspectValue := anObject parameterAt: #value.
-
-	aspect = #paneLayout ifTrue: [
-		"('#paneLayout -> ' , aspectValue asString) traceCr."
-		self model paneLayout useTwoPaneBody: aspectValue.
-		^ self ].
-
-	aspect = #isExpanded ifTrue: [
-		^ self model navRail isExpanded: aspectValue ].
-
-	aspect = #navModal ifTrue: [
-		^ self model navRail isModal: aspectValue ].
-
-	aspect = #twoPaneSplitPosition ifTrue: [
-		"('#twoPaneSplitPosition -> ' , aspectValue asString) traceCr."
-		^ self model paneLayout pane1Width: aspectValue"; valueChanged" ].
-
-	aspect = #appBarMenuDisplay ifTrue: [
-		"('#appBarMenuDisplay -> ' , aspectValue asString) traceCr."
-		^ self model paneLayout appBarModel appBarMenuDisplay: aspectValue"; valueChanged" ].
-
-	aspect = #appBarDisplay ifTrue: [
-		"('#appBarDisplay -> ' , aspectValue asString) traceCr."
-		^ self model paneLayout appBarDisplayed: aspectValue"; valueChanged" ]
-]
-
-{ #category : #view }
 SlmdLayoutPresenter >> navigateTo: anObject [
 
 	self application pane1Model handleActionRequest: anObject; valueChanged.
@@ -74,7 +42,7 @@ SlmdLayoutPresenter >> viewCreated [
 	super viewCreated.
 
 	self view
-		when: (CpActionRequested id: #adapt) send: #handleAdapt: to: self;
-		when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self.
+		when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self;
+		yourself.
 
 ]

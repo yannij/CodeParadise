@@ -9,6 +9,8 @@ Class {
 		'layoutType',
 		'useModalNav',
 		'useTwoPaneBody',
+		'showAppBar',
+		'showAppBarLeadingButton',
 		'showNavBar',
 		'showSidesheet',
 		'showToolbar',
@@ -24,9 +26,11 @@ SlmdLayoutSettingsModel >> asProperties [
 		at: #colorThemeName put: self colorThemeName;
 		at: #fontFamily put: self fontFamily;
 		at: #layoutType put: self layoutType;
-		at: #isExpanded put: self isExpanded;
+		at: #navRailExpanded put: self navRailExpanded;
 		at: #showNavBar put: self showNavBar;
 		at: #showSidesheet put: self showSidesheet;
+		at: #showAppBar put: self showAppBar;
+		at: #showAppBarLeadingButton put: self showAppBarLeadingButton;
 		at: #showToolbar put: self showToolbar;
 		at: #useAutoLayout put: self useAutoLayout;
 		at: #useModalNav put: self useModalNav;
@@ -81,6 +85,7 @@ SlmdLayoutSettingsModel >> initialize [
 	navRailExpanded := false.
 	showNavBar := false.
 	showSidesheet := false.
+	showAppBar := false.
 	showToolbar := false.
 	useAutoLayout := true.
 	useModalNav := false.
@@ -128,6 +133,42 @@ SlmdLayoutSettingsModel >> layoutWidth [
 SlmdLayoutSettingsModel >> layoutWidth: anObject [
 
 	layoutWidth := anObject
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> navRailExpanded [
+
+	^ navRailExpanded
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> navRailExpanded: anObject [
+
+	navRailExpanded := anObject
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> showAppBar [
+
+	^ showAppBar
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> showAppBar: anObject [
+
+	showAppBar := anObject
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> showAppBarLeadingButton [
+
+	^ showAppBarLeadingButton
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> showAppBarLeadingButton: anObject [
+
+	showAppBarLeadingButton := anObject
 ]
 
 { #category : #accessing }

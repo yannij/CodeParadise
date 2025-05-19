@@ -88,19 +88,6 @@ SlmdLayoutView class >> template [
 '
 ]
 
-{ #category : #events }
-SlmdLayoutView >> adaptWithAspect: aspect value: anObject [
-
-	self traceCr: aspect printString, ' -> ', anObject printString.
-
-	self serverAnnounce: (CpActionRequested
-		id: #adapt
-		parameters: {
-			#aspect -> aspect.
-			#value -> anObject
-		} asDictionary).
-]
-
 { #category : #body }
 SlmdLayoutView >> adjustBodyHeight [
 	| bodyRegion bodyHeight |
@@ -123,8 +110,6 @@ SlmdLayoutView >> appBarDisplay: anObject [
 	component ifNotNil: [
 		component appBarDisplay: anObject ].
 
-	self adaptWithAspect: #appBarDisplay value: anObject
-
 ]
 
 { #category : #events }
@@ -134,8 +119,6 @@ SlmdLayoutView >> appBarMenuDisplay: anObject [
 	components := SlmdAppBarView all.
 	components do: [ :each |
 		each appBarMenuDisplay: anObject ].
-
-	self adaptWithAspect: #appBarMenuDisplay value: anObject
 
 ]
 
@@ -162,7 +145,6 @@ SlmdLayoutView >> bodySplitPanelAdapt [
 	paneLayout ifNotNil: [
 		paneLayout pane1WidthSet: w ].
 
-	self adaptWithAspect: #twoPaneSplitPosition value: w
 ]
 
 { #category : #'color theme' }
@@ -288,29 +270,32 @@ SlmdLayoutView >> isExpanded: anObject [
 { #category : #layout }
 SlmdLayoutView >> layoutAdaptToWidth [
 
-	layoutWidthCached < 600 ifTrue: [ ^ self layoutTypeChangeAutoResize: #compact ].
-	layoutWidthCached < 840 ifTrue: [ ^ self layoutTypeChangeAutoResize: #medium ].
-	layoutWidthCached < 1200 ifTrue: [ ^ self layoutTypeChangeAutoResize: #expanded ].
-	layoutWidthCached < 1600 ifTrue: [ ^ self layoutTypeChangeAutoResize: #large ].
-	self layoutTypeChangeAutoResize: #'extra-large'.
+	layoutWidthCached < 600 ifTrue: [ ^ self layoutTypeAdapt: #compact ].
+	layoutWidthCached < 840 ifTrue: [ ^ self layoutTypeAdapt: #medium ].
+	layoutWidthCached < 1200 ifTrue: [ ^ self layoutTypeAdapt: #expanded ].
+	layoutWidthCached < 1600 ifTrue: [ ^ self layoutTypeAdapt: #large ].
+	self layoutTypeAdapt: #'extra-large'.
 
 ]
 
-{ #category : #layout }
+{ #category : #initialization }
 SlmdLayoutView >> layoutInitialSetUp: props [
 	"Invoked by presenter's viewCreated"
 
 	self traceCr: ('layoutInitialSetUp: ', props printString).
+	self resizeSetUp.
+
 	self colorThemeAdapt: (props at: #colorThemeName ifAbsent: []).
 	self fontFamilyAdapt: (props at: #fontFamily ifAbsent: []).
-	self isExpanded: (props at: #isExpanded ifAbsent: [ false ]).
-	self layoutTypeAdapt: (props at: #layoutType ifAbsent: []).
-	self toolbarOff.
-	self resizeSetUp.
-	self adjustBodyHeight.
 
 	(props at: #useAutoLayout ifAbsent: [ true ]) ifTrue: [
-		self layoutAdaptToWidth ].
+		self layoutAdaptToWidth.
+		^ self ].
+
+	self layoutType: (props at: #layoutType ifAbsent: []).
+	self navRailExpandedAdapt: (props at: #navRailExpanded ifAbsent: [ false ]).
+	self showNavBarAdapt: (props at: #showNavBar ifAbsent: [ false ]).
+	self adjustBodyHeight.
 
 ]
 
@@ -345,8 +330,7 @@ SlmdLayoutView >> layoutType: anObject [
 { #category : #layout }
 SlmdLayoutView >> layoutTypeAdapt: aLayoutType [
 
-	"self layoutType = aLayoutType ifTrue: [
-		^ self ]."
+	self traceCr: ('**** layoutTypeAdapt: ', aLayoutType printString).
 
 	aLayoutType = #compact ifTrue: [
 		self navRegionModalOn; navRailExpandedOff; navBarOn; sidesheetOff; useTwoPanesChangeAutoResize: false ].
@@ -360,20 +344,6 @@ SlmdLayoutView >> layoutTypeAdapt: aLayoutType [
 		self navRegionModalOff; navRailExpandedOn; navBarOff; sidesheetOn; useTwoPanesChangeAutoResize: true  ].
 
 	self bodySplitPanelAdapt.
-
-]
-
-{ #category : #layout }
-SlmdLayoutView >> layoutTypeChangeAutoResize: aLayoutType [
-
-	self layoutTypeAdapt: aLayoutType
-]
-
-{ #category : #layout }
-SlmdLayoutView >> layoutTypeChangeManual: aLayoutType [
-
-	self useAutoLayout: false.
-	self layoutTypeAdapt: aLayoutType.
 
 ]
 
@@ -547,8 +517,6 @@ SlmdLayoutView >> paneLayoutAdapt: anObject [
 			ifTrue: [ component useTwoPaneLayout ]
 			ifFalse: [ component useOnePaneLayout ] ].
 
-	self adaptWithAspect: #paneLayout value: anObject
-
 ]
 
 { #category : #layout }
@@ -573,6 +541,14 @@ SlmdLayoutView >> showNavBar [
 SlmdLayoutView >> showNavBar: anObject [
 
 	self layoutSettingsView showNavBar: anObject
+]
+
+{ #category : #navbar }
+SlmdLayoutView >> showNavBarAdapt: aBoolean [
+
+	aBoolean
+		ifTrue: [ self navBarOn ]
+		ifFalse: [ self navBarOff ]
 ]
 
 { #category : #'accessing - settings' }

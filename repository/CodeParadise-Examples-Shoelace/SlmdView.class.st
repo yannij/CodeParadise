@@ -4,6 +4,31 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
+{ #category : #accessing }
+SlmdView class >> eventIdModelUpdate [
+
+	^ #modelUpdate
+]
+
+{ #category : #events }
+SlmdView >> announceAspect: key value: anObject [
+
+	self announceEvent: self class eventIdModelUpdate key: key value: anObject
+]
+
+{ #category : #events }
+SlmdView >> announceEvent: id key: key value: anObject [
+
+	self traceCr: id printString, ': ', key printString, ' -> ', anObject printString.
+
+	self serverAnnounce: (CpActionRequested
+		id: id
+		parameters: {
+			#aspect -> key.
+			#value -> anObject
+		} asDictionary).
+]
+
 { #category : #utilities }
 SlmdView >> findByIdInLightDom: anId [
 
