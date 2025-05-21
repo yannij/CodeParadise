@@ -1,9 +1,8 @@
 Class {
 	#name : #SlmdLayoutSettingsView,
-	#superclass : #SlmdView,
+	#superclass : #SlmdLayoutComponentView,
 	#instVars : [
 		'drawer',
-		'layoutView',
 		'colorThemeName',
 		'fontFamily'
 	],
@@ -169,18 +168,6 @@ SlmdLayoutSettingsView >> fontFamilySet: anObject [
 
 ]
 
-{ #category : #'settings - switches' }
-SlmdLayoutSettingsView >> isExpanded [
-
-	^ self switchId: self navRailExpandedId ifMissing: false
-]
-
-{ #category : #'settings - switches' }
-SlmdLayoutSettingsView >> isExpanded: aBoolean [
-
-	^ self switchId: self navRailExpandedId put: aBoolean ifMissing: nil
-]
-
 { #category : #initalize }
 SlmdLayoutSettingsView >> layoutInitialSetUp: props [
 
@@ -226,7 +213,7 @@ SlmdLayoutSettingsView >> layoutTypeBuildChooser: props [
 { #category : #'settings - choosers' }
 SlmdLayoutSettingsView >> layoutTypeSet: anObject [
 
-	self useAutoLayout: false.
+	self useAutoLayoutUpdate: false.
 
 	self layoutType: anObject.
 	self layoutViewLazy layoutTypeAdapt: anObject.
@@ -234,25 +221,21 @@ SlmdLayoutSettingsView >> layoutTypeSet: anObject [
 
 ]
 
-{ #category : #accessing }
-SlmdLayoutSettingsView >> layoutView [
+{ #category : #actions }
+SlmdLayoutSettingsView >> layoutUpdate [
+	| props |
 
-	^ layoutView
-]
+	props := {
+		#navRailExpanded -> self navRailExpanded.
+		#showNavBar -> self showNavBar.
+		#showSidesheet -> self showSidesheet.
+		#useTwoPaneBody -> self useTwoPaneBody.
+		#showAppBar -> self showAppBar.
+		#showAppBarLeadingButton -> self showAppBarLeadingButton.
+		#useModalNav -> self useModalNav.
+	} asDictionary.
 
-{ #category : #accessing }
-SlmdLayoutSettingsView >> layoutView: anObject [
-
-	layoutView := anObject
-]
-
-{ #category : #accessing }
-SlmdLayoutSettingsView >> layoutViewLazy [
-
-	layoutView ifNil: [
-		layoutView := self layoutViewFind ].
-
-	^ layoutView
+	self announceAspect: #layoutUpdate value: props
 ]
 
 { #category : #initalize }
@@ -294,6 +277,18 @@ SlmdLayoutSettingsView >> modalDivSetUp: aDictionary [
 ]
 
 { #category : #'settings - switches' }
+SlmdLayoutSettingsView >> navRailExpanded [
+
+	^ self switchId: self navRailExpandedId ifMissing: true
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> navRailExpanded: aBoolean [
+
+	self switchId: self navRailExpandedId put: aBoolean ifMissing: nil
+]
+
+{ #category : #'settings - switches' }
 SlmdLayoutSettingsView >> navRailExpandedId [
 
 	^ 'navRailExpanded'
@@ -307,7 +302,7 @@ SlmdLayoutSettingsView >> navRailExpandedNewSwitch: props [
 		switchNewWithId: self navRailExpandedId
 		label: 'Nav rail expanded'
 		checked: (props at: #navRailExpanded ifAbsent: [ false ])
-		do: [ self navRailExpandedSet: self isExpanded ].
+		do: [ self navRailExpandedSet: self navRailExpanded ].
 
 	^ self addAttributeContainerStyle: element
 
@@ -316,7 +311,7 @@ SlmdLayoutSettingsView >> navRailExpandedNewSwitch: props [
 { #category : #'settings - switches' }
 SlmdLayoutSettingsView >> navRailExpandedSet: aBoolean [
 
-	self useAutoLayout: false.
+	self useAutoLayoutUpdate: false.
 
 	self layoutViewLazy navRailExpandedAdapt: aBoolean.
 	self announceAspect: #navRailExpanded value: aBoolean.
@@ -376,7 +371,7 @@ SlmdLayoutSettingsView >> showAppBarLeadingButtonNewSwitch: props [
 { #category : #'settings - switches' }
 SlmdLayoutSettingsView >> showAppBarLeadingButtonSet: aBoolean [
 
-	self useAutoLayout: false.
+	self useAutoLayoutUpdate: false.
 
 	self layoutViewLazy appBarMenuDisplay: aBoolean.
 	self announceAspect: #showAppBarLeadingButton value: aBoolean.
@@ -397,7 +392,7 @@ SlmdLayoutSettingsView >> showAppBarNewSwitch: props [
 { #category : #'settings - switches' }
 SlmdLayoutSettingsView >> showAppBarSet: aBoolean [
 
-	self useAutoLayout: false.
+	self useAutoLayoutUpdate: false.
 
 	self layoutViewLazy appBarDisplay: aBoolean.
 	self announceAspect: #showAppBar value: aBoolean.
@@ -436,12 +431,9 @@ SlmdLayoutSettingsView >> showNavBarNewSwitch: props [
 { #category : #'settings - switches' }
 SlmdLayoutSettingsView >> showNavBarSet: aBoolean [
 
-	self useAutoLayout: false.
+	self useAutoLayoutUpdate: false.
 
-	aBoolean
-		ifTrue: [ self layoutViewLazy navBarOn ]
-		ifFalse: [ self layoutViewLazy navBarOff ].
-
+	self layoutViewLazy showNavBarAdapt: aBoolean.
 	self announceAspect: #showNavBar value: aBoolean.
 
 ]
@@ -478,7 +470,7 @@ SlmdLayoutSettingsView >> showSidesheetNewSwitch: props [
 { #category : #'settings - switches' }
 SlmdLayoutSettingsView >> showSidesheetSet: aBoolean [
 
-	self useAutoLayout: false.
+	self useAutoLayoutUpdate: false.
 
 	self layoutViewLazy sidesheetDisplay: aBoolean.
 	self announceAspect: #showSidesheet value: aBoolean.
@@ -517,11 +509,9 @@ SlmdLayoutSettingsView >> showToolbarNewSwitch: props [
 { #category : #'settings - switches' }
 SlmdLayoutSettingsView >> showToolbarSet: aBoolean [
 
-	self useAutoLayout: false.
+	self useAutoLayoutUpdate: false.
 
-	aBoolean
-		ifTrue: [ self layoutViewLazy toolbarOn ]
-		ifFalse: [ self layoutViewLazy toolbarOff ].
+	self layoutViewLazy showToolbarAdapt: aBoolean.
 	self announceAspect: #showToolbar value: aBoolean.
 
 ]
@@ -594,6 +584,14 @@ SlmdLayoutSettingsView >> useAutoLayoutSet: aBoolean [
 ]
 
 { #category : #'settings - switches' }
+SlmdLayoutSettingsView >> useAutoLayoutUpdate: aBoolean [
+
+	self useAutoLayout: aBoolean.
+	self announceAspect: #useAutoLayout value: aBoolean.
+
+]
+
+{ #category : #'settings - switches' }
 SlmdLayoutSettingsView >> useModalNav [
 
 	^ self switchId: self useModalNavId ifMissing: false
@@ -625,9 +623,9 @@ SlmdLayoutSettingsView >> useModalNavNewSwitch: props [
 { #category : #'settings - switches' }
 SlmdLayoutSettingsView >> useModalNavSet: aBoolean [
 
-	self useAutoLayout: false.
+	self useAutoLayoutUpdate: false.
 
-	self layoutViewLazy navRailModalSet: aBoolean.
+	self layoutViewLazy useModalNavAdapt: aBoolean.
 	self announceAspect: #useModalNav value: aBoolean.
 
 ]
@@ -664,9 +662,9 @@ SlmdLayoutSettingsView >> useTwoPaneBodyNewSwitch: props [
 { #category : #'settings - switches' }
 SlmdLayoutSettingsView >> useTwoPaneBodySet: aBoolean [
 
-	self useAutoLayout: false.
+	self useAutoLayoutUpdate: false.
 
-	self layoutViewLazy paneLayoutAdapt: aBoolean.
+	self layoutViewLazy useTwoPaneBodyAdapt: aBoolean.
 	self announceAspect: #useTwoPaneBody value: aBoolean.
 
 ]

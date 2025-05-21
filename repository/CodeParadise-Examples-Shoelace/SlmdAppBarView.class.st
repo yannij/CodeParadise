@@ -1,6 +1,6 @@
 Class {
 	#name : #SlmdAppBarView,
-	#superclass : #SlmdView,
+	#superclass : #SlmdLayoutComponentView,
 	#instVars : [
 		'headline',
 		'leadingAction',

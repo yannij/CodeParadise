@@ -117,6 +117,7 @@ SlmdLayoutView >> appBarMenuDisplay: anObject [
 	| components |
 
 	components := SlmdAppBarView all.
+	components ifEmpty: [ self traceCr: 'appBarMenuDisplay: - No App bar found' ].
 	components do: [ :each |
 		each appBarMenuDisplay: anObject ].
 
@@ -255,18 +256,6 @@ SlmdLayoutView >> initialize [
 
 ]
 
-{ #category : #'accessing - settings' }
-SlmdLayoutView >> isExpanded [
-
-	^ self layoutSettingsView isExpanded
-]
-
-{ #category : #'accessing - settings' }
-SlmdLayoutView >> isExpanded: anObject [
-
-	self layoutSettingsView isExpanded: anObject
-]
-
 { #category : #layout }
 SlmdLayoutView >> layoutAdaptToWidth [
 
@@ -292,9 +281,15 @@ SlmdLayoutView >> layoutInitialSetUp: props [
 		self layoutAdaptToWidth.
 		^ self ].
 
-	self layoutType: (props at: #layoutType ifAbsent: []).
+	"self layoutType: (props at: #layoutType ifAbsent: [])."
 	self navRailExpandedAdapt: (props at: #navRailExpanded ifAbsent: [ false ]).
+	self useModalNavAdapt: (props at: #useModalNav ifAbsent: [ false ]).
+	self useTwoPaneBodyAdapt: (props at: #useTwoPaneBody ifAbsent: [ false ]).
+	self sidesheetDisplay: (props at: #showSidesheet ifAbsent: [ false ]).
+	self appBarDisplay: (props at: #showAppBar ifAbsent: [ false ]).
+	self appBarMenuDisplay: (props at: #showAppBarLeadingButton ifAbsent: [ false ]).
 	self showNavBarAdapt: (props at: #showNavBar ifAbsent: [ false ]).
+	self showToolbarAdapt: (props at: #showToolbar ifAbsent: [ false ]).
 	self adjustBodyHeight.
 
 ]
@@ -333,17 +328,127 @@ SlmdLayoutView >> layoutTypeAdapt: aLayoutType [
 	self traceCr: ('**** layoutTypeAdapt: ', aLayoutType printString).
 
 	aLayoutType = #compact ifTrue: [
-		self navRegionModalOn; navRailExpandedOff; navBarOn; sidesheetOff; useTwoPanesChangeAutoResize: false ].
+		self layoutTypeBeCompact ].
 	aLayoutType = #medium ifTrue: [
-		self navRegionModalOn; navRailExpandedOn; navBarOn; sidesheetOff; useTwoPanesChangeAutoResize: true  ].
+		self layoutTypeBeMedium ].
 	aLayoutType = #expanded ifTrue: [
-		self navRegionModalOff; navRailExpandedOff; navBarOff; sidesheetOff; useTwoPanesChangeAutoResize: true  ].
+		self layoutTypeBeExpanded ].
 	aLayoutType = #large ifTrue: [
-		 self navRegionModalOff; navRailExpandedOff; navBarOff; sidesheetOff; useTwoPanesChangeAutoResize: true  ].
+		 self layoutTypeBeLarge ].
 	aLayoutType = #'extra-large' ifTrue: [
-		self navRegionModalOff; navRailExpandedOn; navBarOff; sidesheetOn; useTwoPanesChangeAutoResize: true  ].
+		self layoutTypeBeExtraLarge ].
 
-	self bodySplitPanelAdapt.
+	self layoutSettingsView layoutUpdate.
+
+]
+
+{ #category : #layout }
+SlmdLayoutView >> layoutTypeBeCompact [
+
+	self
+		navRailExpandedAdapt: false;
+		showNavBarAdapt: true;
+		showSidesheetAdapt: false;
+		useTwoPaneBodyAdapt: false;
+		useModalNavAdapt: true.
+
+	self
+		layoutType: #compact;
+		navRailExpanded: false;
+		showNavBar: true;
+		showSidesheet: false;
+		useTwoPaneBody: false;
+		showAppBar: true;
+		showAppBarLeadingButton: true;
+		useModalNav: true.
+
+]
+
+{ #category : #layout }
+SlmdLayoutView >> layoutTypeBeExpanded [
+
+	self
+		navRailExpandedAdapt: false;
+		showNavBarAdapt: false;
+		showSidesheetAdapt: false;
+		useTwoPaneBodyAdapt: true;
+		useModalNavAdapt: false.
+
+	self
+		layoutType: #expanded;
+		navRailExpanded: false;
+		showNavBar: false;
+		showSidesheet: false;
+		useTwoPaneBody: true;
+		showAppBar: true;
+		showAppBarLeadingButton: false;
+		useModalNav: false.
+
+]
+
+{ #category : #layout }
+SlmdLayoutView >> layoutTypeBeExtraLarge [
+
+	self
+		navRailExpandedAdapt: true;
+		showNavBarAdapt: false;
+		showSidesheetAdapt: true;
+		useTwoPaneBodyAdapt: true;
+		useModalNavAdapt: false.
+
+	self
+		layoutType: #'extra-large';
+		navRailExpanded: true;
+		showNavBar: false;
+		showSidesheet: true;
+		useTwoPaneBody: true;
+		showAppBar: true;
+		showAppBarLeadingButton: false;
+		useModalNav: false.
+
+]
+
+{ #category : #layout }
+SlmdLayoutView >> layoutTypeBeLarge [
+
+	self
+		navRailExpandedAdapt: false;
+		showNavBarAdapt: false;
+		showSidesheetAdapt: false;
+		useTwoPaneBodyAdapt: true;
+		useModalNavAdapt: false.
+
+	self
+		layoutType: #large;
+		navRailExpanded: false;
+		showNavBar: false;
+		showSidesheet: false;
+		useTwoPaneBody: true;
+		showAppBar: true;
+		showAppBarLeadingButton: false;
+		useModalNav: false.
+
+]
+
+{ #category : #layout }
+SlmdLayoutView >> layoutTypeBeMedium [
+
+	self
+		navRailExpandedAdapt: true;
+		showNavBarAdapt: true;
+		showSidesheetAdapt: false;
+		useTwoPaneBodyAdapt: true;
+		useModalNavAdapt: true.
+
+	self
+		layoutType: #medium;
+		navRailExpanded: true;
+		showNavBar: true;
+		showSidesheet: false;
+		useTwoPaneBody: true;
+		showAppBar: true;
+		showAppBarLeadingButton: true;
+		useModalNav: true.
 
 ]
 
@@ -366,22 +471,16 @@ SlmdLayoutView >> navBarDisplay: aBoolean [
 
 ]
 
-{ #category : #navbar }
-SlmdLayoutView >> navBarOff [
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> navRailExpanded [
 
-	self showNavBar: false.
-	self navBarDisplay: false.
-	self adjustBodyHeight.
-
+	^ self layoutSettingsView navRailExpanded
 ]
 
-{ #category : #navbar }
-SlmdLayoutView >> navBarOn [
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> navRailExpanded: anObject [
 
-	self showNavBar: true.
-	self navBarDisplay: true.
-	self adjustBodyHeight.
-
+	self layoutSettingsView navRailExpanded: anObject
 ]
 
 { #category : #navrail }
@@ -392,7 +491,7 @@ SlmdLayoutView >> navRailExpandedAdapt: aBoolean [
 
 	"Set type in nav view"
 	navComponent := SlmdNavRailView first.
-	navComponent ifNotNil: [ navComponent isExpanded: aBoolean ].
+	navComponent ifNotNil: [ navComponent navRailExpanded: aBoolean ].
 
 	self navRegionFind
 		styleAt: 'flex'
@@ -403,42 +502,14 @@ SlmdLayoutView >> navRailExpandedAdapt: aBoolean [
 		modalElement customPropertyAt: 'size' put: self navRailWidth printString, 'px'.
 		SlmdNavRailView first navSetUp ].
 
-	"Set type in nav model"
-	"self adaptWithAspect: #isExpanded value: aBoolean."
-
 	self bodySplitPanelAdapt.
-
-]
-
-{ #category : #navrail }
-SlmdLayoutView >> navRailExpandedOff [
-
-	self navRailExpandedAdapt: false.
-
-]
-
-{ #category : #navrail }
-SlmdLayoutView >> navRailExpandedOn [
-
-	self navRailExpandedAdapt: true.
-
-]
-
-{ #category : #events }
-SlmdLayoutView >> navRailModalSet: anObject [
-
-	"Set type in nav view"
-	SlmdNavRailView first isModal: anObject.
-
-	"Adapt layout"
-	self navRegionModalAdapt: anObject.
 
 ]
 
 { #category : #navrail }
 SlmdLayoutView >> navRailWidth [
 
-	^ self isExpanded ifTrue: [ 220 ] ifFalse: [ 96 ]
+	^ SlmdNavRailView first navRailWidth
 ]
 
 { #category : #navrail }
@@ -460,37 +531,6 @@ SlmdLayoutView >> navRegionFind [
 	^ self shadowedElementWithId: 'smdNavRegion'
 ]
 
-{ #category : #navrail }
-SlmdLayoutView >> navRegionModalAdapt: isOn [
-
-	isOn
-		ifTrue: [
-			self navRegionDisplay: false.
-			self appBarMenuDisplay: true ]
-		ifFalse: [
-			self navRegionDisplay: true.
-			self appBarMenuDisplay: false ].
-
-	self bodySplitPanelAdapt.
-
-]
-
-{ #category : #navrail }
-SlmdLayoutView >> navRegionModalOff [
-
-	self useModalNav: false.
-	self navRegionModalAdapt: false.
-
-]
-
-{ #category : #navrail }
-SlmdLayoutView >> navRegionModalOn [
-
-	self useModalNav: true.
-	self navRegionModalAdapt: true.
-
-]
-
 { #category : #body }
 SlmdLayoutView >> pane1WidthCompute [
 	| w |
@@ -507,18 +547,6 @@ SlmdLayoutView >> pane1WidthMin [
 	^ 300
 ]
 
-{ #category : #events }
-SlmdLayoutView >> paneLayoutAdapt: anObject [
-	| component |
-
-	component := SlmdPaneLayoutView first.
-	component ifNotNil: [
-		anObject
-			ifTrue: [ component useTwoPaneLayout ]
-			ifFalse: [ component useOnePaneLayout ] ].
-
-]
-
 { #category : #layout }
 SlmdLayoutView >> resizeSetUp [
 
@@ -529,6 +557,30 @@ SlmdLayoutView >> resizeSetUp [
 	resize when: SlResizeEvent send: #debounceResizeEvent: to: self.
 	target replaceChild: div with: resize.
 	resize appendChild: div
+]
+
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> showAppBar [
+
+	^ self layoutSettingsView showAppBar
+]
+
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> showAppBar: anObject [
+
+	self layoutSettingsView showAppBar: anObject
+]
+
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> showAppBarLeadingButton [
+
+	^ self layoutSettingsView showAppBarLeadingButton
+]
+
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> showAppBarLeadingButton: anObject [
+
+	self layoutSettingsView showAppBarLeadingButton: anObject
 ]
 
 { #category : #'accessing - settings' }
@@ -546,9 +598,9 @@ SlmdLayoutView >> showNavBar: anObject [
 { #category : #navbar }
 SlmdLayoutView >> showNavBarAdapt: aBoolean [
 
-	aBoolean
-		ifTrue: [ self navBarOn ]
-		ifFalse: [ self navBarOff ]
+	self showNavBar: aBoolean.
+	self navBarDisplay: aBoolean.
+	self adjustBodyHeight.
 ]
 
 { #category : #'accessing - settings' }
@@ -563,6 +615,14 @@ SlmdLayoutView >> showSidesheet: anObject [
 	self layoutSettingsView showSidesheet: anObject
 ]
 
+{ #category : #sidesheet }
+SlmdLayoutView >> showSidesheetAdapt: aBoolean [
+
+	self showSidesheet: aBoolean.
+	self sidesheetDisplay: aBoolean.
+
+]
+
 { #category : #'accessing - settings' }
 SlmdLayoutView >> showToolbar [
 
@@ -575,6 +635,15 @@ SlmdLayoutView >> showToolbar: anObject [
 	self layoutSettingsView showToolbar: anObject
 ]
 
+{ #category : #toolbar }
+SlmdLayoutView >> showToolbarAdapt: aBoolean [
+
+	self showToolbar: aBoolean.
+	self toolbarDisplay: aBoolean.
+
+	self adjustBodyHeight.
+]
+
 { #category : #sidesheet }
 SlmdLayoutView >> sidesheetDisplay: aBoolean [
 
@@ -582,44 +651,10 @@ SlmdLayoutView >> sidesheetDisplay: aBoolean [
 
 ]
 
-{ #category : #sidesheet }
-SlmdLayoutView >> sidesheetOff [
-
-	self showSidesheet: false.
-	self sidesheetDisplay: false.
-
-]
-
-{ #category : #sidesheet }
-SlmdLayoutView >> sidesheetOn [
-
-	self showSidesheet: true.
-	self sidesheetDisplay: true.
-
-]
-
 { #category : #toolbar }
 SlmdLayoutView >> toolbarDisplay: aBoolean [
 
 	self shadowElementId: 'smdToolbar' show: aBoolean
-
-]
-
-{ #category : #toolbar }
-SlmdLayoutView >> toolbarOff [
-
-	self showToolbar: false.
-	self toolbarDisplay: false.
-	self adjustBodyHeight.
-
-]
-
-{ #category : #toolbar }
-SlmdLayoutView >> toolbarOn [
-
-	self showToolbar: true.
-	self toolbarDisplay: true.
-	self adjustBodyHeight.
 
 ]
 
@@ -655,6 +690,15 @@ SlmdLayoutView >> useModalNav: anObject [
 	self layoutSettingsView useModalNav: anObject
 ]
 
+{ #category : #navrail }
+SlmdLayoutView >> useModalNavAdapt: aBoolean [
+
+	self appBarMenuDisplay: aBoolean.
+	self navRegionDisplay: aBoolean not.
+	self bodySplitPanelAdapt.
+
+]
+
 { #category : #'accessing - settings' }
 SlmdLayoutView >> useTwoPaneBody [
 
@@ -667,13 +711,14 @@ SlmdLayoutView >> useTwoPaneBody: anObject [
 	self layoutSettingsView useTwoPaneBody: anObject
 ]
 
-{ #category : #body }
-SlmdLayoutView >> useTwoPanesChangeAutoResize: aBoolean [
+{ #category : #events }
+SlmdLayoutView >> useTwoPaneBodyAdapt: anObject [
+	| component |
 
-	self useTwoPaneBody = aBoolean ifTrue: [
-		^ self ].
-
-	self useTwoPaneBody: aBoolean.
-	self paneLayoutAdapt: aBoolean.
+	component := SlmdPaneLayoutView first.
+	component ifNotNil: [
+		anObject
+			ifTrue: [ component useTwoPaneLayout ]
+			ifFalse: [ component useOnePaneLayout ] ].
 
 ]

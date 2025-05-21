@@ -71,7 +71,7 @@ SlmdNavBarView class >> template [
 '
 ]
 
-{ #category : #rendering }
+{ #category : #'as yet unclassified' }
 SlmdNavBarView >> navSetUp [
 
 	navItems ifNotNil: [
@@ -82,7 +82,7 @@ SlmdNavBarView >> navSetUp [
 
 ]
 
-{ #category : #rendering }
+{ #category : #'as yet unclassified' }
 SlmdNavBarView >> navbarBuildItem: aNavAction [
 	| iconName arg1 |
 

@@ -1,8 +1,7 @@
 Class {
 	#name : #SlmdNavView,
-	#superclass : #SlmdView,
+	#superclass : #SlmdLayoutComponentView,
 	#instVars : [
-		'layoutView',
 		'navItems',
 		'navActions'
 	],
@@ -33,18 +32,6 @@ SlmdNavView >> initialize [
 	navActions := Dictionary new.
 	navItems := OrderedCollection new.
 
-]
-
-{ #category : #accessing }
-SlmdNavView >> layoutView [
-
-	^ layoutView
-]
-
-{ #category : #accessing }
-SlmdNavView >> layoutView: anObject [
-
-	layoutView := anObject
 ]
 
 { #category : #accessing }

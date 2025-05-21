@@ -39,7 +39,7 @@ SlmdNavRailPresenter >> viewInitialized [
 	self navSetUp.
 
 	self view
-		isExpanded: self model isExpanded;
+		"navRailExpanded: self model navRailExpanded;"
 		navModalPaneSetUp;
 		navSetUp;
 		yourself.

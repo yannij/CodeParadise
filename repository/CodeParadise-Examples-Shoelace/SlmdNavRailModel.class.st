@@ -19,18 +19,6 @@ SlmdNavRailModel >> initialize [
 ]
 
 { #category : #accessing }
-SlmdNavRailModel >> isExpanded [
-
-	^ isExpanded
-]
-
-{ #category : #accessing }
-SlmdNavRailModel >> isExpanded: anObject [
-
-	isExpanded := anObject
-]
-
-{ #category : #accessing }
 SlmdNavRailModel >> isModal [
 
 	^ isModal

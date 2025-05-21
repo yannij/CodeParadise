@@ -2,9 +2,8 @@ Class {
 	#name : #SlmdNavRailView,
 	#superclass : #SlmdNavView,
 	#instVars : [
-		'isModal',
 		'drawer',
-		'isExpanded'
+		'navRailExpanded'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
@@ -132,43 +131,19 @@ SlmdNavRailView >> drawer: anObject [
 	drawer := anObject
 ]
 
-{ #category : #initialize }
+{ #category : #initialization }
 SlmdNavRailView >> initialize [
 
 	super initialize.
 
-	isExpanded := false.
+	navRailExpanded := false.
 
-]
-
-{ #category : #accessing }
-SlmdNavRailView >> isExpanded [
-
-	^ isExpanded
-]
-
-{ #category : #accessing }
-SlmdNavRailView >> isExpanded: anObject [
-
-	isExpanded := anObject
-]
-
-{ #category : #accessing }
-SlmdNavRailView >> isModal [
-
-	^ isModal
-]
-
-{ #category : #accessing }
-SlmdNavRailView >> isModal: anObject [
-
-	isModal := anObject
 ]
 
 { #category : #nav }
 SlmdNavRailView >> navContentBuild [
 
-	self isExpanded ifTrue: [
+	self navRailExpanded ifTrue: [
 		^ self navrailExpandedBuild ].
 
 	^ self navrailNarrowBuild
@@ -204,10 +179,22 @@ SlmdNavRailView >> navModalPaneSetUp [
 		appendChild: self navModalPaneBuild
 ]
 
+{ #category : #accessing }
+SlmdNavRailView >> navRailExpanded [
+
+	^ navRailExpanded
+]
+
+{ #category : #accessing }
+SlmdNavRailView >> navRailExpanded: anObject [
+
+	navRailExpanded := anObject
+]
+
 { #category : #nav }
 SlmdNavRailView >> navRailWidth [
 
-	^ self isExpanded ifTrue: [ 220 ] ifFalse: [ 96 ]
+	^ self navRailExpanded ifTrue: [ 220 ] ifFalse: [ 96 ]
 ]
 
 { #category : #nav }

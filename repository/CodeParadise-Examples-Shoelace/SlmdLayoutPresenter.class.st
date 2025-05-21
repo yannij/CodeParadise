@@ -5,6 +5,22 @@ Class {
 }
 
 { #category : #view }
+SlmdLayoutPresenter >> handleViewAction: anObject [
+	| aspect aspectValue |
+
+	anObject printString traceCr.
+	aspect := anObject parameterAt: #aspect.
+	aspectValue := anObject parameterAt: #value.
+
+	"aspect = #aspect" "true ifTrue: [
+		self traceCr: aspect asString, ': ', (self model perform: aspect asSymbol) printString.
+		self model perform: (aspect, ':') asSymbol with: aspectValue.
+		self traceCr: aspect asString, ': ', (self model perform: aspect asSymbol) printString.
+		^ self ]."
+
+]
+
+{ #category : #view }
 SlmdLayoutPresenter >> navigateTo: anObject [
 
 	self application pane1Model handleActionRequest: anObject; valueChanged.
@@ -13,9 +29,6 @@ SlmdLayoutPresenter >> navigateTo: anObject [
 
 { #category : #view }
 SlmdLayoutPresenter >> renderView [
-
-	self model layoutSettings ifNotNil: [ :value |
-		self renderChildViewForModel: value atSlotNamed: nil ].
 
 	self model navRail ifNotNil: [ :value |
 		"Render the navRail before the panes, so AppBar can find
@@ -33,6 +46,9 @@ SlmdLayoutPresenter >> renderView [
 
 	self model toolbar ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: #toolbar ].
+
+	self model layoutSettings ifNotNil: [ :value |
+		self renderChildViewForModel: value atSlotNamed: nil ].
 
 ]
 

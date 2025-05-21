@@ -12,11 +12,28 @@ SlmdLayoutSettingsPresenter >> handleViewAction: anObject [
 	aspect := anObject parameterAt: #aspect.
 	aspectValue := anObject parameterAt: #value.
 
-	"aspect = #aspect" true ifTrue: [
-		self traceCr: aspect asString, ': ', (self model perform: aspect asSymbol) printString.
-		self model perform: (aspect, ':') asSymbol with: aspectValue.
-		self traceCr: aspect asString, ': ', (self model perform: aspect asSymbol) printString.
+	aspect = #layoutUpdate ifTrue: [
+		self layoutUpdate: aspectValue.
 		^ self ].
+
+	self traceCr: aspect asString, ' BEFORE: ', (self model perform: aspect asSymbol) printString.
+	self model perform: (aspect, ':') asSymbol with: aspectValue.
+	self traceCr: aspect asString, '  AFTER: ', (self model perform: aspect asSymbol) printString.
+]
+
+{ #category : #actions }
+SlmdLayoutSettingsPresenter >> layoutUpdate: props [
+	| m |
+
+	self traceCr: props printString.
+
+	m := self model.
+	props keysAndValuesDo: [ :k :v | | setAccessor |
+		setAccessor := (k, ':') asSymbol.
+		self traceCr: k asString, ' BEFORE: ', (m perform: k) printString.
+		m perform: setAccessor with: v.
+		self traceCr: k asString, '  AFTER: ', (m perform: k) printString.
+		].
 
 ]
 

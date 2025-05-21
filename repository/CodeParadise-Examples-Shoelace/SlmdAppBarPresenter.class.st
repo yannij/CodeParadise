@@ -13,8 +13,6 @@ SlmdAppBarPresenter >> renderView [
 		renderTrailingActions;
 		yourself.
 
-	self view appBarMenuDisplay: self model appBarMenuDisplay.
-
 ]
 
 { #category : #accessing }

@@ -1,6 +1,6 @@
 Class {
 	#name : #SlmdPaneLayoutView,
-	#superclass : #SlmdView,
+	#superclass : #SlmdLayoutComponentView,
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 

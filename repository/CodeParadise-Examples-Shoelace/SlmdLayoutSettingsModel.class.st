@@ -2,19 +2,19 @@ Class {
 	#name : #SlmdLayoutSettingsModel,
 	#superclass : #SlmdModel,
 	#instVars : [
-		'useAutoLayout',
 		'colorThemeName',
 		'fontFamily',
 		'layoutWidth',
 		'layoutType',
+		'useAutoLayout',
 		'useModalNav',
 		'useTwoPaneBody',
+		'navRailExpanded',
 		'showAppBar',
 		'showAppBarLeadingButton',
 		'showNavBar',
 		'showSidesheet',
-		'showToolbar',
-		'navRailExpanded'
+		'showToolbar'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
@@ -82,27 +82,16 @@ SlmdLayoutSettingsModel >> initialize [
 	colorThemeName := self defaultColorThemeName.
 	fontFamily := self defaultFontFamily.
 	layoutType := self layoutTypeDefault.
-	navRailExpanded := false.
-	showNavBar := false.
-	showSidesheet := false.
-	showAppBar := false.
-	showToolbar := false.
 	useAutoLayout := true.
 	useModalNav := false.
 	useTwoPaneBody := true.
+	navRailExpanded := false.
+	showAppBar := false.
+	showAppBarLeadingButton := true.
+	showNavBar := false.
+	showSidesheet := false.
+	showToolbar := false.
 
-]
-
-{ #category : #accessing }
-SlmdLayoutSettingsModel >> isExpanded [
-
-	^ navRailExpanded
-]
-
-{ #category : #accessing }
-SlmdLayoutSettingsModel >> isExpanded: anObject [
-
-	navRailExpanded := anObject
 ]
 
 { #category : #accessing }
