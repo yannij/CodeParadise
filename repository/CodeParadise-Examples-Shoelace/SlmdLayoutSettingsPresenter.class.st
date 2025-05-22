@@ -8,7 +8,7 @@ Class {
 SlmdLayoutSettingsPresenter >> handleViewAction: anObject [
 	| aspect aspectValue |
 
-	anObject printString traceCr.
+	self logTrace: anObject printString method: 'handleViewAction:'.
 	aspect := anObject parameterAt: #aspect.
 	aspectValue := anObject parameterAt: #value.
 
@@ -16,23 +16,24 @@ SlmdLayoutSettingsPresenter >> handleViewAction: anObject [
 		self layoutUpdate: aspectValue.
 		^ self ].
 
-	self traceCr: aspect asString, ' BEFORE: ', (self model perform: aspect asSymbol) printString.
+	self logTrace5: aspect asString, ' BEFORE: ', (self model perform: aspect) printString.
 	self model perform: (aspect, ':') asSymbol with: aspectValue.
-	self traceCr: aspect asString, '  AFTER: ', (self model perform: aspect asSymbol) printString.
+	self logTrace5: aspect asString, '  AFTER: ', (self model perform: aspect) printString.
+
 ]
 
 { #category : #actions }
 SlmdLayoutSettingsPresenter >> layoutUpdate: props [
 	| m |
 
-	self traceCr: props printString.
+	self logTrace: props printString method: 'layoutUpdate:'.
 
 	m := self model.
 	props keysAndValuesDo: [ :k :v | | setAccessor |
 		setAccessor := (k, ':') asSymbol.
-		self traceCr: k asString, ' BEFORE: ', (m perform: k) printString.
+		self logTrace5: k asString, ' BEFORE: ', (m perform: k) printString.
 		m perform: setAccessor with: v.
-		self traceCr: k asString, '  AFTER: ', (m perform: k) printString.
+		self logTrace5: k asString, '  AFTER: ', (m perform: k) printString.
 		].
 
 ]

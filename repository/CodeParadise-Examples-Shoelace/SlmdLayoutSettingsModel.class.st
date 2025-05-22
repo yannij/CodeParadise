@@ -109,7 +109,7 @@ SlmdLayoutSettingsModel >> layoutType: anObject [
 { #category : #accessing }
 SlmdLayoutSettingsModel >> layoutTypeDefault [
 
-	^ #expanded
+	^ SlmdLayoutView layoutTypeExpanded
 ]
 
 { #category : #accessing }

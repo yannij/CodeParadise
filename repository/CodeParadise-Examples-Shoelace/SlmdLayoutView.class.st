@@ -28,6 +28,48 @@ SlmdLayoutView class >> globalStyle [
 
 ]
 
+{ #category : #accessing }
+SlmdLayoutView class >> layoutTypeCompact [
+
+	^ #compact
+]
+
+{ #category : #accessing }
+SlmdLayoutView class >> layoutTypeExpanded [
+
+	^ #expanded
+]
+
+{ #category : #accessing }
+SlmdLayoutView class >> layoutTypeExtraLarge [
+
+	^ #'extra-large'
+]
+
+{ #category : #accessing }
+SlmdLayoutView class >> layoutTypeLarge [
+
+	^ #large
+]
+
+{ #category : #accessing }
+SlmdLayoutView class >> layoutTypeList [
+
+	^ {
+	self layoutTypeCompact -> 'Compact'.
+	self layoutTypeMedium -> 'Medium'.
+	self layoutTypeExpanded -> 'Expanded'.
+	self layoutTypeLarge -> 'Large'.
+	self layoutTypeExtraLarge -> 'Extra-large'.
+	}
+]
+
+{ #category : #accessing }
+SlmdLayoutView class >> layoutTypeMedium [
+
+	^ #medium
+]
+
 { #category : #'web resources' }
 SlmdLayoutView class >> style [
 
@@ -117,7 +159,7 @@ SlmdLayoutView >> appBarMenuDisplay: anObject [
 	| components |
 
 	components := SlmdAppBarView all.
-	components ifEmpty: [ self traceCr: 'appBarMenuDisplay: - No App bar found' ].
+	components ifEmpty: [ self logError: 'appBarMenuDisplay: - No App bar found' ].
 	components do: [ :each |
 		each appBarMenuDisplay: anObject ].
 
@@ -151,7 +193,7 @@ SlmdLayoutView >> bodySplitPanelAdapt [
 { #category : #'color theme' }
 SlmdLayoutView >> colorThemeAdapt: aColorName [
 
-	self traceCr: 'colorThemeAdapt: ', aColorName printString.
+	self logTrace: aColorName printString method: 'colorThemeAdapt:'.
 	aColorName ifNil: [ ^ self ].
 	self updateGlobalStyle.
 
@@ -259,11 +301,19 @@ SlmdLayoutView >> initialize [
 { #category : #layout }
 SlmdLayoutView >> layoutAdaptToWidth [
 
-	layoutWidthCached < 600 ifTrue: [ ^ self layoutTypeAdapt: #compact ].
-	layoutWidthCached < 840 ifTrue: [ ^ self layoutTypeAdapt: #medium ].
-	layoutWidthCached < 1200 ifTrue: [ ^ self layoutTypeAdapt: #expanded ].
-	layoutWidthCached < 1600 ifTrue: [ ^ self layoutTypeAdapt: #large ].
-	self layoutTypeAdapt: #'extra-large'.
+	layoutWidthCached < 600 ifTrue: [
+		^ self layoutTypeAdapt: self class layoutTypeCompact ].
+
+	layoutWidthCached < 840 ifTrue: [
+		^ self layoutTypeAdapt: self class layoutTypeMedium ].
+
+	layoutWidthCached < 1200 ifTrue: [
+		^ self layoutTypeAdapt: self class layoutTypeExpanded ].
+
+	layoutWidthCached < 1600 ifTrue: [
+		^ self layoutTypeAdapt: self class layoutTypeLarge ].
+
+	self layoutTypeAdapt: self class layoutTypeExtraLarge.
 
 ]
 
@@ -271,7 +321,7 @@ SlmdLayoutView >> layoutAdaptToWidth [
 SlmdLayoutView >> layoutInitialSetUp: props [
 	"Invoked by presenter's viewCreated"
 
-	self traceCr: ('layoutInitialSetUp: ', props printString).
+	self logTrace: props printString method: 'layoutInitialSetUp:'.
 	self resizeSetUp.
 
 	self colorThemeAdapt: (props at: #colorThemeName ifAbsent: []).
@@ -325,17 +375,17 @@ SlmdLayoutView >> layoutType: anObject [
 { #category : #layout }
 SlmdLayoutView >> layoutTypeAdapt: aLayoutType [
 
-	self traceCr: ('**** layoutTypeAdapt: ', aLayoutType printString).
+	self logTrace: aLayoutType printString method: 'layoutTypeAdapt:'.
 
-	aLayoutType = #compact ifTrue: [
+	aLayoutType = self class layoutTypeCompact ifTrue: [
 		self layoutTypeBeCompact ].
-	aLayoutType = #medium ifTrue: [
+	aLayoutType = self class layoutTypeMedium ifTrue: [
 		self layoutTypeBeMedium ].
-	aLayoutType = #expanded ifTrue: [
+	aLayoutType = self class layoutTypeExpanded ifTrue: [
 		self layoutTypeBeExpanded ].
-	aLayoutType = #large ifTrue: [
+	aLayoutType = self class layoutTypeLarge ifTrue: [
 		 self layoutTypeBeLarge ].
-	aLayoutType = #'extra-large' ifTrue: [
+	aLayoutType = self class layoutTypeExtraLarge ifTrue: [
 		self layoutTypeBeExtraLarge ].
 
 	self layoutSettingsView layoutUpdate.
@@ -353,7 +403,7 @@ SlmdLayoutView >> layoutTypeBeCompact [
 		useModalNavAdapt: true.
 
 	self
-		layoutType: #compact;
+		layoutType: self class layoutTypeCompact;
 		navRailExpanded: false;
 		showNavBar: true;
 		showSidesheet: false;
@@ -375,7 +425,7 @@ SlmdLayoutView >> layoutTypeBeExpanded [
 		useModalNavAdapt: false.
 
 	self
-		layoutType: #expanded;
+		layoutType: self class layoutTypeExpanded;
 		navRailExpanded: false;
 		showNavBar: false;
 		showSidesheet: false;
@@ -397,7 +447,7 @@ SlmdLayoutView >> layoutTypeBeExtraLarge [
 		useModalNavAdapt: false.
 
 	self
-		layoutType: #'extra-large';
+		layoutType: self class layoutTypeExtraLarge;
 		navRailExpanded: true;
 		showNavBar: false;
 		showSidesheet: true;
@@ -419,7 +469,7 @@ SlmdLayoutView >> layoutTypeBeLarge [
 		useModalNavAdapt: false.
 
 	self
-		layoutType: #large;
+		layoutType: self class layoutTypeLarge;
 		navRailExpanded: false;
 		showNavBar: false;
 		showSidesheet: false;
@@ -441,7 +491,7 @@ SlmdLayoutView >> layoutTypeBeMedium [
 		useModalNavAdapt: true.
 
 	self
-		layoutType: #medium;
+		layoutType: self class layoutTypeMedium;
 		navRailExpanded: true;
 		showNavBar: true;
 		showSidesheet: false;
@@ -487,7 +537,7 @@ SlmdLayoutView >> navRailExpanded: anObject [
 SlmdLayoutView >> navRailExpandedAdapt: aBoolean [
 	| modalElement navComponent |
 
-	self traceCr: '**** navRailExpandedAdapt: : ', aBoolean printString.
+	self logTrace: aBoolean printString method: 'navRailExpandedAdapt:'.
 
 	"Set type in nav view"
 	navComponent := SlmdNavRailView first.
@@ -661,7 +711,7 @@ SlmdLayoutView >> toolbarDisplay: aBoolean [
 { #category : #initialization }
 SlmdLayoutView >> updateGlobalStyle [
 
-	self traceCr: 'updateGlobalStyle... colorThemeName = ', self colorThemeName printString.
+	self logTrace: 'colorThemeName = ', self colorThemeName printString method: 'updateGlobalStyle'.
 	CpHtmlElement documentAddStyle: (self colorThemeFrom: self colorThemeName asString).
 
 ]

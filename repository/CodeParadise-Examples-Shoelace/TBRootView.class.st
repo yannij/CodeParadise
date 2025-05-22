@@ -1,6 +1,6 @@
 Class {
 	#name : #TBRootView,
-	#superclass : #CpView,
+	#superclass : #SlmdView,
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 

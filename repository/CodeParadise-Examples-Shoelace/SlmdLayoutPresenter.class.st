@@ -8,7 +8,7 @@ Class {
 SlmdLayoutPresenter >> handleViewAction: anObject [
 	| aspect aspectValue |
 
-	anObject printString traceCr.
+	self logTrace: anObject printString.
 	aspect := anObject parameterAt: #aspect.
 	aspectValue := anObject parameterAt: #value.
 

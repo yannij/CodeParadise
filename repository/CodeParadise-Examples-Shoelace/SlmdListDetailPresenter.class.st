@@ -1,6 +1,6 @@
 Class {
 	#name : #SlmdListDetailPresenter,
-	#superclass : #CpPresenter,
+	#superclass : #SlmdPresenter,
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 

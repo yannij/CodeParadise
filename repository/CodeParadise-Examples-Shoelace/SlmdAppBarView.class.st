@@ -122,7 +122,8 @@ SlmdAppBarView >> renderLeadingAction: aString [
 
 	leadingAction ifNil: [
 		drawer := self modalNavElementOrNil.
-		drawer ifNil: [ self traceCr: 'modal nav element is nil' ].
+		drawer ifNil: [
+			self logError: 'modal nav element is nil' ].
 		leadingAction := (SlIconButton named: aString)
 			when: CpClickEvent basicPrimary send: #show to: drawer;
 			yourself ].

@@ -1,6 +1,6 @@
 Class {
 	#name : #TBPostModel,
-	#superclass : #CpModel,
+	#superclass : #SlmdModel,
 	#instVars : [
 		'title',
 		'text',

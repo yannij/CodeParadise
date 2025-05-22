@@ -201,11 +201,8 @@ SlmdLayoutSettingsView >> layoutTypeBuildChooser: props [
 
 	radioGroup when: SlChangeEvent do: [ self layoutTypeSet: radioGroup value ] for: self.
 
-	radioGroup appendChild: (SlRadio new value: #compact; textContent: 'Compact'; yourself).
-	radioGroup appendChild: (SlRadio new value: #medium; textContent: 'Medium'; yourself).
-	radioGroup appendChild: (SlRadio new value: #expanded; textContent: 'Expanded'; yourself).
-	radioGroup appendChild: (SlRadio new value: #large; textContent: 'Large'; yourself).
-	radioGroup appendChild: (SlRadio new value: #'extra-large'; textContent: 'Extra-large'; yourself).
+	SlmdLayoutView layoutTypeList do: [ :each |
+		radioGroup appendChild: (SlRadio new value: each key; textContent: each value; yourself) ].
 
 	^ self addAttributeContainerStyle: radioGroup
 ]

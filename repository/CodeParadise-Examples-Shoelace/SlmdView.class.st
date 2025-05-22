@@ -1,6 +1,9 @@
 Class {
 	#name : #SlmdView,
 	#superclass : #CpView,
+	#classVars : [
+		'TraceLevel'
+	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
@@ -8,6 +11,18 @@ Class {
 SlmdView class >> eventIdModelUpdate [
 
 	^ #modelUpdate
+]
+
+{ #category : #accessing }
+SlmdView class >> traceLevel [
+
+	^ TraceLevel ifNil: [ TraceLevel := 3 ]
+]
+
+{ #category : #accessing }
+SlmdView class >> traceLevel: anObject [
+
+	^ TraceLevel := anObject
 ]
 
 { #category : #events }
@@ -19,7 +34,7 @@ SlmdView >> announceAspect: key value: anObject [
 { #category : #events }
 SlmdView >> announceEvent: id key: key value: anObject [
 
-	self traceCr: id printString, ': ', key printString, ' -> ', anObject printString.
+	self logTraceAnnouncement: id printString, ': ', key printString, ' -> ', anObject printString.
 
 	self serverAnnounce: (CpActionRequested
 		id: id
@@ -74,7 +89,54 @@ SlmdView >> layoutViewFind [
 { #category : #logging }
 SlmdView >> log: aString [
 
-	self traceCr: '**** ', self class name, ': ', aString
+	self traceCr: aString
+]
+
+{ #category : #logging }
+SlmdView >> logError: aString [
+
+	self log: '[Error] ', aString
+]
+
+{ #category : #logging }
+SlmdView >> logTrace5: aString [
+
+	self logTrace: aString aspect: nil level: 5
+]
+
+{ #category : #logging }
+SlmdView >> logTrace: aString [
+
+	self logTrace: aString aspect: nil
+]
+
+{ #category : #logging }
+SlmdView >> logTrace: aString aspect: aspect [
+
+	self logTrace: aString aspect: aspect level: 3
+]
+
+{ #category : #logging }
+SlmdView >> logTrace: aString aspect: aspect level: level [
+
+	self class traceLevel < level ifTrue: [
+		^ self ].
+
+	aspect
+		ifNil: [ self log: aString ]
+		ifNotNil: [ self log: '[', aspect, '] ', aString ]
+]
+
+{ #category : #logging }
+SlmdView >> logTrace: aString method: methodName [
+
+	self logTrace: aString aspect: self class name, '>>', methodName
+]
+
+{ #category : #logging }
+SlmdView >> logTraceAnnouncement: aString [
+
+	self logTrace: aString aspect: 'Announcement'
 ]
 
 { #category : #utilities }
@@ -104,7 +166,7 @@ SlmdView >> modalSettingsElement [
 { #category : #settings }
 SlmdView >> modalSettingsOpen [
 
-	self traceCr: 'settingsOpen'.
+	self logTrace: '' method: 'modalSettingsOpen'.
 	self modalSettingsElement beOpen
 
 ]

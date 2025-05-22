@@ -1,6 +1,6 @@
 Class {
 	#name : #SlmdListItemPresenter,
-	#superclass : #CpPresenter,
+	#superclass : #SlmdPresenter,
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
@@ -16,7 +16,7 @@ SlmdListItemPresenter >> renderView [
 { #category : #initialization }
 SlmdListItemPresenter >> setDetail: request [
 
-	request printString traceCr.
+	self logTrace: request printString.
 
 	self application setDetailWithIndex: (request parameterAt: #index).
 	self application layout paneLayout valueChanged.
