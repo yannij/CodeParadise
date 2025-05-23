@@ -77,7 +77,7 @@ SlmdAppBarView class >> template [
 ]
 
 { #category : #topAppBar }
-SlmdAppBarView >> appBarMenuDisplay: aBoolean [
+SlmdAppBarView >> appBarLeadingButtonDisplay: aBoolean [
 	| element |
 
 	element := self appBarMenuFind.
@@ -136,17 +136,12 @@ SlmdAppBarView >> renderLeadingAction: aString [
 
 { #category : #topAppBar }
 SlmdAppBarView >> renderTrailingActions [
-	| gear |
-
-	gear := (SlIconButton named: 'gear')
-		when: CpClickEvent basicPrimary send: #modalSettingsOpen to: self;
-		yourself.
 
 	self removeChildrenAtSlotNamed: 'trailingActions'.
 
 	self
 		appendChild: (SlIconButton named: trailingActions first) atSlotNamed: 'trailingActions';
-		appendChild: gear atSlotNamed: 'trailingActions';
+		appendChild: (SlIconButton named: trailingActions second) atSlotNamed: 'trailingActions';
 		appendChild: (SlIconButton named: trailingActions third) atSlotNamed: 'trailingActions';
 		yourself.
 

@@ -65,6 +65,7 @@ MD3ExampleApplication >> initialize [
 	sidesheetModel := SlmdSidesheetModel new.
 	layout := SlmdLayoutModel new.
 	navActions := OrderedCollection new
+		add: (SlmdNavAction id: #settings iconName: 'gear' iconLabel: 'Settings' arg1: 'Settings');
 		add: (SlmdNavAction id: #club iconName: 'suit-club' iconLabel: 'Club' arg1: 'Club Page');
 		add: (SlmdNavAction id: #diamond iconName: 'suit-diamond' iconLabel: 'Diamond' arg1: 'Diamond Page');
 		add: (SlmdNavAction id: #heart iconName: 'suit-heart' iconLabel: 'Heart' arg1: 'Heart Page');

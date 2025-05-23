@@ -84,15 +84,14 @@ SlmdNavBarView >> navSetUp [
 
 { #category : #'as yet unclassified' }
 SlmdNavBarView >> navbarBuildItem: aNavAction [
-	| iconName arg1 |
+	| iconName |
 
 	iconName := aNavAction at: #iconName.
-	arg1 := aNavAction at: #arg1.
 
 	^ #div asHtmlTag
 		addClass: 'smd-navbar-item';
 		addClass: 'smd-navbar-font';
-		when: CpClickEvent basicPrimary do: [ self navigateTo: arg1 ] for: self;
+		when: CpClickEvent basicPrimary do: [ self executeNavAction: aNavAction ] for: self;
 		appendChild: ((SlIconButton named: iconName) addClass: 'smd-navbar-icon'; yourself);
 		appendChild: (#div asHtmlTag
 			addClass: 'smd-navbar-labelText';

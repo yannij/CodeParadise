@@ -44,6 +44,19 @@ SlmdView >> announceEvent: id key: key value: anObject [
 		} asDictionary).
 ]
 
+{ #category : #nav }
+SlmdView >> executeNavAction: aNavAction [
+	| navId arg1 |
+
+	navId := aNavAction at: #id.
+	navId = #settings ifTrue: [
+		^ self modalSettingsOpen ].
+
+	arg1 := aNavAction at: #arg1.
+	self navigateTo: arg1.
+
+]
+
 { #category : #utilities }
 SlmdView >> findByIdInLightDom: anId [
 

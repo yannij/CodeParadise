@@ -5,6 +5,13 @@ Class {
 }
 
 { #category : #'web resources' }
+SlmdToolbarView class >> globalStyle [
+	<webResource: #css>
+
+	^ ''
+]
+
+{ #category : #'web resources' }
 SlmdToolbarView class >> style [
 
 	<webResource: #css>
@@ -18,11 +25,11 @@ SlmdToolbarView class >> style [
   z-index: 10;
   display: flex;
   flex-flow: row wrap;
-  padding: 12px 16px 12px 4px;
+  padding: 8px;
 }
 
 .smd-toolbar-button {
-  height: 60px;
+  height: 48px;
   width: 48px;
   font-size: 24px;
 }

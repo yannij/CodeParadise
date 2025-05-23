@@ -62,6 +62,7 @@ TBRootApplication >> initialize [
 	self setDetailWithIndex: 1.
 	layout := SlmdLayoutModel new.
 	navActions := OrderedCollection new
+		add: (SlmdNavAction id: #settings iconName: 'gear' iconLabel: 'Settings' arg1: 'Settings');
 		add: (SlmdNavAction id: #home iconName: 'house' iconLabel: 'Home' arg1: 'Home Page');
 		yourself.
 

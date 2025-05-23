@@ -225,7 +225,6 @@ SlmdNavRailView >> navrailExpandedBuild [
 	navItems ifNotNil: [
 		navItems do: [ :eachItem | | navItem |
 			navItem := self navrailExpandedBuildItem: (navActions at: eachItem).
-			navItem when: CpClickEvent basicPrimary send: #hide to: drawer.
 			element appendChild: navItem ] ].
 
 	^ #nav asHtmlTag
@@ -237,15 +236,15 @@ SlmdNavRailView >> navrailExpandedBuild [
 
 { #category : #nav }
 SlmdNavRailView >> navrailExpandedBuildItem: aNavAction [
-	| iconName arg1 |
+	| iconName |
 
 	iconName := aNavAction at: #iconName.
-	arg1 := aNavAction at: #arg1.
 
 	^ #div asHtmlTag
 		addClass: 'smd-navrailx-item';
 		addClass: 'smd-nav-font';
-		when: CpClickEvent basicPrimary do: [ self navigateTo: arg1 ] for: self;
+		when: CpClickEvent basicPrimary do: [ self executeNavAction: aNavAction ] for: self;
+		when: CpClickEvent basicPrimary send: #hide to: drawer;
 		appendChild: ((SlIconButton named: iconName) addClass: 'smd-navrailx-icon'; yourself);
 		appendChild: (#div asHtmlTag
 			addClass: 'smd-navrailx-labelText';
@@ -262,7 +261,6 @@ SlmdNavRailView >> navrailNarrowBuild [
 	navItems ifNotNil: [
 		navItems do: [ :eachItem | | navItem |
 			navItem := self navrailNarrowBuildItem: (navActions at: eachItem asSymbol).
-			navItem when: CpClickEvent basicPrimary send: #hide to: drawer.
 			element appendChild: navItem ] ].
 	"element appendChild: (
 		(SlIconButton named: 'gear')
@@ -278,14 +276,14 @@ SlmdNavRailView >> navrailNarrowBuild [
 
 { #category : #nav }
 SlmdNavRailView >> navrailNarrowBuildItem: aNavAction [
-	| iconName arg1 |
+	| iconName |
 
 	iconName := aNavAction at: #iconName.
-	arg1 := aNavAction at: #arg1.
 
 	^ #div asHtmlTag
 		addClass: 'smd-navrail-item';
-		when: CpClickEvent basicPrimary do: [ self navigateTo: arg1 ] for: self;
+		when: CpClickEvent basicPrimary do: [ self executeNavAction: aNavAction ] for: self;
+		when: CpClickEvent basicPrimary send: #hide to: drawer;
 		appendChild: (
 			#div asHtmlTag
 				addClass: 'smd-navrail-icon';

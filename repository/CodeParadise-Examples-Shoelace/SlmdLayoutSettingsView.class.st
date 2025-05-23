@@ -228,7 +228,6 @@ SlmdLayoutSettingsView >> layoutUpdate [
 		#showSidesheet -> self showSidesheet.
 		#useTwoPaneBody -> self useTwoPaneBody.
 		#showAppBar -> self showAppBar.
-		#showAppBarLeadingButton -> self showAppBarLeadingButton.
 		#useModalNav -> self useModalNav.
 	} asDictionary.
 
@@ -248,7 +247,6 @@ SlmdLayoutSettingsView >> modalDivContentWith: props [
 		appendChild: (self useTwoPaneBodyNewSwitch: props);
 		appendChild: (self showSidesheetNewSwitch: props);
 		appendChild: (self showAppBarNewSwitch: props);
-		appendChild: (self showAppBarLeadingButtonNewSwitch: props);
 		appendChild: (self showNavBarNewSwitch: props);
 		appendChild: (self showToolbarNewSwitch: props);
 		appendChild: (self colorThemeBuildChooser: props);
@@ -334,45 +332,9 @@ SlmdLayoutSettingsView >> showAppBarId [
 ]
 
 { #category : #'settings - switches' }
-SlmdLayoutSettingsView >> showAppBarLeadingButton [
-
-	^ self switchId: self showAppBarLeadingButtonId ifMissing: true
-]
-
-{ #category : #'settings - switches' }
-SlmdLayoutSettingsView >> showAppBarLeadingButton: aBoolean [
-
-	self switchId: self showAppBarLeadingButtonId put: aBoolean ifMissing: nil
-]
-
-{ #category : #'settings - switches' }
 SlmdLayoutSettingsView >> showAppBarLeadingButtonId [
 
 	^ 'showAppBarLeadingButton'
-]
-
-{ #category : #'settings - switches' }
-SlmdLayoutSettingsView >> showAppBarLeadingButtonNewSwitch: props [
-	| element |
-
-	element := self
-		switchNewWithId: self showAppBarLeadingButtonId
-		label: 'Show App bar leading button'
-		checked: (props at: #showAppBarLeadingButton ifAbsent: [ false ])
-		do: [ self showAppBarLeadingButtonSet: self showAppBarLeadingButton ].
-
-	^ self addAttributeContainerStyle: element
-
-]
-
-{ #category : #'settings - switches' }
-SlmdLayoutSettingsView >> showAppBarLeadingButtonSet: aBoolean [
-
-	self useAutoLayoutUpdate: false.
-
-	self layoutViewLazy appBarMenuDisplay: aBoolean.
-	self announceAspect: #showAppBarLeadingButton value: aBoolean.
-
 ]
 
 { #category : #'settings - switches' }
