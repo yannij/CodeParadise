@@ -359,6 +359,28 @@ SlmdLayoutSettingsView >> showAppBarSet: aBoolean [
 ]
 
 { #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showDockedToolbar [
+
+	^ self switchId: self showToolbarId ifMissing: false
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showDockedToolbar: aBoolean [
+
+	self switchId: self showToolbarId put: aBoolean ifMissing: nil
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showDockedToolbarSet: aBoolean [
+
+	self useAutoLayoutUpdate: false.
+
+	self layoutViewLazy showDockedToolbarAdapt: aBoolean.
+	self announceAspect: #showDockedToolbar value: aBoolean.
+
+]
+
+{ #category : #'settings - switches' }
 SlmdLayoutSettingsView >> showNavBar [
 
 	^ self switchId: self showNavBarId ifMissing: false
@@ -437,18 +459,6 @@ SlmdLayoutSettingsView >> showSidesheetSet: aBoolean [
 ]
 
 { #category : #'settings - switches' }
-SlmdLayoutSettingsView >> showToolbar [
-
-	^ self switchId: self showToolbarId ifMissing: false
-]
-
-{ #category : #'settings - switches' }
-SlmdLayoutSettingsView >> showToolbar: aBoolean [
-
-	self switchId: self showToolbarId put: aBoolean ifMissing: nil
-]
-
-{ #category : #'settings - switches' }
 SlmdLayoutSettingsView >> showToolbarId [
 
 	^ 'showToolbar'
@@ -459,19 +469,9 @@ SlmdLayoutSettingsView >> showToolbarNewSwitch: props [
 
 	^ self
 		switchNewWithId: self showToolbarId
-		label: 'Show Toolbar'
-		checked: (props at: #showToolbar ifAbsent: [ false ])
-		do: [ self showToolbarSet: self showToolbar ].
-
-]
-
-{ #category : #'settings - switches' }
-SlmdLayoutSettingsView >> showToolbarSet: aBoolean [
-
-	self useAutoLayoutUpdate: false.
-
-	self layoutViewLazy showToolbarAdapt: aBoolean.
-	self announceAspect: #showToolbar value: aBoolean.
+		label: 'Show Docked Toolbar'
+		checked: (props at: #showDockedToolbar ifAbsent: [ false ])
+		do: [ self showDockedToolbarSet: self showDockedToolbar ].
 
 ]
 

@@ -7,10 +7,36 @@ Class {
 		'twoPaneSplitPosition',
 		'navRail',
 		'navBar',
-		'toolbar'
+		'toolbar',
+		'dockedToolbar',
+		'floatingToolbar'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
+
+{ #category : #accessing }
+SlmdLayoutModel >> dockedToolbar [
+
+	^ dockedToolbar
+]
+
+{ #category : #accessing }
+SlmdLayoutModel >> dockedToolbar: anObject [
+
+	dockedToolbar := anObject
+]
+
+{ #category : #accessing }
+SlmdLayoutModel >> floatingToolbar [
+
+	^ floatingToolbar
+]
+
+{ #category : #accessing }
+SlmdLayoutModel >> floatingToolbar: anObject [
+
+	floatingToolbar := anObject
+]
 
 { #category : #initialization }
 SlmdLayoutModel >> initialize [
@@ -22,7 +48,8 @@ SlmdLayoutModel >> initialize [
 	paneLayout := SlmdPaneLayoutModel new.
 	navRail := SlmdNavRailModel new.
 	navBar := SlmdNavBarModel new.
-	toolbar := SlmdToolbarModel new.
+	dockedToolbar := SlmdDockedToolbarModel new.
+	floatingToolbar := SlmdFloatingToolbarModel new.
 
 ]
 

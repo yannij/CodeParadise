@@ -1,6 +1,6 @@
 Class {
 	#name : #SlmdNavRailModel,
-	#superclass : #SlmdModel,
+	#superclass : #SlmdNavModel,
 	#instVars : [
 		'isModal',
 		'isExpanded'

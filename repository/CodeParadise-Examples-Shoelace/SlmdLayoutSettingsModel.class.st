@@ -13,7 +13,7 @@ Class {
 		'showAppBar',
 		'showNavBar',
 		'showSidesheet',
-		'showToolbar'
+		'showDockedToolbar'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
@@ -29,7 +29,7 @@ SlmdLayoutSettingsModel >> asProperties [
 		at: #showNavBar put: self showNavBar;
 		at: #showSidesheet put: self showSidesheet;
 		at: #showAppBar put: self showAppBar;
-		at: #showToolbar put: self showToolbar;
+		at: #showDockedToolbar put: self showDockedToolbar;
 		at: #useAutoLayout put: self useAutoLayout;
 		at: #useModalNav put: self useModalNav;
 		at: #useTwoPaneBody put: self useTwoPaneBody;
@@ -87,7 +87,7 @@ SlmdLayoutSettingsModel >> initialize [
 	showAppBar := false.
 	showNavBar := false.
 	showSidesheet := false.
-	showToolbar := false.
+	showDockedToolbar := false.
 
 ]
 
@@ -146,6 +146,18 @@ SlmdLayoutSettingsModel >> showAppBar: anObject [
 ]
 
 { #category : #accessing }
+SlmdLayoutSettingsModel >> showDockedToolbar [
+
+	^ showDockedToolbar
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> showDockedToolbar: anObject [
+
+	showDockedToolbar := anObject
+]
+
+{ #category : #accessing }
 SlmdLayoutSettingsModel >> showNavBar [
 
 	^ showNavBar
@@ -167,18 +179,6 @@ SlmdLayoutSettingsModel >> showSidesheet [
 SlmdLayoutSettingsModel >> showSidesheet: anObject [
 
 	showSidesheet := anObject
-]
-
-{ #category : #accessing }
-SlmdLayoutSettingsModel >> showToolbar [
-
-	^ showToolbar
-]
-
-{ #category : #accessing }
-SlmdLayoutSettingsModel >> showToolbar: anObject [
-
-	showToolbar := anObject
 ]
 
 { #category : #accessing }

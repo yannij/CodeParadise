@@ -121,9 +121,12 @@ SlmdLayoutView class >> template [
     <footer id="smdNavBar">
       <slot name="navBar"></slot>
     </footer>
-    <footer id="smdToolbar">
-      <slot name="toolbar"></slot>
+    <footer id="smdDockedToolbar">
+      <slot name="dockedToolbar"></slot>
     </footer>
+    <div id="smdFloatingToolbar">
+      <slot name="floatingToolbar"></slot>
+    </div>
   </div>
   <div id="smdModalDiv"></div>
 </div>
@@ -137,7 +140,7 @@ SlmdLayoutView >> adjustBodyHeight [
 	bodyRegion := self bodyRegionFind.
 	bodyRegion ifNil: [ ^ self  ].
 
-	bodyHeight := (self showNavBar or: [self showToolbar])
+	bodyHeight := (self showNavBar or: [self showDockedToolbar])
 		ifTrue: [ 'calc(100vh - 64px)' ]
 		ifFalse: [ '100vh' ].
 	bodyRegion styleAt: 'height' put: bodyHeight.
@@ -338,7 +341,7 @@ SlmdLayoutView >> layoutInitialSetUp: props [
 	self sidesheetDisplay: (props at: #showSidesheet ifAbsent: [ false ]).
 	self appBarDisplay: (props at: #showAppBar ifAbsent: [ false ]).
 	self showNavBarAdapt: (props at: #showNavBar ifAbsent: [ false ]).
-	self showToolbarAdapt: (props at: #showToolbar ifAbsent: [ false ]).
+	self showDockedToolbarAdapt: (props at: #showDockedToolbar ifAbsent: [ false ]).
 	self adjustBodyHeight.
 
 ]
@@ -397,7 +400,7 @@ SlmdLayoutView >> layoutTypeBeCompact [
 	self
 		navRailExpandedAdapt: false;
 		showNavBarAdapt: true;
-		showToolbarAdapt: false;
+		showDockedToolbarAdapt: false;
 		showSidesheetAdapt: false;
 		useTwoPaneBodyAdapt: false;
 		useModalNavAdapt: true.
@@ -406,7 +409,7 @@ SlmdLayoutView >> layoutTypeBeCompact [
 		layoutType: self class layoutTypeCompact;
 		navRailExpanded: false;
 		showNavBar: true;
-		showToolbar: false;
+		showDockedToolbar: false;
 		showSidesheet: false;
 		useTwoPaneBody: false;
 		showAppBar: true;
@@ -420,7 +423,7 @@ SlmdLayoutView >> layoutTypeBeExpanded [
 	self
 		navRailExpandedAdapt: false;
 		showNavBarAdapt: false;
-		showToolbarAdapt: false;
+		showDockedToolbarAdapt: false;
 		showSidesheetAdapt: false;
 		useTwoPaneBodyAdapt: true;
 		useModalNavAdapt: false.
@@ -429,7 +432,7 @@ SlmdLayoutView >> layoutTypeBeExpanded [
 		layoutType: self class layoutTypeExpanded;
 		navRailExpanded: false;
 		showNavBar: false;
-		showToolbar: false;
+		showDockedToolbar: false;
 		showSidesheet: false;
 		useTwoPaneBody: true;
 		showAppBar: true;
@@ -443,7 +446,7 @@ SlmdLayoutView >> layoutTypeBeExtraLarge [
 	self
 		navRailExpandedAdapt: true;
 		showNavBarAdapt: false;
-		showToolbarAdapt: false;
+		showDockedToolbarAdapt: false;
 		showSidesheetAdapt: true;
 		useTwoPaneBodyAdapt: true;
 		useModalNavAdapt: false.
@@ -452,7 +455,7 @@ SlmdLayoutView >> layoutTypeBeExtraLarge [
 		layoutType: self class layoutTypeExtraLarge;
 		navRailExpanded: true;
 		showNavBar: false;
-		showToolbar: false;
+		showDockedToolbar: false;
 		showSidesheet: true;
 		useTwoPaneBody: true;
 		showAppBar: true;
@@ -466,7 +469,7 @@ SlmdLayoutView >> layoutTypeBeLarge [
 	self
 		navRailExpandedAdapt: false;
 		showNavBarAdapt: false;
-		showToolbarAdapt: false;
+		showDockedToolbarAdapt: false;
 		showSidesheetAdapt: false;
 		useTwoPaneBodyAdapt: true;
 		useModalNavAdapt: false.
@@ -475,7 +478,7 @@ SlmdLayoutView >> layoutTypeBeLarge [
 		layoutType: self class layoutTypeLarge;
 		navRailExpanded: false;
 		showNavBar: false;
-		showToolbar: false;
+		showDockedToolbar: false;
 		showSidesheet: false;
 		useTwoPaneBody: true;
 		showAppBar: true;
@@ -489,7 +492,7 @@ SlmdLayoutView >> layoutTypeBeMedium [
 	self
 		navRailExpandedAdapt: true;
 		showNavBarAdapt: true;
-		showToolbarAdapt: false;
+		showDockedToolbarAdapt: false;
 		showSidesheetAdapt: false;
 		useTwoPaneBodyAdapt: true;
 		useModalNavAdapt: true.
@@ -498,7 +501,7 @@ SlmdLayoutView >> layoutTypeBeMedium [
 		layoutType: self class layoutTypeMedium;
 		navRailExpanded: true;
 		showNavBar: true;
-		showToolbar: false;
+		showDockedToolbar: false;
 		showSidesheet: false;
 		useTwoPaneBody: true;
 		showAppBar: true;
@@ -626,6 +629,29 @@ SlmdLayoutView >> showAppBar: anObject [
 ]
 
 { #category : #'accessing - settings' }
+SlmdLayoutView >> showDockedToolbar [
+
+	^ self layoutSettingsView showDockedToolbar
+]
+
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> showDockedToolbar: anObject [
+
+	self layoutSettingsView showDockedToolbar: anObject
+]
+
+{ #category : #toolbar }
+SlmdLayoutView >> showDockedToolbarAdapt: aBoolean [
+
+	self logTrace: aBoolean printString method: 'showToolbarAdapt:'.
+
+	self showDockedToolbar: aBoolean.
+	self toolbarDockedDisplay: aBoolean.
+
+	self adjustBodyHeight.
+]
+
+{ #category : #'accessing - settings' }
 SlmdLayoutView >> showNavBar [
 
 	^ self layoutSettingsView showNavBar
@@ -670,29 +696,6 @@ SlmdLayoutView >> showSidesheetAdapt: aBoolean [
 
 ]
 
-{ #category : #'accessing - settings' }
-SlmdLayoutView >> showToolbar [
-
-	^ self layoutSettingsView showToolbar
-]
-
-{ #category : #'accessing - settings' }
-SlmdLayoutView >> showToolbar: anObject [
-
-	self layoutSettingsView showToolbar: anObject
-]
-
-{ #category : #toolbar }
-SlmdLayoutView >> showToolbarAdapt: aBoolean [
-
-	self logTrace: aBoolean printString method: 'showToolbarAdapt:'.
-
-	self showToolbar: aBoolean.
-	self toolbarDisplay: aBoolean.
-
-	self adjustBodyHeight.
-]
-
 { #category : #sidesheet }
 SlmdLayoutView >> sidesheetDisplay: aBoolean [
 
@@ -701,9 +704,9 @@ SlmdLayoutView >> sidesheetDisplay: aBoolean [
 ]
 
 { #category : #toolbar }
-SlmdLayoutView >> toolbarDisplay: aBoolean [
+SlmdLayoutView >> toolbarDockedDisplay: aBoolean [
 
-	self shadowElementId: 'smdToolbar' show: aBoolean
+	self shadowElementId: 'smdDockedToolbar' show: aBoolean
 
 ]
 

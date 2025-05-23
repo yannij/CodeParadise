@@ -44,8 +44,11 @@ SlmdLayoutPresenter >> renderView [
 	self application sidesheetModel ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: #sidesheet ].
 
-	self model toolbar ifNotNil: [ :value |
-		self renderChildViewForModel: value atSlotNamed: #toolbar ].
+	self model dockedToolbar ifNotNil: [ :value |
+		self renderChildViewForModel: value atSlotNamed: #dockedToolbar ].
+
+	self model floatingToolbar ifNotNil: [ :value |
+		self renderChildViewForModel: value atSlotNamed: #floatingToolbar ].
 
 	self model layoutSettings ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: nil ].

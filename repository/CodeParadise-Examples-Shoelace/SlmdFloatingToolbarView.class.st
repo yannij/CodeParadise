@@ -1,5 +1,5 @@
 Class {
-	#name : #SlmdToolbarPresenter,
-	#superclass : #SlmdPresenter,
+	#name : #SlmdFloatingToolbarView,
+	#superclass : #SlmdToolbarView,
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }

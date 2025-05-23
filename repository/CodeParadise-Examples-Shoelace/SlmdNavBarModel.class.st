@@ -1,6 +1,6 @@
 Class {
 	#name : #SlmdNavBarModel,
-	#superclass : #SlmdModel,
+	#superclass : #SlmdNavModel,
 	#instVars : [
 		'isVisible',
 		'iconButtons'
