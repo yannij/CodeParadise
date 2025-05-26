@@ -4,7 +4,7 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
-{ #category : #rendering }
+{ #category : #'as yet unclassified' }
 SlmdNavBarPresenter >> renderView [
 	"| icons |
 
@@ -19,22 +19,13 @@ SlmdNavBarPresenter >> renderView [
 "
 ]
 
-{ #category : #view }
-SlmdNavBarPresenter >> viewCreated [
-
-	super viewCreated.
-
-	self view when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self.
-
-]
-
-{ #category : #view }
+{ #category : #nil }
 SlmdNavBarPresenter >> viewInitialized [
 
 	super viewInitialized.
 
-	self navSetUp.
+	self navInitialize.
 
-	self view navSetUp.
+	self view navInitialize.
 
 ]

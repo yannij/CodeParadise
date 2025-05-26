@@ -21,13 +21,6 @@ SlmdLayoutPresenter >> handleViewAction: anObject [
 ]
 
 { #category : #view }
-SlmdLayoutPresenter >> navigateTo: anObject [
-
-	self application pane1Model handleActionRequest: anObject; valueChanged.
-
-]
-
-{ #category : #view }
 SlmdLayoutPresenter >> renderView [
 
 	self model navRail ifNotNil: [ :value |
@@ -63,5 +56,23 @@ SlmdLayoutPresenter >> viewCreated [
 	self view
 		when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self;
 		yourself.
+
+]
+
+{ #category : #view }
+SlmdLayoutPresenter >> viewInitialized [
+	| v |
+
+	super viewInitialized.
+
+	v := self view.
+
+	self application navActions do: [ :eachNavAction |
+		v addNavAction: eachNavAction asDictionary ].
+
+	self application actionItems do: [ :each |
+		each asDictionary keysAndValuesDo: [ :key :value |
+			v addActionItemId: each id key: key value: value ] ].
+
 
 ]

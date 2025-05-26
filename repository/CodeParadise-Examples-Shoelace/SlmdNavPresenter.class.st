@@ -5,19 +5,19 @@ Class {
 }
 
 { #category : #nav }
-SlmdNavPresenter >> navSetUp [
+SlmdNavPresenter >> navInitialize [
 	| v |
 
 	v := self view.
 	self application navActions do: [ :eachNavAction |
-		eachNavAction asDictionary keysAndValuesDo: [ :key :value |
-			v addNavActionId: eachNavAction id key: key value: value ].
 		v addNavItem: eachNavAction id ]
 ]
 
-{ #category : #nav }
-SlmdNavPresenter >> navigateTo: anObject [
+{ #category : #view }
+SlmdNavPresenter >> viewCreated [
 
-	self application pane1Model handleActionRequest: anObject; valueChanged.
+	super viewCreated.
+
+	self view when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self.
 
 ]

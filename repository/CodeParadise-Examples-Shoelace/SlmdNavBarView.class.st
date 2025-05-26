@@ -18,6 +18,7 @@ SlmdNavBarView class >> globalStyle [
 .smd-navbar-item {
   flex-basis: max-content;
   display: flex;
+  padding: 0 4px;
   border-radius: 20px;
   height: 40px;
   background: var(--sl-color-primary-100);
@@ -43,16 +44,13 @@ SlmdNavBarView class >> style [
 	<webResource: #css>
 
 	^ '
-.smd-navBar-footer {
-  background: var(--sl-color-primary-200);
-}
-
 .smd-navBar {
   z-index: 10;
   display: flex;
   justify-content: space-between;
   flex-flow: row nowrap;
-  padding: 12px;
+  padding: 12px 4px;
+  background: var(--sl-color-primary-200);
 }
 '
 ]
@@ -63,21 +61,21 @@ SlmdNavBarView class >> template [
 	<webResource: #html>
 
 	^ '
-<div id="container" class="smd-navBar-footer">
-  <div class="smd-navBar">
-    <slot name="navBar"></slot>
-  </div>
+<div id="container" class="smd-navBar">
+  <slot name="navBar"></slot>
 </div>
 '
 ]
 
 { #category : #'as yet unclassified' }
-SlmdNavBarView >> navSetUp [
+SlmdNavBarView >> navInitialize [
+	| list |
 
+	list := self navActions.
 	navItems ifNotNil: [
 		navItems withIndexDo: [ :eachItem :index | | navItem |
 			index <= 5 ifTrue: [
-				navItem := self navbarBuildItem: (navActions at: eachItem).
+				navItem := self navbarBuildItem: (list at: eachItem).
 				self appendChild: navItem atSlotNamed: 'navBar' ] ] ].
 
 ]

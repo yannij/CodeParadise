@@ -13,7 +13,8 @@ Class {
 		'showAppBar',
 		'showNavBar',
 		'showSidesheet',
-		'showDockedToolbar'
+		'showDockedToolbar',
+		'showFloatingToolbar'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
@@ -30,6 +31,7 @@ SlmdLayoutSettingsModel >> asProperties [
 		at: #showSidesheet put: self showSidesheet;
 		at: #showAppBar put: self showAppBar;
 		at: #showDockedToolbar put: self showDockedToolbar;
+		at: #showFloatingToolbar put: self showFloatingToolbar;
 		at: #useAutoLayout put: self useAutoLayout;
 		at: #useModalNav put: self useModalNav;
 		at: #useTwoPaneBody put: self useTwoPaneBody;
@@ -51,7 +53,7 @@ SlmdLayoutSettingsModel >> colorThemeName: anObject [
 { #category : #'color theme' }
 SlmdLayoutSettingsModel >> defaultColorThemeName [
 
-	^ #lime
+	^ #blue
 ]
 
 { #category : #typography }
@@ -88,6 +90,7 @@ SlmdLayoutSettingsModel >> initialize [
 	showNavBar := false.
 	showSidesheet := false.
 	showDockedToolbar := false.
+	showFloatingToolbar := false.
 
 ]
 
@@ -155,6 +158,18 @@ SlmdLayoutSettingsModel >> showDockedToolbar [
 SlmdLayoutSettingsModel >> showDockedToolbar: anObject [
 
 	showDockedToolbar := anObject
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> showFloatingToolbar [
+
+	^ showFloatingToolbar
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> showFloatingToolbar: anObject [
+
+	showFloatingToolbar := anObject
 ]
 
 { #category : #accessing }

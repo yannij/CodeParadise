@@ -17,29 +17,31 @@ SlmdDockedToolbarView class >> style [
 	<webResource: #css>
 
 	^ '
-.smd-toolbar-footer {
-  background: var(--sl-color-primary-200);
-}
-
 .smd-toolbar {
   z-index: 10;
   display: flex;
   flex-flow: row wrap;
-  padding: 8px;
+  padding: 0 16px;
+  height: 64px;
+  background: var(--sl-color-primary-300);
 }
 
-.smd-toolbar-button {
-  height: 48px;
-  width: 48px;
-  font-size: 24px;
+.smd-toolbar-buttons {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 32px;
+  padding: 0 8px;
+  height: 64px;
+  background: var(--sl-color-primary-300);
 }
 
 .smd-toolbar-fab {
   margin-left: auto;
+  padding: 8px;
   height: 48px;
   width: 48px;
-  font-size: 24px;
-  background: var(--sl-color-primary-300);
+  border-radius: 16px;
+  background: var(--sl-color-primary-400);
 }
 '
 ]
@@ -50,16 +52,10 @@ SlmdDockedToolbarView class >> template [
 	<webResource: #html>
 
 	^ '
-<div id="container" class="smd-toolbar-footer">
+<div id="container">
   <div class="smd-toolbar">
-    <div class="smd-toolbar-button">
-      <slot name="item1"></slot>
-    </div>
-    <div class="smd-toolbar-button">
-      <slot name="item2"></slot>
-    </div>
-    <div class="smd-toolbar-button">
-      <slot name="item3"></slot>
+    <div class="smd-toolbar-buttons">
+      <slot name="toolbar"></slot>
     </div>
     <div class="smd-toolbar-fab">
       <slot name="fab"></slot>
@@ -67,22 +63,4 @@ SlmdDockedToolbarView class >> template [
   </div>
 </div>
 '
-]
-
-{ #category : #'as yet unclassified' }
-SlmdDockedToolbarView >> buildIconButton: iconName class: cssClass [
-
-	^ (CpHtmlElement newWithTag: #div)
-		addClass: cssClass;
-		appendChild: (SlIconButton named: iconName);
-		yourself
-]
-
-{ #category : #'as yet unclassified' }
-SlmdDockedToolbarView >> renderIcon: iconName at: slotName with: cssClass [
-
-	self
-		replaceAllChildrenWith: (self buildIconButton: iconName class: cssClass)
-		atSlotNamed: slotName.
-
 ]

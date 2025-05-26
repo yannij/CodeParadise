@@ -2,20 +2,15 @@ Class {
 	#name : #SlmdNavView,
 	#superclass : #SlmdLayoutComponentView,
 	#instVars : [
-		'navItems',
-		'navActions'
+		'navItems'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
 { #category : #nav }
-SlmdNavView >> addNavActionId: id key: key value: value [
-	| item |
+SlmdNavView >> addNavAction: props [
 
-	(navActions includesKey: id) ifFalse: [
-		navActions at: id put: Dictionary new ].
-	item := navActions at: id.
-	item at: key put: value
+	self layoutViewLazy addNavAction: props
 ]
 
 { #category : #nav }
@@ -29,30 +24,14 @@ SlmdNavView >> initialize [
 
 	super initialize.
 
-	navActions := Dictionary new.
 	navItems := OrderedCollection new.
 
 ]
 
 { #category : #accessing }
-SlmdNavView >> layoutViewLazy [
-
-	layoutView ifNil: [
-		layoutView := self layoutViewFind ].
-
-	^ layoutView
-]
-
-{ #category : #accessing }
 SlmdNavView >> navActions [
 
-	^ navActions
-]
-
-{ #category : #accessing }
-SlmdNavView >> navActions: anObject [
-
-	navActions := anObject
+	^ self layoutViewLazy navActions
 ]
 
 { #category : #accessing }

@@ -1,13 +1,6 @@
 Class {
 	#name : #TBRootApplication,
-	#superclass : #CpMvpWebApplication,
-	#instVars : [
-		'layout',
-		'navActions',
-		'pane1Model',
-		'pane2Model',
-		'sidesheetModel'
-	],
+	#superclass : #SlmdWebApplication,
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
@@ -38,14 +31,6 @@ TBRootApplication class >> appName [
 ]
 
 { #category : #accessing }
-TBRootApplication >> applicationModel [
-
-	"Answer the Model for the receiver, which is the receiver itself"
-
-	^ self
-]
-
-{ #category : #accessing }
 TBRootApplication >> applicationPresenterClass [
 
 	^ TBRootPresenter
@@ -69,54 +54,6 @@ TBRootApplication >> initialize [
 ]
 
 { #category : #accessing }
-TBRootApplication >> layout [
-
-	^ layout
-]
-
-{ #category : #accessing }
-TBRootApplication >> layout: anObject [
-
-	layout := anObject
-]
-
-{ #category : #accessing }
-TBRootApplication >> navActions [
-
-	^ navActions
-]
-
-{ #category : #accessing }
-TBRootApplication >> navActions: anObject [
-
-	navActions := anObject
-]
-
-{ #category : #accessing }
-TBRootApplication >> pane1Model [
-
-	^ pane1Model
-]
-
-{ #category : #accessing }
-TBRootApplication >> pane1Model: anObject [
-
-	pane1Model := anObject
-]
-
-{ #category : #accessing }
-TBRootApplication >> pane2Model [
-
-	^ pane2Model
-]
-
-{ #category : #accessing }
-TBRootApplication >> pane2Model: anObject [
-
-	pane2Model := anObject
-]
-
-{ #category : #accessing }
 TBRootApplication >> setDetailWithIndex: index [
 	| list detail |
 
@@ -127,16 +64,4 @@ TBRootApplication >> setDetailWithIndex: index [
 	self pane1Model detail: detail.
 	self pane2Model: detail.
 
-]
-
-{ #category : #accessing }
-TBRootApplication >> sidesheetModel [
-
-	^ sidesheetModel
-]
-
-{ #category : #accessing }
-TBRootApplication >> sidesheetModel: anObject [
-
-	sidesheetModel := anObject
 ]

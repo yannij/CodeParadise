@@ -150,6 +150,19 @@ SlmdNavRailView >> navContentBuild [
 ]
 
 { #category : #nav }
+SlmdNavRailView >> navInitialize [
+
+	self modalNavElementOrNil
+		replaceAllChildrenWith: self navContentBuild
+		atSlotNamed: nil.
+
+	self
+		replaceAllChildrenWith: self navContentBuild
+		atSlotNamed: 'navRegion'.
+
+]
+
+{ #category : #nav }
 SlmdNavRailView >> navModalPaneBuild [
 
 	drawer := SlDrawer new
@@ -198,21 +211,10 @@ SlmdNavRailView >> navRailWidth [
 ]
 
 { #category : #nav }
-SlmdNavRailView >> navSetUp [
-
-	self modalNavElementOrNil
-		replaceAllChildrenWith: self navContentBuild
-		atSlotNamed: nil.
-
-	self
-		replaceAllChildrenWith: self navContentBuild
-		atSlotNamed: 'navRegion'.
-
-]
-
-{ #category : #nav }
 SlmdNavRailView >> navrailExpandedBuild [
-	| element |
+	| element list |
+
+	list := self navActions.
 
 	element := #div asHtmlTag
 		addClass: 'smd-navrailx';
@@ -224,7 +226,7 @@ SlmdNavRailView >> navrailExpandedBuild [
 		yourself.
 	navItems ifNotNil: [
 		navItems do: [ :eachItem | | navItem |
-			navItem := self navrailExpandedBuildItem: (navActions at: eachItem).
+			navItem := self navrailExpandedBuildItem: (list at: eachItem).
 			element appendChild: navItem ] ].
 
 	^ #nav asHtmlTag
@@ -255,12 +257,14 @@ SlmdNavRailView >> navrailExpandedBuildItem: aNavAction [
 
 { #category : #nav }
 SlmdNavRailView >> navrailNarrowBuild [
-	| element |
+	| element list |
+
+	list := self navActions.
 
 	element := #div asHtmlTag addClass: 'smd-navrail'; yourself.
 	navItems ifNotNil: [
 		navItems do: [ :eachItem | | navItem |
-			navItem := self navrailNarrowBuildItem: (navActions at: eachItem asSymbol).
+			navItem := self navrailNarrowBuildItem: (list at: eachItem asSymbol).
 			element appendChild: navItem ] ].
 	"element appendChild: (
 		(SlIconButton named: 'gear')

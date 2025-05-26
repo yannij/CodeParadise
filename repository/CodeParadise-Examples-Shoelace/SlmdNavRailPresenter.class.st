@@ -5,25 +5,13 @@ Class {
 }
 
 { #category : #view }
-SlmdNavRailPresenter >> viewCreated [
-
-	super viewCreated.
-
-	self view when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self.
-
-]
-
-{ #category : #view }
 SlmdNavRailPresenter >> viewInitialized [
 
 	super viewInitialized.
 
-	self navSetUp.
+	self navInitialize.
 
-	self view
-		"navRailExpanded: self model navRailExpanded;"
-		navModalPaneSetUp;
-		navSetUp;
-		yourself.
+	self view navModalPaneSetUp.
+	self view navInitialize.
 
 ]

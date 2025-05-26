@@ -7,7 +7,6 @@ Class {
 		'twoPaneSplitPosition',
 		'navRail',
 		'navBar',
-		'toolbar',
 		'dockedToolbar',
 		'floatingToolbar'
 	],
@@ -99,18 +98,6 @@ SlmdLayoutModel >> paneLayout [
 SlmdLayoutModel >> paneLayout: anObject [
 
 	paneLayout := anObject
-]
-
-{ #category : #accessing }
-SlmdLayoutModel >> toolbar [
-
-	^ toolbar
-]
-
-{ #category : #accessing }
-SlmdLayoutModel >> toolbar: anObject [
-
-	toolbar := anObject
 ]
 
 { #category : #accessing }

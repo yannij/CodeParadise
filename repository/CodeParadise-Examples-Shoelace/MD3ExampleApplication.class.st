@@ -4,14 +4,7 @@ I only live in the ServerEnvironment.
 "
 Class {
 	#name : #MD3ExampleApplication,
-	#superclass : #CpMvpWebApplication,
-	#instVars : [
-		'layout',
-		'navActions',
-		'pane1Model',
-		'pane2Model',
-		'sidesheetModel'
-	],
+	#superclass : #SlmdWebApplication,
 	#category : #'CodeParadise-Examples-Shoelace-MaterialDesign3App'
 }
 
@@ -42,14 +35,6 @@ MD3ExampleApplication class >> appName [
 ]
 
 { #category : #accessing }
-MD3ExampleApplication >> applicationModel [
-
-	"Answer the Model for the receiver, which is the receiver itself"
-
-	^ self
-]
-
-{ #category : #accessing }
 MD3ExampleApplication >> applicationPresenterClass [
 
 	^ MD3ExampleApplicationPresenter
@@ -74,19 +59,13 @@ MD3ExampleApplication >> initialize [
 		add: (SlmdNavAction id: #square2 iconName: '2-square' iconLabel: 'Square2' arg1: 'Square-2');
 		add: (SlmdNavAction id: #square3 iconName: '3-square' iconLabel: 'Square3' arg1: 'Square-3');
 		yourself.
+	actionItems := OrderedCollection new
+		add: (SlmdNavAction id: #circle1 iconName: '1-circle' iconLabel: '1-circle' arg1: '1-circle');
+		add: (SlmdNavAction id: #circle2 iconName: '2-circle' iconLabel: '2-circle' arg1: '2-circle');
+		add: (SlmdNavAction id: #circle3 iconName: '3-circle' iconLabel: '3-circle' arg1: '3-circle');
+		add: (SlmdNavAction id: #circle4 iconName: '4-circle' iconLabel: '4-circle' arg1: '4-circle');
+		yourself.
 
-]
-
-{ #category : #accessing }
-MD3ExampleApplication >> layout [
-
-	^ layout
-]
-
-{ #category : #accessing }
-MD3ExampleApplication >> layout: anObject [
-
-	layout := anObject
 ]
 
 { #category : #actions }
@@ -96,52 +75,4 @@ MD3ExampleApplication >> load [
 
 	"Add development tools"
 	"self addViewInspector"
-]
-
-{ #category : #accessing }
-MD3ExampleApplication >> navActions [
-
-	^ navActions
-]
-
-{ #category : #accessing }
-MD3ExampleApplication >> navActions: anObject [
-
-	navActions := anObject
-]
-
-{ #category : #accessing }
-MD3ExampleApplication >> pane1Model [
-
-	^ pane1Model
-]
-
-{ #category : #accessing }
-MD3ExampleApplication >> pane1Model: anObject [
-
-	pane1Model := anObject
-]
-
-{ #category : #accessing }
-MD3ExampleApplication >> pane2Model [
-
-	^ pane2Model
-]
-
-{ #category : #accessing }
-MD3ExampleApplication >> pane2Model: anObject [
-
-	pane2Model := anObject
-]
-
-{ #category : #accessing }
-MD3ExampleApplication >> sidesheetModel [
-
-	^ sidesheetModel
-]
-
-{ #category : #accessing }
-MD3ExampleApplication >> sidesheetModel: anObject [
-
-	sidesheetModel := anObject
 ]

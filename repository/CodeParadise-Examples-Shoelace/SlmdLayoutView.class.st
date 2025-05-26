@@ -4,7 +4,9 @@ Class {
 	#instVars : [
 		'debounceTransition',
 		'layoutSettingsView',
-		'layoutWidthCached'
+		'layoutWidthCached',
+		'navActions',
+		'actionItems'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
@@ -133,6 +135,34 @@ SlmdLayoutView class >> template [
 '
 ]
 
+{ #category : #accessing }
+SlmdLayoutView >> actionItems [
+
+	^ actionItems
+]
+
+{ #category : #accessing }
+SlmdLayoutView >> actionItems: anObject [
+
+	actionItems := anObject
+]
+
+{ #category : #events }
+SlmdLayoutView >> addActionItemId: id key: key value: value [
+	| item |
+
+	(actionItems includesKey: id) ifFalse: [
+		actionItems at: id put: Dictionary new ].
+	item := actionItems at: id.
+	item at: key put: value
+]
+
+{ #category : #events }
+SlmdLayoutView >> addNavAction: props [
+
+	navActions at: (props at: #id) put: props
+]
+
 { #category : #body }
 SlmdLayoutView >> adjustBodyHeight [
 	| bodyRegion bodyHeight |
@@ -140,7 +170,7 @@ SlmdLayoutView >> adjustBodyHeight [
 	bodyRegion := self bodyRegionFind.
 	bodyRegion ifNil: [ ^ self  ].
 
-	bodyHeight := (self showNavBar or: [self showDockedToolbar])
+	bodyHeight := (self showNavBar or: [ self showDockedToolbar ])
 		ifTrue: [ 'calc(100vh - 64px)' ]
 		ifFalse: [ '100vh' ].
 	bodyRegion styleAt: 'height' put: bodyHeight.
@@ -293,11 +323,9 @@ SlmdLayoutView >> initialize [
 
 	super initialize.
 
-	"colorThemeName := self defaultColorThemeName."
 	layoutWidthCached := 0.
-
-	"#layoutSetUp will set the value later. DO NOT set it here."
-	"layoutType := nil."
+	navActions := Dictionary new.
+	actionItems := Dictionary new.
 
 ]
 
@@ -342,6 +370,7 @@ SlmdLayoutView >> layoutInitialSetUp: props [
 	self appBarDisplay: (props at: #showAppBar ifAbsent: [ false ]).
 	self showNavBarAdapt: (props at: #showNavBar ifAbsent: [ false ]).
 	self showDockedToolbarAdapt: (props at: #showDockedToolbar ifAbsent: [ false ]).
+	self showFloatingToolbarAdapt: (props at: #showFloatingToolbar ifAbsent: [ false ]).
 	self adjustBodyHeight.
 
 ]
@@ -521,6 +550,18 @@ SlmdLayoutView >> layoutWidthCached: anObject [
 	layoutWidthCached := anObject
 ]
 
+{ #category : #accessing }
+SlmdLayoutView >> navActions [
+
+	^ navActions
+]
+
+{ #category : #accessing }
+SlmdLayoutView >> navActions: anObject [
+
+	navActions := anObject
+]
+
 { #category : #navbar }
 SlmdLayoutView >> navBarDisplay: aBoolean [
 
@@ -557,7 +598,7 @@ SlmdLayoutView >> navRailExpandedAdapt: aBoolean [
 	modalElement := self modalNavElementOrNil.
 	modalElement ifNotNil: [
 		modalElement customPropertyAt: 'size' put: self navRailWidth printString, 'px'.
-		SlmdNavRailView first navSetUp ].
+		"SlmdNavRailView first navSetUp" ].
 
 	self bodySplitPanelAdapt.
 
@@ -643,12 +684,36 @@ SlmdLayoutView >> showDockedToolbar: anObject [
 { #category : #toolbar }
 SlmdLayoutView >> showDockedToolbarAdapt: aBoolean [
 
-	self logTrace: aBoolean printString method: 'showToolbarAdapt:'.
+	self logTrace: aBoolean printString method: 'showDockedToolbarAdapt:'.
 
 	self showDockedToolbar: aBoolean.
 	self toolbarDockedDisplay: aBoolean.
 
 	self adjustBodyHeight.
+]
+
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> showFloatingToolbar [
+
+	^ self layoutSettingsView showFloatingToolbar
+]
+
+{ #category : #'accessing - settings' }
+SlmdLayoutView >> showFloatingToolbar: anObject [
+
+	self layoutSettingsView showFloatingToolbar: anObject
+]
+
+{ #category : #toolbar }
+SlmdLayoutView >> showFloatingToolbarAdapt: aBoolean [
+
+	self logTrace: aBoolean printString method: 'showFloatingToolbarAdapt:'.
+
+	self showFloatingToolbar: aBoolean.
+	self toolbarFloatingDisplay: aBoolean.
+
+	self adjustBodyHeight.
+
 ]
 
 { #category : #'accessing - settings' }
@@ -707,6 +772,13 @@ SlmdLayoutView >> sidesheetDisplay: aBoolean [
 SlmdLayoutView >> toolbarDockedDisplay: aBoolean [
 
 	self shadowElementId: 'smdDockedToolbar' show: aBoolean
+
+]
+
+{ #category : #toolbar }
+SlmdLayoutView >> toolbarFloatingDisplay: aBoolean [
+
+	self shadowElementId: 'smdFloatingToolbar' show: aBoolean
 
 ]
 

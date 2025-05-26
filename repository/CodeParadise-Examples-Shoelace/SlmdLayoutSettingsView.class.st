@@ -248,7 +248,8 @@ SlmdLayoutSettingsView >> modalDivContentWith: props [
 		appendChild: (self showSidesheetNewSwitch: props);
 		appendChild: (self showAppBarNewSwitch: props);
 		appendChild: (self showNavBarNewSwitch: props);
-		appendChild: (self showToolbarNewSwitch: props);
+		appendChild: (self showDockedToolbarNewSwitch: props);
+		appendChild: (self showFloatingToolbarNewSwitch: props);
 		appendChild: (self colorThemeBuildChooser: props);
 		appendChild: (self fontFamilyChooser: props);
 		yourself.
@@ -361,13 +362,30 @@ SlmdLayoutSettingsView >> showAppBarSet: aBoolean [
 { #category : #'settings - switches' }
 SlmdLayoutSettingsView >> showDockedToolbar [
 
-	^ self switchId: self showToolbarId ifMissing: false
+	^ self switchId: self showDockedToolbarId ifMissing: false
 ]
 
 { #category : #'settings - switches' }
 SlmdLayoutSettingsView >> showDockedToolbar: aBoolean [
 
-	self switchId: self showToolbarId put: aBoolean ifMissing: nil
+	self switchId: self showDockedToolbarId put: aBoolean ifMissing: nil
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showDockedToolbarId [
+
+	^ 'showDockedToolbar'
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showDockedToolbarNewSwitch: props [
+
+	^ self
+		switchNewWithId: self showDockedToolbarId
+		label: 'Show Docked Toolbar'
+		checked: (props at: #showDockedToolbar ifAbsent: [ false ])
+		do: [ self showDockedToolbarSet: self showDockedToolbar ].
+
 ]
 
 { #category : #'settings - switches' }
@@ -377,6 +395,45 @@ SlmdLayoutSettingsView >> showDockedToolbarSet: aBoolean [
 
 	self layoutViewLazy showDockedToolbarAdapt: aBoolean.
 	self announceAspect: #showDockedToolbar value: aBoolean.
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showFloatingToolbar [
+
+	^ self switchId: self showFloatingToolbarId ifMissing: false
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showFloatingToolbar: aBoolean [
+
+	self switchId: self showFloatingToolbarId put: aBoolean ifMissing: nil
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showFloatingToolbarId [
+
+	^ 'showFloatingToolbar'
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showFloatingToolbarNewSwitch: props [
+
+	^ self
+		switchNewWithId: self showFloatingToolbarId
+		label: 'Show Floating Toolbar'
+		checked: (props at: #showFloatingToolbar ifAbsent: [ false ])
+		do: [ self showFloatingToolbarSet: self showFloatingToolbar ].
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showFloatingToolbarSet: aBoolean [
+
+	self useAutoLayoutUpdate: false.
+
+	self layoutViewLazy showFloatingToolbarAdapt: aBoolean.
+	self announceAspect: #showFloatingToolbar value: aBoolean.
 
 ]
 
@@ -455,23 +512,6 @@ SlmdLayoutSettingsView >> showSidesheetSet: aBoolean [
 
 	self layoutViewLazy sidesheetDisplay: aBoolean.
 	self announceAspect: #showSidesheet value: aBoolean.
-
-]
-
-{ #category : #'settings - switches' }
-SlmdLayoutSettingsView >> showToolbarId [
-
-	^ 'showToolbar'
-]
-
-{ #category : #'settings - switches' }
-SlmdLayoutSettingsView >> showToolbarNewSwitch: props [
-
-	^ self
-		switchNewWithId: self showToolbarId
-		label: 'Show Docked Toolbar'
-		checked: (props at: #showDockedToolbar ifAbsent: [ false ])
-		do: [ self showDockedToolbarSet: self showDockedToolbar ].
 
 ]
 

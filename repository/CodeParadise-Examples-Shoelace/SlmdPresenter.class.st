@@ -73,6 +73,13 @@ SlmdPresenter >> logTrace: aString method: methodName [
 	self logTrace: aString aspect: self class name, '>>', methodName
 ]
 
+{ #category : #nav }
+SlmdPresenter >> navigateTo: anObject [
+
+	self application pane1Model handleActionRequest: anObject; valueChanged.
+
+]
+
 { #category : #view }
 SlmdPresenter >> viewCreated [
 
