@@ -67,7 +67,7 @@ SlmdNavBarView class >> template [
 '
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #rendering }
 SlmdNavBarView >> navInitialize [
 	| list |
 
@@ -80,7 +80,7 @@ SlmdNavBarView >> navInitialize [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #rendering }
 SlmdNavBarView >> navbarBuildItem: aNavAction [
 	| iconName |
 

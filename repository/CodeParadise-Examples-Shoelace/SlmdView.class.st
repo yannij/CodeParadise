@@ -51,6 +51,8 @@ SlmdView >> executeNavAction: aNavAction [
 	navId := aNavAction at: #id.
 	navId = #settings ifTrue: [
 		^ self modalSettingsOpen ].
+	navId = #modalNavButton ifTrue: [
+		^ self modalNavOpen ].
 
 	arg1 := aNavAction at: #arg1.
 	self navigateTo: arg1.
@@ -166,6 +168,16 @@ SlmdView >> modalNavElementOrNil [
 
 	component := SlmdNavRailView first.
 	^ component ifNil: [ nil ] ifNotNil: [ component drawer ].
+]
+
+{ #category : #topAppBar }
+SlmdView >> modalNavOpen [
+	| drawer |
+
+	drawer := self modalNavElementOrNil.
+	drawer
+		ifNil: [ self logError: 'modal nav element is nil' ]
+		ifNotNil: [ drawer show ]
 ]
 
 { #category : #settings }

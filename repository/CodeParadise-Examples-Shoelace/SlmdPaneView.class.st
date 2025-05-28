@@ -11,6 +11,7 @@ SlmdPaneView class >> style [
 
 	^ '
 .smd-pane-content {
+  padding: 8px;
   border-radius: 16px;
   background: var(--sl-color-primary-50);
 }
@@ -34,7 +35,7 @@ SlmdPaneView >> renderId: paneId content: aString [
 
 	self
 		replaceAllChildrenWith: (#div asHtmlTag
-			id: paneId;
+			"id: paneId;"
 			addClass: 'smd-pane';
 			appendChild: (aString inHtmlTag: #span);
 			yourself)

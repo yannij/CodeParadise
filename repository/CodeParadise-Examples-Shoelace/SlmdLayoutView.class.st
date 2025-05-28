@@ -430,6 +430,7 @@ SlmdLayoutView >> layoutTypeBeCompact [
 		navRailExpandedAdapt: false;
 		showNavBarAdapt: true;
 		showDockedToolbarAdapt: false;
+		showFloatingToolbarAdapt: false;
 		showSidesheetAdapt: false;
 		useTwoPaneBodyAdapt: false;
 		useModalNavAdapt: true.
@@ -439,6 +440,7 @@ SlmdLayoutView >> layoutTypeBeCompact [
 		navRailExpanded: false;
 		showNavBar: true;
 		showDockedToolbar: false;
+		showFloatingToolbar: false;
 		showSidesheet: false;
 		useTwoPaneBody: false;
 		showAppBar: true;
@@ -453,6 +455,7 @@ SlmdLayoutView >> layoutTypeBeExpanded [
 		navRailExpandedAdapt: false;
 		showNavBarAdapt: false;
 		showDockedToolbarAdapt: false;
+		showFloatingToolbarAdapt: false;
 		showSidesheetAdapt: false;
 		useTwoPaneBodyAdapt: true;
 		useModalNavAdapt: false.
@@ -462,6 +465,7 @@ SlmdLayoutView >> layoutTypeBeExpanded [
 		navRailExpanded: false;
 		showNavBar: false;
 		showDockedToolbar: false;
+		showFloatingToolbar: false;
 		showSidesheet: false;
 		useTwoPaneBody: true;
 		showAppBar: true;
@@ -476,6 +480,7 @@ SlmdLayoutView >> layoutTypeBeExtraLarge [
 		navRailExpandedAdapt: true;
 		showNavBarAdapt: false;
 		showDockedToolbarAdapt: false;
+		showFloatingToolbarAdapt: false;
 		showSidesheetAdapt: true;
 		useTwoPaneBodyAdapt: true;
 		useModalNavAdapt: false.
@@ -485,6 +490,7 @@ SlmdLayoutView >> layoutTypeBeExtraLarge [
 		navRailExpanded: true;
 		showNavBar: false;
 		showDockedToolbar: false;
+		showFloatingToolbar: false;
 		showSidesheet: true;
 		useTwoPaneBody: true;
 		showAppBar: true;
@@ -499,6 +505,7 @@ SlmdLayoutView >> layoutTypeBeLarge [
 		navRailExpandedAdapt: false;
 		showNavBarAdapt: false;
 		showDockedToolbarAdapt: false;
+		showFloatingToolbarAdapt: false;
 		showSidesheetAdapt: false;
 		useTwoPaneBodyAdapt: true;
 		useModalNavAdapt: false.
@@ -508,6 +515,7 @@ SlmdLayoutView >> layoutTypeBeLarge [
 		navRailExpanded: false;
 		showNavBar: false;
 		showDockedToolbar: false;
+		showFloatingToolbar: false;
 		showSidesheet: false;
 		useTwoPaneBody: true;
 		showAppBar: true;
@@ -522,6 +530,7 @@ SlmdLayoutView >> layoutTypeBeMedium [
 		navRailExpandedAdapt: true;
 		showNavBarAdapt: true;
 		showDockedToolbarAdapt: false;
+		showFloatingToolbarAdapt: false;
 		showSidesheetAdapt: false;
 		useTwoPaneBodyAdapt: true;
 		useModalNavAdapt: true.
@@ -531,6 +540,7 @@ SlmdLayoutView >> layoutTypeBeMedium [
 		navRailExpanded: true;
 		showNavBar: true;
 		showDockedToolbar: false;
+		showFloatingToolbar: false;
 		showSidesheet: false;
 		useTwoPaneBody: true;
 		showAppBar: true;

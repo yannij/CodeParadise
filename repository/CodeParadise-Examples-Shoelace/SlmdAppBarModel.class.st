@@ -1,5 +1,5 @@
 Class {
 	#name : #SlmdAppBarModel,
-	#superclass : #SlmdModel,
+	#superclass : #SlmdToolbarModel,
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }

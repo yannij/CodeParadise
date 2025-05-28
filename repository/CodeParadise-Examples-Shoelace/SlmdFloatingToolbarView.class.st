@@ -31,7 +31,7 @@ SlmdFloatingToolbarView class >> style [
 .smd-toolbar {
   z-index: 10;
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row nowrap;
 
   position: fixed;
   left: 50%; transform: translate(-50%, 0);
@@ -40,7 +40,7 @@ SlmdFloatingToolbarView class >> style [
 
 .smd-toolbar-buttons {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row nowrap;
   gap: 4px;
   padding: 0 8px;
   border-radius: 32px;

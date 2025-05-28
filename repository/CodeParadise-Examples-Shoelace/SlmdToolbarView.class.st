@@ -51,6 +51,20 @@ SlmdToolbarView >> buildItem: aNavAction css: cssClass [
 	^ tag
 ]
 
+{ #category : #nav }
+SlmdToolbarView >> buildModalNavItem [
+	| tag modalMenuAction |
+
+	modalMenuAction := (SlmdNavAction id: #modalNavButton iconName: 'list' iconLabel: 'Menu' arg1: 'Show Modal Nav') asDictionary.
+
+	tag := #div asHtmlTag
+		when: CpClickEvent basicPrimary do: [ self executeNavAction: modalMenuAction ] for: self;
+		appendChild: ((SlIconButton named: 'list') addClass: 'smd-toolbar-icon'; yourself);
+		yourself.
+
+	^ tag
+]
+
 { #category : #initialization }
 SlmdToolbarView >> initialize [
 

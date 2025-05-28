@@ -1,11 +1,6 @@
 Class {
 	#name : #SlmdAppBarView,
-	#superclass : #SlmdLayoutComponentView,
-	#instVars : [
-		'headline',
-		'leadingAction',
-		'trailingActions'
-	],
+	#superclass : #SlmdToolbarView,
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
@@ -15,41 +10,33 @@ SlmdAppBarView class >> style [
 	<webResource: #css>
 
 	^ '
-.smd-header {
-  border-radius: 16px;
-  margin-bottom: 16px;
-  flex: 0 0 64px;
-  display: flex;  
-  flex-direction: column;
+.smd-appBar {
+  display: flex;
+  flex-flow: row nowrap;
+  height: 64px;
+  padding: 0 4px;
   background: var(--sl-color-primary-200);
 }
 
-.smd-appBar {
-  display: flex;
-  flex-flow: row wrap;
-  padding: 8px 4px 8px 4px;
-}
-
 .smd-appBar-leadingAction {
-  margin-top: 4px;
+  padding: 8px 0;
   height: 48px;
   width: 48px;
-  font-size: 24px;
 }
 
 .smd-appBar-headline {
-  margin-top: 4px;
-  padding-top: 8px;
   padding-left: 8px;
   height: 48px;
+  line-height: 64px;
   font-size: 24px;
 }
 
 .smd-appBar-trailingActions {
   margin-left: auto;
-  margin-top: 4px;
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 4px;
   height: 48px;
-  font-size: 24px;
 }
 '
 ]
@@ -76,12 +63,28 @@ SlmdAppBarView class >> template [
 '
 ]
 
+{ #category : #nav }
+SlmdAppBarView >> actionItemsInitialize [
+	| list actionItem |
+
+	list := self layoutViewLazy actionItems.
+
+	items ifNotEmpty: [
+		items withIndexDo: [ :eachItem :index |
+			actionItem := self buildItem: (list at: eachItem) css: 'smd-toolbar-item'.
+			self appendChild: actionItem atSlotNamed: 'trailingActions' ] ].
+
+	actionItem := self buildModalNavItem.
+	self appendChild: actionItem atSlotNamed: 'leadingAction'.
+
+]
+
 { #category : #topAppBar }
 SlmdAppBarView >> appBarLeadingButtonDisplay: aBoolean [
 	| element |
 
 	element := self appBarMenuFind.
-	element ifNil: [ self error: '**** appBarMenuFind answered nil' ].
+	element ifNil: [ self logError: '**** appBarMenuFind answered nil' ].
 	element ifNotNil: [
 		aBoolean
 			ifTrue: [ element removeStyleAt: 'display' ]
@@ -95,18 +98,6 @@ SlmdAppBarView >> appBarMenuFind [
 	^ self shadowedFirstDescendantMatching: '.smd-appBar-leadingAction'
 ]
 
-{ #category : #accessing }
-SlmdAppBarView >> leadingAction [
-
-	^ leadingAction
-]
-
-{ #category : #accessing }
-SlmdAppBarView >> leadingAction: anObject [
-
-	leadingAction := anObject
-]
-
 { #category : #topAppBar }
 SlmdAppBarView >> renderHeadline: aString [
 
@@ -114,47 +105,4 @@ SlmdAppBarView >> renderHeadline: aString [
 		replaceAllChildrenWith: (aString inHtmlTag: #span)
 		atSlotNamed: 'headline'.
 
-]
-
-{ #category : #topAppBar }
-SlmdAppBarView >> renderLeadingAction: aString [
-	| drawer |
-
-	leadingAction ifNil: [
-		drawer := self modalNavElementOrNil.
-		drawer ifNil: [
-			self logError: 'modal nav element is nil' ].
-		leadingAction := (SlIconButton named: aString)
-			when: CpClickEvent basicPrimary send: #show to: drawer;
-			yourself ].
-
-	self
-		replaceAllChildrenWith: leadingAction
-		atSlotNamed: 'leadingAction'.
-
-]
-
-{ #category : #topAppBar }
-SlmdAppBarView >> renderTrailingActions [
-
-	self removeChildrenAtSlotNamed: 'trailingActions'.
-
-	self
-		appendChild: (SlIconButton named: trailingActions first) atSlotNamed: 'trailingActions';
-		appendChild: (SlIconButton named: trailingActions second) atSlotNamed: 'trailingActions';
-		appendChild: (SlIconButton named: trailingActions third) atSlotNamed: 'trailingActions';
-		yourself.
-
-]
-
-{ #category : #accessing }
-SlmdAppBarView >> trailingActions [
-
-	^ trailingActions
-]
-
-{ #category : #accessing }
-SlmdAppBarView >> trailingActions: anObject [
-
-	trailingActions := anObject
 ]

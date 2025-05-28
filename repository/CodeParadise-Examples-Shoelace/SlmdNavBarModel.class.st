@@ -8,13 +8,13 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
-{ #category : #accessing }
+{ #category : #'as yet unclassified' }
 SlmdNavBarModel >> iconButtons [
 
 	^ iconButtons
 ]
 
-{ #category : #accessing }
+{ #category : #'as yet unclassified' }
 SlmdNavBarModel >> iconButtons: anObject [
 
 	iconButtons := anObject
@@ -29,13 +29,13 @@ SlmdNavBarModel >> initialize [
 
 ]
 
-{ #category : #accessing }
+{ #category : #'as yet unclassified' }
 SlmdNavBarModel >> isVisible [
 
 	^ isVisible
 ]
 
-{ #category : #accessing }
+{ #category : #'as yet unclassified' }
 SlmdNavBarModel >> isVisible: anObject [
 
 	isVisible := anObject
