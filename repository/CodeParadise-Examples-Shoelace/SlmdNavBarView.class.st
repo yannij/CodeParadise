@@ -68,15 +68,46 @@ SlmdNavBarView class >> template [
 ]
 
 { #category : #rendering }
+SlmdNavBarView >> dropdownMenu: actionList [
+	| menu dropdown |
+
+	menu := SlMenu new.
+	actionList do: [ :each |
+		menu appendChild: (SlMenuItem new
+			when: CpClickEvent basicPrimary do: [ self executeNavAction: each ] for: self;
+			prefix: (SlIcon named: (each at: #iconName));
+			textContent: (each at: #iconLabel);
+			yourself) ].
+
+	dropdown := SlDropdown new
+		replaceAllChildrenWith: (SlIconButton named: 'three-dots') atSlotNamed: #trigger;
+		appendChild: menu;
+		yourself.
+
+	^ dropdown
+
+]
+
+{ #category : #rendering }
 SlmdNavBarView >> navInitialize [
-	| list |
+	| list items navList overflowList |
+
+	navItems ifNil: [ ^ self ].
 
 	list := self navActions.
-	navItems ifNotNil: [
-		navItems withIndexDo: [ :eachItem :index | | navItem |
-			index <= 5 ifTrue: [
-				navItem := self navbarBuildItem: (list at: eachItem).
-				self appendChild: navItem atSlotNamed: 'navBar' ] ] ].
+	items := navItems collect: [ :each | list at: each ].
+
+	items size <= 4 ifTrue: [
+		items withIndexDo: [ :each :index |
+			self appendChild: (self navbarBuildItem: each) atSlotNamed: 'navBar' ].
+		^ self ].
+
+	navList := items copyFrom: 1 to: 3.
+	navList withIndexDo: [ :each :index |
+		self appendChild: (self navbarBuildItem: each) atSlotNamed: 'navBar' ].
+
+	overflowList := items copyFrom: 4 to: items size.
+	self appendChild: (self dropdownMenu: overflowList) atSlotNamed: 'navBar'.
 
 ]
 

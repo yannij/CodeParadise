@@ -177,7 +177,7 @@ SlmdLayoutView >> adjustBodyHeight [
 	bodyRegion styleAt: 'max-height' put: bodyHeight.
 ]
 
-{ #category : #events }
+{ #category : #body }
 SlmdLayoutView >> appBarDisplay: anObject [
 	| component |
 
@@ -187,7 +187,7 @@ SlmdLayoutView >> appBarDisplay: anObject [
 
 ]
 
-{ #category : #events }
+{ #category : #body }
 SlmdLayoutView >> appBarLeadingButtonDisplay: anObject [
 	| components |
 
@@ -428,22 +428,24 @@ SlmdLayoutView >> layoutTypeBeCompact [
 
 	self
 		navRailExpandedAdapt: false;
-		showNavBarAdapt: true;
 		showDockedToolbarAdapt: false;
 		showFloatingToolbarAdapt: false;
 		showSidesheetAdapt: false;
 		useTwoPaneBodyAdapt: false;
+		showNavBarAdapt: true;
+		showNavMenuButtonAdapt: false;
 		useModalNavAdapt: true.
 
 	self
 		layoutType: self class layoutTypeCompact;
 		navRailExpanded: false;
-		showNavBar: true;
 		showDockedToolbar: false;
 		showFloatingToolbar: false;
 		showSidesheet: false;
 		useTwoPaneBody: false;
 		showAppBar: true;
+		showNavBar: true;
+		showNavMenuButton: false;
 		useModalNav: true.
 
 ]
@@ -453,23 +455,25 @@ SlmdLayoutView >> layoutTypeBeExpanded [
 
 	self
 		navRailExpandedAdapt: false;
-		showNavBarAdapt: false;
 		showDockedToolbarAdapt: false;
 		showFloatingToolbarAdapt: false;
 		showSidesheetAdapt: false;
 		useTwoPaneBodyAdapt: true;
-		useModalNavAdapt: false.
+		showNavBarAdapt: false;
+		showNavMenuButtonAdapt: true;
+		useModalNavAdapt: true.
 
 	self
 		layoutType: self class layoutTypeExpanded;
 		navRailExpanded: false;
-		showNavBar: false;
 		showDockedToolbar: false;
 		showFloatingToolbar: false;
 		showSidesheet: false;
 		useTwoPaneBody: true;
 		showAppBar: true;
-		useModalNav: false.
+		showNavBar: false;
+		showNavMenuButton: true;
+		useModalNav: true.
 
 ]
 
@@ -478,22 +482,23 @@ SlmdLayoutView >> layoutTypeBeExtraLarge [
 
 	self
 		navRailExpandedAdapt: true;
-		showNavBarAdapt: false;
 		showDockedToolbarAdapt: false;
 		showFloatingToolbarAdapt: false;
 		showSidesheetAdapt: true;
 		useTwoPaneBodyAdapt: true;
+		showNavBarAdapt: false;
+		showNavMenuButtonAdapt: false;
 		useModalNavAdapt: false.
 
 	self
 		layoutType: self class layoutTypeExtraLarge;
 		navRailExpanded: true;
-		showNavBar: false;
 		showDockedToolbar: false;
 		showFloatingToolbar: false;
 		showSidesheet: true;
 		useTwoPaneBody: true;
 		showAppBar: true;
+		showNavBar: false;
 		useModalNav: false.
 
 ]
@@ -503,22 +508,23 @@ SlmdLayoutView >> layoutTypeBeLarge [
 
 	self
 		navRailExpandedAdapt: false;
-		showNavBarAdapt: false;
 		showDockedToolbarAdapt: false;
 		showFloatingToolbarAdapt: false;
 		showSidesheetAdapt: false;
 		useTwoPaneBodyAdapt: true;
+		showNavBarAdapt: false;
+		showNavMenuButtonAdapt: false;
 		useModalNavAdapt: false.
 
 	self
 		layoutType: self class layoutTypeLarge;
 		navRailExpanded: false;
-		showNavBar: false;
 		showDockedToolbar: false;
 		showFloatingToolbar: false;
 		showSidesheet: false;
 		useTwoPaneBody: true;
 		showAppBar: true;
+		showNavBar: false;
 		useModalNav: false.
 
 ]
@@ -528,22 +534,23 @@ SlmdLayoutView >> layoutTypeBeMedium [
 
 	self
 		navRailExpandedAdapt: true;
-		showNavBarAdapt: true;
 		showDockedToolbarAdapt: false;
 		showFloatingToolbarAdapt: false;
 		showSidesheetAdapt: false;
 		useTwoPaneBodyAdapt: true;
+		showNavBarAdapt: true;
+		showNavMenuButtonAdapt: false;
 		useModalNavAdapt: true.
 
 	self
 		layoutType: self class layoutTypeMedium;
 		navRailExpanded: true;
-		showNavBar: true;
 		showDockedToolbar: false;
 		showFloatingToolbar: false;
 		showSidesheet: false;
 		useTwoPaneBody: true;
 		showAppBar: true;
+		showNavBar: true;
 		useModalNav: true.
 
 ]
@@ -750,6 +757,19 @@ SlmdLayoutView >> showNavBarAdapt: aBoolean [
 ]
 
 { #category : #'accessing - settings' }
+SlmdLayoutView >> showNavMenuButton: anObject [
+
+	self layoutSettingsView showNavMenuButton: anObject
+]
+
+{ #category : #body }
+SlmdLayoutView >> showNavMenuButtonAdapt: aBoolean [
+
+	self appBarLeadingButtonDisplay: aBoolean.
+
+]
+
+{ #category : #'accessing - settings' }
 SlmdLayoutView >> showSidesheet [
 
 	^ self layoutSettingsView showSidesheet
@@ -829,7 +849,6 @@ SlmdLayoutView >> useModalNavAdapt: aBoolean [
 
 	self logTrace: aBoolean printString method: 'useModalNavAdapt:'.
 
-	self appBarLeadingButtonDisplay: aBoolean.
 	self navRegionDisplay: aBoolean not.
 	self bodySplitPanelAdapt.
 
@@ -847,7 +866,7 @@ SlmdLayoutView >> useTwoPaneBody: anObject [
 	self layoutSettingsView useTwoPaneBody: anObject
 ]
 
-{ #category : #events }
+{ #category : #body }
 SlmdLayoutView >> useTwoPaneBodyAdapt: anObject [
 	| component |
 

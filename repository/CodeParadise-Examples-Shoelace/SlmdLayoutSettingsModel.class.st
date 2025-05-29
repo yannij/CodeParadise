@@ -11,6 +11,7 @@ Class {
 		'useTwoPaneBody',
 		'navRailExpanded',
 		'showAppBar',
+		'showNavMenuButton',
 		'showNavBar',
 		'showSidesheet',
 		'showDockedToolbar',
@@ -27,9 +28,10 @@ SlmdLayoutSettingsModel >> asProperties [
 		at: #fontFamily put: self fontFamily;
 		at: #layoutType put: self layoutType;
 		at: #navRailExpanded put: self navRailExpanded;
-		at: #showNavBar put: self showNavBar;
 		at: #showSidesheet put: self showSidesheet;
 		at: #showAppBar put: self showAppBar;
+		at: #showNavMenuButton put: self showNavMenuButton;
+		at: #showNavBar put: self showNavBar;
 		at: #showDockedToolbar put: self showDockedToolbar;
 		at: #showFloatingToolbar put: self showFloatingToolbar;
 		at: #useAutoLayout put: self useAutoLayout;
@@ -87,6 +89,7 @@ SlmdLayoutSettingsModel >> initialize [
 	useTwoPaneBody := true.
 	navRailExpanded := false.
 	showAppBar := false.
+	showNavMenuButton := false.
 	showNavBar := false.
 	showSidesheet := false.
 	showDockedToolbar := false.
@@ -182,6 +185,18 @@ SlmdLayoutSettingsModel >> showNavBar [
 SlmdLayoutSettingsModel >> showNavBar: anObject [
 
 	showNavBar := anObject
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> showNavMenuButton [
+
+	^ showNavMenuButton
+]
+
+{ #category : #accessing }
+SlmdLayoutSettingsModel >> showNavMenuButton: anObject [
+
+	showNavMenuButton := anObject
 ]
 
 { #category : #accessing }

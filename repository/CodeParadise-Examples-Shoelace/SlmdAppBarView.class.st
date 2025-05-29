@@ -71,7 +71,7 @@ SlmdAppBarView >> actionItemsInitialize [
 
 	items ifNotEmpty: [
 		items withIndexDo: [ :eachItem :index |
-			actionItem := self buildItem: (list at: eachItem) css: 'smd-toolbar-item'.
+			actionItem := self iconButtonForAction: (list at: eachItem) css: 'smd-toolbar-item'.
 			self appendChild: actionItem atSlotNamed: 'trailingActions' ] ].
 
 	actionItem := self buildModalNavItem.

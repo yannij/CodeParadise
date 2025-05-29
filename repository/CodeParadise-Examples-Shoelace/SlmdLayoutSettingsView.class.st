@@ -246,8 +246,9 @@ SlmdLayoutSettingsView >> modalDivContentWith: props [
 		appendChild: (self useModalNavNewSwitch: props);
 		appendChild: (self useTwoPaneBodyNewSwitch: props);
 		appendChild: (self showSidesheetNewSwitch: props);
-		appendChild: (self showAppBarNewSwitch: props);
+		appendChild: (self showNavMenuButtonNewSwitch: props);
 		appendChild: (self showNavBarNewSwitch: props);
+		appendChild: (self showAppBarNewSwitch: props);
 		appendChild: (self showDockedToolbarNewSwitch: props);
 		appendChild: (self showFloatingToolbarNewSwitch: props);
 		appendChild: (self colorThemeBuildChooser: props);
@@ -473,6 +474,45 @@ SlmdLayoutSettingsView >> showNavBarSet: aBoolean [
 
 	self layoutViewLazy showNavBarAdapt: aBoolean.
 	self announceAspect: #showNavBar value: aBoolean.
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showNavMenuButton [
+
+	^ self switchId: self showNavMenuButtonId ifMissing: false
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showNavMenuButton: aBoolean [
+
+	self switchId: self showNavMenuButtonId put: aBoolean ifMissing: false
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showNavMenuButtonId [
+
+	^ 'showNavMenuButton'
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showNavMenuButtonNewSwitch: props [
+
+	^ self
+		switchNewWithId: self showNavMenuButtonId
+		label: 'Show Nav menu button'
+		checked: (props at: #showMenuButtonBar ifAbsent: [ false ])
+		do: [ self showNavMenuButtonSet: self showNavMenuButton ].
+
+]
+
+{ #category : #'settings - switches' }
+SlmdLayoutSettingsView >> showNavMenuButtonSet: aBoolean [
+
+	self useAutoLayoutUpdate: false.
+
+	self layoutViewLazy showNavMenuButtonAdapt: aBoolean.
+	self announceAspect: #showNavMenuButton value: aBoolean.
 
 ]
 

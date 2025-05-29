@@ -15,10 +15,10 @@ SlmdToolbarView >> actionItemsInitialize [
 
 	items ifNotEmpty: [
 		items withIndexDo: [ :eachItem :index |
-			actionItem := self buildItem: (list at: eachItem) css: 'smd-toolbar-item'.
+			actionItem := self iconButtonForAction: (list at: eachItem) css: 'smd-toolbar-item'.
 			self appendChild: actionItem atSlotNamed: 'toolbar' ].
 
-		actionItem := self buildItem: (list at: items last).
+		actionItem := self iconButtonForAction: (list at: items last) css: nil.
 		self appendChild: actionItem atSlotNamed: 'fab' ].
 
 ]
@@ -30,37 +30,11 @@ SlmdToolbarView >> addActionItem: anActionId [
 ]
 
 { #category : #nav }
-SlmdToolbarView >> buildItem: aNavAction [
-
-	^ self buildItem: aNavAction css: nil
-]
-
-{ #category : #nav }
-SlmdToolbarView >> buildItem: aNavAction css: cssClass [
-	| iconName tag |
-
-	iconName := aNavAction at: #iconName.
-
-	tag := #div asHtmlTag
-		when: CpClickEvent basicPrimary do: [ self executeNavAction: aNavAction ] for: self;
-		appendChild: ((SlIconButton named: iconName) addClass: 'smd-toolbar-icon'; yourself);
-		yourself.
-
-	cssClass ifNotNil: [ tag addClass: cssClass ].
-
-	^ tag
-]
-
-{ #category : #nav }
 SlmdToolbarView >> buildModalNavItem [
 	| tag modalMenuAction |
 
 	modalMenuAction := (SlmdNavAction id: #modalNavButton iconName: 'list' iconLabel: 'Menu' arg1: 'Show Modal Nav') asDictionary.
-
-	tag := #div asHtmlTag
-		when: CpClickEvent basicPrimary do: [ self executeNavAction: modalMenuAction ] for: self;
-		appendChild: ((SlIconButton named: 'list') addClass: 'smd-toolbar-icon'; yourself);
-		yourself.
+	tag := self iconButtonForAction: modalMenuAction css: nil.
 
 	^ tag
 ]
