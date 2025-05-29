@@ -31,7 +31,7 @@ MD3ExampleApplication class >> app [
 MD3ExampleApplication class >> appName [
 	"Answer name to be shown in AppBar headline"
 
-	^ #'MD3 Example'
+	^ #'MD3 Example - CodeParadise'
 ]
 
 { #category : #accessing }
@@ -62,8 +62,8 @@ MD3ExampleApplication >> initialize [
 	actionItems := OrderedCollection new
 		add: (SlmdNavAction id: #circle1 iconName: '1-circle' iconLabel: '1-circle' arg1: '1-circle');
 		add: (SlmdNavAction id: #circle2 iconName: '2-circle' iconLabel: '2-circle' arg1: '2-circle');
-		add: (SlmdNavAction id: #circle3 iconName: '3-circle' iconLabel: '3-circle' arg1: '3-circle');
-		add: (SlmdNavAction id: #circle4 iconName: '4-circle' iconLabel: '4-circle' arg1: '4-circle');
+		"add: (SlmdNavAction id: #circle3 iconName: '3-circle' iconLabel: '3-circle' arg1: '3-circle');
+		add: (SlmdNavAction id: #circle4 iconName: '4-circle' iconLabel: '4-circle' arg1: '4-circle');"
 		yourself.
 
 ]

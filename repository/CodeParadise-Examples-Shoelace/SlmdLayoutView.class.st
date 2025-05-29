@@ -198,6 +198,23 @@ SlmdLayoutView >> appBarLeadingButtonDisplay: anObject [
 
 ]
 
+{ #category : #layout }
+SlmdLayoutView >> applyLayoutProfile: props [
+
+	self navRailExpandedAdapt: (props at: #navRailExpanded ifAbsent: [ false ]).
+	self showNavMenuButtonAdapt: (props at: #showNavMenuButton ifAbsent: [ false ]).
+	self useModalNavAdapt: (props at: #useModalNav ifAbsent: [ false ]).
+	self showNavBarAdapt: (props at: #showNavBar ifAbsent: [ false ]).
+	self useTwoPaneBodyAdapt: (props at: #useTwoPaneBody ifAbsent: [ false ]).
+	self showSidesheetAdapt: (props at: #showSidesheet ifAbsent: [ false ]).
+	self showAppBarAdapt: (props at: #showAppBar ifAbsent: [ false ]).
+	self showDockedToolbarAdapt: (props at: #showDockedToolbar ifAbsent: [ false ]).
+	self showFloatingToolbarAdapt: (props at: #showFloatingToolbar ifAbsent: [ false ]).
+
+	self adjustBodyHeight.
+
+]
+
 { #category : #body }
 SlmdLayoutView >> bodyFind [
 
@@ -362,16 +379,92 @@ SlmdLayoutView >> layoutInitialSetUp: props [
 		self layoutAdaptToWidth.
 		^ self ].
 
-	"self layoutType: (props at: #layoutType ifAbsent: [])."
-	self navRailExpandedAdapt: (props at: #navRailExpanded ifAbsent: [ false ]).
-	self useModalNavAdapt: (props at: #useModalNav ifAbsent: [ false ]).
-	self useTwoPaneBodyAdapt: (props at: #useTwoPaneBody ifAbsent: [ false ]).
-	self sidesheetDisplay: (props at: #showSidesheet ifAbsent: [ false ]).
-	self appBarDisplay: (props at: #showAppBar ifAbsent: [ false ]).
-	self showNavBarAdapt: (props at: #showNavBar ifAbsent: [ false ]).
-	self showDockedToolbarAdapt: (props at: #showDockedToolbar ifAbsent: [ false ]).
-	self showFloatingToolbarAdapt: (props at: #showFloatingToolbar ifAbsent: [ false ]).
-	self adjustBodyHeight.
+	self applyLayoutProfile: props.
+
+]
+
+{ #category : #layout }
+SlmdLayoutView >> layoutProfileCompact [
+
+	^ {
+		#navRailExpanded -> false.
+		#showNavMenuButton -> false.
+		#useModalNav -> true.
+		#showNavBar -> true.
+		#useTwoPaneBody -> false.
+		#showSidesheet -> false.
+		#showAppBar -> true.
+		#showDockedToolbar -> false.
+		#showFloatingToolba -> false
+	} asDictionary
+
+]
+
+{ #category : #layout }
+SlmdLayoutView >> layoutProfileExpanded [
+
+	^ {
+		#navRailExpanded -> false.
+		#showNavMenuButton -> true.
+		#useModalNav -> true.
+		#showNavBar -> false.
+		#useTwoPaneBody -> true.
+		#showSidesheet -> false.
+		#showAppBar -> true.
+		#showDockedToolbar -> false.
+		#showFloatingToolba -> false
+	} asDictionary
+
+]
+
+{ #category : #layout }
+SlmdLayoutView >> layoutProfileExtraLarge [
+
+	^ {
+		#navRailExpanded -> true.
+		#showNavMenuButton -> false.
+		#useModalNav -> false.
+		#showNavBar -> false.
+		#useTwoPaneBody -> true.
+		#showSidesheet -> true.
+		#showAppBar -> true.
+		#showDockedToolbar -> false.
+		#showFloatingToolba -> false
+	} asDictionary
+
+]
+
+{ #category : #layout }
+SlmdLayoutView >> layoutProfileLarge [
+
+	^ {
+		#navRailExpanded -> false.
+		#showNavMenuButton -> false.
+		#useModalNav -> false.
+		#showNavBar -> false.
+		#useTwoPaneBody -> true.
+		#showSidesheet -> false.
+		#showAppBar -> true.
+		#showDockedToolbar -> false.
+		#showFloatingToolba -> false
+	} asDictionary
+
+]
+
+{ #category : #layout }
+SlmdLayoutView >> layoutProfileMedium [
+
+	^ {
+		#navRailExpanded -> true.
+		#showNavMenuButton -> false.
+		#useModalNav -> true.
+		#showNavBar -> true.
+		#useTwoPaneBody -> true.
+		#showSidesheet -> false.
+		#showAppBar -> true.
+		#showDockedToolbar -> false.
+		#showFloatingToolba -> false
+	} asDictionary
 
 ]
 
@@ -405,153 +498,26 @@ SlmdLayoutView >> layoutType: anObject [
 
 { #category : #layout }
 SlmdLayoutView >> layoutTypeAdapt: aLayoutType [
+	| props |
 
 	self logTrace: aLayoutType printString method: 'layoutTypeAdapt:'.
 
 	aLayoutType = self class layoutTypeCompact ifTrue: [
-		self layoutTypeBeCompact ].
+		props := self layoutProfileCompact ].
 	aLayoutType = self class layoutTypeMedium ifTrue: [
-		self layoutTypeBeMedium ].
+		props := self layoutProfileMedium ].
 	aLayoutType = self class layoutTypeExpanded ifTrue: [
-		self layoutTypeBeExpanded ].
+		props := self layoutProfileExpanded ].
 	aLayoutType = self class layoutTypeLarge ifTrue: [
-		 self layoutTypeBeLarge ].
+		props := self layoutProfileLarge ].
 	aLayoutType = self class layoutTypeExtraLarge ifTrue: [
-		self layoutTypeBeExtraLarge ].
+		props := self layoutProfileExtraLarge ].
 
+	props ifNil: [ ^ self ].
+	self layoutType: aLayoutType.
+	self setLayoutSettings: props.
+	self applyLayoutProfile: props.
 	self layoutSettingsView layoutUpdate.
-
-]
-
-{ #category : #layout }
-SlmdLayoutView >> layoutTypeBeCompact [
-
-	self
-		navRailExpandedAdapt: false;
-		showDockedToolbarAdapt: false;
-		showFloatingToolbarAdapt: false;
-		showSidesheetAdapt: false;
-		useTwoPaneBodyAdapt: false;
-		showNavBarAdapt: true;
-		showNavMenuButtonAdapt: false;
-		useModalNavAdapt: true.
-
-	self
-		layoutType: self class layoutTypeCompact;
-		navRailExpanded: false;
-		showDockedToolbar: false;
-		showFloatingToolbar: false;
-		showSidesheet: false;
-		useTwoPaneBody: false;
-		showAppBar: true;
-		showNavBar: true;
-		showNavMenuButton: false;
-		useModalNav: true.
-
-]
-
-{ #category : #layout }
-SlmdLayoutView >> layoutTypeBeExpanded [
-
-	self
-		navRailExpandedAdapt: false;
-		showDockedToolbarAdapt: false;
-		showFloatingToolbarAdapt: false;
-		showSidesheetAdapt: false;
-		useTwoPaneBodyAdapt: true;
-		showNavBarAdapt: false;
-		showNavMenuButtonAdapt: true;
-		useModalNavAdapt: true.
-
-	self
-		layoutType: self class layoutTypeExpanded;
-		navRailExpanded: false;
-		showDockedToolbar: false;
-		showFloatingToolbar: false;
-		showSidesheet: false;
-		useTwoPaneBody: true;
-		showAppBar: true;
-		showNavBar: false;
-		showNavMenuButton: true;
-		useModalNav: true.
-
-]
-
-{ #category : #layout }
-SlmdLayoutView >> layoutTypeBeExtraLarge [
-
-	self
-		navRailExpandedAdapt: true;
-		showDockedToolbarAdapt: false;
-		showFloatingToolbarAdapt: false;
-		showSidesheetAdapt: true;
-		useTwoPaneBodyAdapt: true;
-		showNavBarAdapt: false;
-		showNavMenuButtonAdapt: false;
-		useModalNavAdapt: false.
-
-	self
-		layoutType: self class layoutTypeExtraLarge;
-		navRailExpanded: true;
-		showDockedToolbar: false;
-		showFloatingToolbar: false;
-		showSidesheet: true;
-		useTwoPaneBody: true;
-		showAppBar: true;
-		showNavBar: false;
-		useModalNav: false.
-
-]
-
-{ #category : #layout }
-SlmdLayoutView >> layoutTypeBeLarge [
-
-	self
-		navRailExpandedAdapt: false;
-		showDockedToolbarAdapt: false;
-		showFloatingToolbarAdapt: false;
-		showSidesheetAdapt: false;
-		useTwoPaneBodyAdapt: true;
-		showNavBarAdapt: false;
-		showNavMenuButtonAdapt: false;
-		useModalNavAdapt: false.
-
-	self
-		layoutType: self class layoutTypeLarge;
-		navRailExpanded: false;
-		showDockedToolbar: false;
-		showFloatingToolbar: false;
-		showSidesheet: false;
-		useTwoPaneBody: true;
-		showAppBar: true;
-		showNavBar: false;
-		useModalNav: false.
-
-]
-
-{ #category : #layout }
-SlmdLayoutView >> layoutTypeBeMedium [
-
-	self
-		navRailExpandedAdapt: true;
-		showDockedToolbarAdapt: false;
-		showFloatingToolbarAdapt: false;
-		showSidesheetAdapt: false;
-		useTwoPaneBodyAdapt: true;
-		showNavBarAdapt: true;
-		showNavMenuButtonAdapt: false;
-		useModalNavAdapt: true.
-
-	self
-		layoutType: self class layoutTypeMedium;
-		navRailExpanded: true;
-		showDockedToolbar: false;
-		showFloatingToolbar: false;
-		showSidesheet: false;
-		useTwoPaneBody: true;
-		showAppBar: true;
-		showNavBar: true;
-		useModalNav: true.
 
 ]
 
@@ -674,6 +640,21 @@ SlmdLayoutView >> resizeSetUp [
 	resize appendChild: div
 ]
 
+{ #category : #layout }
+SlmdLayoutView >> setLayoutSettings: props [
+
+	self navRailExpanded: (props at: #navRailExpanded ifAbsent: [ false ]).
+	self showNavMenuButton: (props at: #showNavMenuButton ifAbsent: [ false ]).
+	self useModalNav: (props at: #useModalNav ifAbsent: [ false ]).
+	self showNavBar: (props at: #showNavBar ifAbsent: [ false ]).
+	self useTwoPaneBody: (props at: #useTwoPaneBody ifAbsent: [ false ]).
+	self showSidesheet: (props at: #showSidesheet ifAbsent: [ false ]).
+	self showAppBar: (props at: #showAppBar ifAbsent: [ false ]).
+	self showDockedToolbar: (props at: #showDockedToolbar ifAbsent: [ false ]).
+	self showFloatingToolbar: (props at: #showFloatingToolbar ifAbsent: [ false ]).
+
+]
+
 { #category : #'accessing - settings' }
 SlmdLayoutView >> showAppBar [
 
@@ -684,6 +665,15 @@ SlmdLayoutView >> showAppBar [
 SlmdLayoutView >> showAppBar: anObject [
 
 	self layoutSettingsView showAppBar: anObject
+]
+
+{ #category : #toolbar }
+SlmdLayoutView >> showAppBarAdapt: aBoolean [
+
+	self logTrace: aBoolean printString method: 'showAppBarAdapt:'.
+
+	self appBarDisplay: aBoolean.
+
 ]
 
 { #category : #'accessing - settings' }
@@ -703,10 +693,8 @@ SlmdLayoutView >> showDockedToolbarAdapt: aBoolean [
 
 	self logTrace: aBoolean printString method: 'showDockedToolbarAdapt:'.
 
-	self showDockedToolbar: aBoolean.
 	self toolbarDockedDisplay: aBoolean.
 
-	self adjustBodyHeight.
 ]
 
 { #category : #'accessing - settings' }
@@ -726,10 +714,7 @@ SlmdLayoutView >> showFloatingToolbarAdapt: aBoolean [
 
 	self logTrace: aBoolean printString method: 'showFloatingToolbarAdapt:'.
 
-	self showFloatingToolbar: aBoolean.
 	self toolbarFloatingDisplay: aBoolean.
-
-	self adjustBodyHeight.
 
 ]
 
@@ -750,10 +735,8 @@ SlmdLayoutView >> showNavBarAdapt: aBoolean [
 
 	self logTrace: aBoolean printString method: 'showNavBarAdapt:'.
 
-	self showNavBar: aBoolean.
 	self navBarDisplay: aBoolean.
 
-	self adjustBodyHeight.
 ]
 
 { #category : #'accessing - settings' }
@@ -786,7 +769,6 @@ SlmdLayoutView >> showSidesheetAdapt: aBoolean [
 
 	self logTrace: aBoolean printString method: 'showSidesheetAdapt:'.
 
-	self showSidesheet: aBoolean.
 	self sidesheetDisplay: aBoolean.
 
 ]

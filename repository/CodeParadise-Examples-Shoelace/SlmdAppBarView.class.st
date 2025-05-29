@@ -25,6 +25,9 @@ SlmdAppBarView class >> style [
 }
 
 .smd-appBar-headline {
+  overflow: clip;
+  white-space: nowrap;
+  max-width: 66%;
   padding-left: 8px;
   height: 48px;
   line-height: 64px;

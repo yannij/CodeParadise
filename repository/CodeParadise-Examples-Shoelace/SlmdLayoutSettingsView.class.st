@@ -212,7 +212,6 @@ SlmdLayoutSettingsView >> layoutTypeSet: anObject [
 
 	self useAutoLayoutUpdate: false.
 
-	self layoutType: anObject.
 	self layoutViewLazy layoutTypeAdapt: anObject.
 	self announceAspect: #layoutType value: anObject.
 
@@ -394,7 +393,7 @@ SlmdLayoutSettingsView >> showDockedToolbarSet: aBoolean [
 
 	self useAutoLayoutUpdate: false.
 
-	self layoutViewLazy showDockedToolbarAdapt: aBoolean.
+	self layoutViewLazy showDockedToolbarAdapt: aBoolean; adjustBodyHeight.
 	self announceAspect: #showDockedToolbar value: aBoolean.
 
 ]
@@ -472,7 +471,7 @@ SlmdLayoutSettingsView >> showNavBarSet: aBoolean [
 
 	self useAutoLayoutUpdate: false.
 
-	self layoutViewLazy showNavBarAdapt: aBoolean.
+	self layoutViewLazy showNavBarAdapt: aBoolean; adjustBodyHeight.
 	self announceAspect: #showNavBar value: aBoolean.
 
 ]
@@ -664,7 +663,9 @@ SlmdLayoutSettingsView >> useModalNavSet: aBoolean [
 
 	self useAutoLayoutUpdate: false.
 
-	self layoutViewLazy useModalNavAdapt: aBoolean.
+	self layoutViewLazy
+		useModalNavAdapt: aBoolean;
+		showNavMenuButtonAdapt: aBoolean.
 	self announceAspect: #useModalNav value: aBoolean.
 
 ]
