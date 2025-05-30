@@ -68,17 +68,27 @@ SlmdAppBarView class >> template [
 
 { #category : #nav }
 SlmdAppBarView >> actionItemsInitialize [
-	| list actionItem |
-
-	list := self layoutViewLazy actionItems.
-
-	items ifNotEmpty: [
-		items withIndexDo: [ :eachItem :index |
-			actionItem := self iconButtonForAction: (list at: eachItem) css: 'smd-toolbar-item'.
-			self appendChild: actionItem atSlotNamed: 'trailingActions' ] ].
+	| list buttons actionItem actionList overflowList |
 
 	actionItem := self buildModalNavItem.
 	self appendChild: actionItem atSlotNamed: 'leadingAction'.
+
+	list := self layoutViewLazy actionItems.
+	buttons := items collect: [ :each | list at: each ].
+
+	buttons size <= 2 ifTrue: [
+		buttons do: [ :each |
+			actionItem := self iconButtonForAction: each css: 'smd-toolbar-item'.
+			self appendChild: actionItem atSlotNamed: 'trailingActions' ].
+		^ self ].
+
+	actionList := buttons copyFrom: 1 to: 1.
+	actionList do: [ :each |
+		actionItem := self iconButtonForAction: each css: 'smd-toolbar-item'.
+		self appendChild: actionItem atSlotNamed: 'trailingActions' ].
+
+	overflowList := buttons copyFrom: 2 to: buttons size.
+	self appendChild: (self dropdownMenu: overflowList css: 'smd-toolbar-item') atSlotNamed: 'trailingActions'.
 
 ]
 

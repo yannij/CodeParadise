@@ -44,6 +44,32 @@ SlmdView >> announceEvent: id key: key value: anObject [
 		} asDictionary).
 ]
 
+{ #category : #utilities }
+SlmdView >> dropdownMenu: actionList css: cssClass [
+	| menu trigger dropdown |
+
+	menu := SlMenu new.
+	actionList do: [ :each |
+		menu appendChild: (SlMenuItem new
+			when: CpClickEvent basicPrimary do: [ self executeNavAction: each ] for: self;
+			prefix: (SlIcon named: (each at: #iconName));
+			textContent: (each at: #iconLabel);
+			yourself) ].
+
+	trigger := #div asHtmlTag
+		appendChild: ((SlIconButton named: 'three-dots-vertical') addClass: 'smd-toolbar-icon'; yourself);
+		yourself.
+	cssClass ifNotNil: [ trigger addClass: cssClass ].
+
+	dropdown := SlDropdown new
+		replaceAllChildrenWith: trigger atSlotNamed: #trigger;
+		appendChild: menu;
+		yourself.
+
+	^ dropdown
+
+]
+
 { #category : #nav }
 SlmdView >> executeNavAction: aNavAction [
 	| navId arg1 |
