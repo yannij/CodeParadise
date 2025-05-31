@@ -49,10 +49,13 @@ SlmdView >> dropdownMenu: actionList css: cssClass [
 	| menu trigger dropdown |
 
 	menu := SlMenu new.
-	actionList do: [ :each |
+	menu addClass: 'smd-menu'.
+	actionList do: [ :each | | icon |
+		icon := (SlIcon named: (each at: #iconName)) addClass: 'smd-menu-icon'; yourself.
 		menu appendChild: (SlMenuItem new
+			addClass: 'smd-menu-item';
 			when: CpClickEvent basicPrimary do: [ self executeNavAction: each ] for: self;
-			prefix: (SlIcon named: (each at: #iconName));
+			prefix: icon;
 			textContent: (each at: #iconLabel);
 			yourself) ].
 

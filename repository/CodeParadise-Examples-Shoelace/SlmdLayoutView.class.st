@@ -26,6 +26,39 @@ SlmdLayoutView class >> globalStyle [
 .smd-hidden {
   display: none;
 }
+
+.smd-menu {
+  padding: 8px 0;
+}
+
+.smd-menu-item::part(base) {
+  padding: 0;
+}
+
+.smd-menu-item::part(checked-icon) {
+  display: none;
+}
+
+.smd-menu-item::part(prefix) {
+  padding: 0;
+}
+
+.smd-menu-item::part(label) {
+  padding: 8px 0;
+}
+
+.smd-menu-item {
+  padding: 0;
+  height: 48px;
+  min-width: 112px;
+  max-width: 280px;
+}
+
+.smd-menu-icon {
+  padding: 12px;
+  font-size: 24px;
+  margin-inline-end: 0;
+}
 '
 
 ]
