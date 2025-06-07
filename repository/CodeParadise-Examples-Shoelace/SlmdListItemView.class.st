@@ -12,14 +12,14 @@ SlmdListItemView class >> globalStyle [
 .smd-item-font {
   line-height: var(--sl-line-height-normal);
   font-size: var(--sl-font-size-medium);
-  font-weight: var(--sl-font-weight-bold);
+  font-weight: var(--sl-font-weight-normal);
 }
 
 .smd-item {
   display: flex;
-  border-radius: 28px;
-  height: 56px;
-  background: var(--sl-color-primary-100);
+  height: 40px;
+  padding: 8px 15px;
+  background: var(--sl-color-primary-200);
 }
 
 .smd-item-icon {
@@ -28,9 +28,8 @@ SlmdListItemView class >> globalStyle [
 }
 
 .smd-item-labelText {
-  padding: 0;
-  line-height: 16pt;
-  font-size: var(--sl-font-size-medium);
+  line-height: 40px;
+  font-size: 16px;
   text-align: left;
   overflow-x: clip;
 }
@@ -53,7 +52,7 @@ SlmdListItemView >> renderTextSlot: slotName value: aString index: index [
 
 	div := #div asHtmlTag
 		addClass: 'smd-item';
-		addClass: 'smd-item-font';
+		"addClass: 'smd-item-font';"
 		when: CpClickEvent basicPrimary do: [ self setDetail: index ] for: self;
 		appendChild: (#div asHtmlTag
 			addClass: 'smd-item-labelText';

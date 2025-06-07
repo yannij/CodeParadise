@@ -283,26 +283,17 @@ SlmdLayoutView >> colorThemeAdapt: aColorName [
 ]
 
 { #category : #'color theme' }
-SlmdLayoutView >> colorThemeFrom: base [
-	|  |
+SlmdLayoutView >> colorThemeFrom: base on: aStream [
 
-	^ String streamContents: [:s |
-		s nextPutAll: '
-:root,
-:host,
-.sl-theme-light {
-'.
-		#('50' '100' '200' '300' '400' '500' '600' '700' '800' '900' '950') do: [ :each |
-			s
-				nextPutAll: '--sl-color-primary-';
-				nextPutAll: each;
-				nextPutAll: ': var(--sl-color-', base, '-';
-				nextPutAll: each;
-				nextPutAll: ');';
-				yourself ].
-		s nextPutAll: '
-}
-' ]
+	#('50' '100' '200' '300' '400' '500' '600' '700' '800' '900' '950') do: [ :each |
+		aStream
+			nextPutAll: '--sl-color-primary-';
+			nextPutAll: each;
+			nextPutAll: ': var(--sl-color-', base, '-';
+			nextPutAll: each;
+			nextPutAll: ');';
+			yourself ].
+
 ]
 
 { #category : #'accessing - settings' }
@@ -813,6 +804,28 @@ SlmdLayoutView >> sidesheetDisplay: aBoolean [
 
 ]
 
+{ #category : #initialization }
+SlmdLayoutView >> themeUpdate [
+
+	^ String streamContents: [:s |
+		s nextPutAll: '
+:root,
+:host,
+.sl-theme-light {
+'.
+		self colorThemeFrom: self colorThemeName asString on: s.
+		"s nextPutAll: '--sl-focus-ring-style: none;'.
+		s nextPutAll: '--sl-input-background-color: cyan;'.
+		s nextPutAll: '--sl-input-background-color-hover red;'.
+		s nextPutAll: '--sl-input-background-color-focus: yellow;'.
+		s nextPutAll: '--sl-input-filled-background-color: cyan;'.
+		s nextPutAll: '--sl-input-filled-background-color-hover red;'.
+		s nextPutAll: '--sl-input-filled-background-color-focus: yellow;'."
+		s nextPutAll: '
+}
+' ]
+]
+
 { #category : #toolbar }
 SlmdLayoutView >> toolbarDockedDisplay: aBoolean [
 
@@ -831,7 +844,7 @@ SlmdLayoutView >> toolbarFloatingDisplay: aBoolean [
 SlmdLayoutView >> updateGlobalStyle [
 
 	self logTrace: 'colorThemeName = ', self colorThemeName printString method: 'updateGlobalStyle'.
-	CpHtmlElement documentAddStyle: (self colorThemeFrom: self colorThemeName asString).
+	CpHtmlElement documentAddStyle: self themeUpdate.
 
 ]
 

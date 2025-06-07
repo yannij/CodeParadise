@@ -17,6 +17,7 @@ SlmdListDetailView class >> style [
 	#container {
 		display: flex;
 		flex-flow: column wrap;
+		gap: 4px;
 	}
 '
 ]
