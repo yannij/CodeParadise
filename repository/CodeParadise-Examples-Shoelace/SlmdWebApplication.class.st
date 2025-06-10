@@ -5,8 +5,6 @@ Class {
 		'navActions',
 		'actionItems',
 		'layout',
-		'pane1Model',
-		'pane2Model',
 		'sidesheetModel'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
@@ -70,25 +68,13 @@ SlmdWebApplication >> navActions: anObject [
 { #category : #accessing }
 SlmdWebApplication >> pane1Model [
 
-	^ pane1Model
-]
-
-{ #category : #accessing }
-SlmdWebApplication >> pane1Model: anObject [
-
-	pane1Model := anObject
+	^ self layout paneLayout pane1
 ]
 
 { #category : #accessing }
 SlmdWebApplication >> pane2Model [
 
-	^ pane2Model
-]
-
-{ #category : #accessing }
-SlmdWebApplication >> pane2Model: anObject [
-
-	pane2Model := anObject
+	^ self layout paneLayout pane2
 ]
 
 { #category : #accessing }

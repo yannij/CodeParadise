@@ -212,11 +212,15 @@ SlmdLayoutView >> adjustBodyHeight [
 
 { #category : #body }
 SlmdLayoutView >> appBarDisplay: anObject [
-	| component |
+	| components |
 
-	component := SlmdPaneLayoutView first.
-	component ifNotNil: [
-		component appBarDisplay: anObject ].
+	self logTrace: anObject printString method: 'appBarDisplay:'.
+	components := SlmdAppBarView all.
+	self logTrace: components printString method: 'appBarDisplay:'.
+
+	components do: [ :each |
+		self logTrace: each printString method: 'appBarDisplay:'.
+		each appBarDisplay: anObject ].
 
 ]
 
@@ -226,8 +230,10 @@ SlmdLayoutView >> appBarLeadingButtonDisplay: anObject [
 
 	components := SlmdAppBarView all.
 	components ifEmpty: [ self logError: 'appBarMenuDisplay: - No App bar found' ].
+
 	components do: [ :each |
-		each appBarLeadingButtonDisplay: anObject ].
+		each isPrimary ifTrue: [
+			each appBarLeadingButtonDisplay: anObject ] ].
 
 ]
 
@@ -662,6 +668,16 @@ SlmdLayoutView >> resizeSetUp [
 	resize when: SlResizeEvent send: #debounceResizeEvent: to: self.
 	target replaceChild: div with: resize.
 	resize appendChild: div
+]
+
+{ #category : #body }
+SlmdLayoutView >> secondaryPaneOnly [
+	| component |
+
+	component := SlmdPaneLayoutView first.
+	component ifNotNil: [
+		component secondaryPaneOnly ].
+
 ]
 
 { #category : #layout }

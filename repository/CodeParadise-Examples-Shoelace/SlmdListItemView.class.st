@@ -64,6 +64,13 @@ SlmdListItemView >> renderTextSlot: slotName value: aString index: index [
 ]
 
 { #category : #rendering }
+SlmdListItemView >> secondaryPaneOnly [
+
+	self layoutViewFind secondaryPaneOnly.
+
+]
+
+{ #category : #rendering }
 SlmdListItemView >> setDetail: index [
 
 	self serverAnnounce: (CpActionRequested id: #detail parameters: { #index -> index } asDictionary).

@@ -1,6 +1,9 @@
 Class {
 	#name : #SlmdAppBarView,
 	#superclass : #SlmdToolbarView,
+	#instVars : [
+		'primary'
+	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
@@ -66,12 +69,9 @@ SlmdAppBarView class >> template [
 '
 ]
 
-{ #category : #nav }
+{ #category : #initialization }
 SlmdAppBarView >> actionItemsInitialize [
 	| list buttons actionItem actionList overflowList |
-
-	actionItem := self buildModalNavItem.
-	self appendChild: actionItem atSlotNamed: 'leadingAction'.
 
 	list := self layoutViewLazy actionItems.
 	buttons := items collect: [ :each | list at: each ].
@@ -92,7 +92,13 @@ SlmdAppBarView >> actionItemsInitialize [
 
 ]
 
-{ #category : #topAppBar }
+{ #category : #rendering }
+SlmdAppBarView >> appBarDisplay: aBoolean [
+
+	self element: self show: aBoolean
+]
+
+{ #category : #rendering }
 SlmdAppBarView >> appBarLeadingButtonDisplay: aBoolean [
 	| element |
 
@@ -105,17 +111,94 @@ SlmdAppBarView >> appBarLeadingButtonDisplay: aBoolean [
 
 ]
 
-{ #category : #topAppBar }
+{ #category : #rendering }
 SlmdAppBarView >> appBarMenuFind [
 
 	^ self shadowedFirstDescendantMatching: '.smd-appBar-leadingAction'
 ]
 
-{ #category : #topAppBar }
+{ #category : #accessing }
+SlmdAppBarView >> bePrimary [
+
+	self primary: true
+]
+
+{ #category : #accessing }
+SlmdAppBarView >> beSecondary [
+
+	self primary: false
+]
+
+{ #category : #initialization }
+SlmdAppBarView >> initialize [
+
+	super initialize.
+
+	primary := true.
+
+]
+
+{ #category : #testing }
+SlmdAppBarView >> isPrimary [
+
+	^ self primary = true
+]
+
+{ #category : #testing }
+SlmdAppBarView >> isSecondary [
+
+	^ self isPrimary not
+]
+
+{ #category : #accessing }
+SlmdAppBarView >> primary [
+
+	^ primary
+]
+
+{ #category : #accessing }
+SlmdAppBarView >> primary: anObject [
+
+	primary := anObject
+]
+
+{ #category : #rendering }
 SlmdAppBarView >> renderHeadline: aString [
 
 	self
 		replaceAllChildrenWith: (aString inHtmlTag: #span)
 		atSlotNamed: 'headline'.
+
+]
+
+{ #category : #initialization }
+SlmdAppBarView >> setPrimary: aBoolean [
+
+	self primary: aBoolean.
+
+	aBoolean
+		ifTrue: [ self setUpLeadingAction ]
+		ifFalse: [ self setUpBackAction ]
+]
+
+{ #category : #initialization }
+SlmdAppBarView >> setUpBackAction [
+	| actionItem leadingAction |
+
+	leadingAction := (SlmdNavAction id: #backNavButton iconName: 'arrow-left' iconLabel: 'Back' arg1: 'Go back') asDictionary.
+	actionItem := self iconButtonForAction: leadingAction css: nil.
+
+	self appendChild: actionItem atSlotNamed: 'leadingAction'.
+
+]
+
+{ #category : #initialization }
+SlmdAppBarView >> setUpLeadingAction [
+	| actionItem leadingAction |
+
+	leadingAction := (SlmdNavAction id: #modalNavButton iconName: 'list' iconLabel: 'Menu' arg1: 'Show Modal Nav') asDictionary.
+	actionItem := self iconButtonForAction: leadingAction css: nil.
+
+	self appendChild: actionItem atSlotNamed: 'leadingAction'.
 
 ]

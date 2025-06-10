@@ -29,12 +29,6 @@ SlmdPaneLayoutView class >> style [
   margin: 0;
 }
 
-.smd-pane-content {
-  padding: 8px;
-  overflow-x: auto;
-  overflow-y: auto;
-}
-
 .smd-body-split-panel {
   height: 100%;
 }
@@ -52,18 +46,11 @@ SlmdPaneLayoutView class >> template [
 	^ '
 <div id="container" class="smd-pane-layout">
   <div id="smdOnePaneLayout">
-    <div class="smd-pane">
-      <div id="smdAppBar">
-        <slot name="appBar"></slot>
-      </div>
-      <div class="smd-pane-content">
-        <slot name="pane1"></slot>
-      </div>
+    <div id="smdOnePaneLayoutX1" class="smd-pane">
+      <slot name="pane1"></slot>
     </div>
-    <div class="smd-pane">
-      <div class="smd-pane-content">
-        <slot name="pane2"></slot>
-      </div>
+    <div id="smdOnePaneLayoutX2" class="smd-pane">
+      <slot name="pane2"></slot>
     </div>
   </div>
   <div id="smdTwoPaneLayout">
@@ -72,34 +59,19 @@ SlmdPaneLayoutView class >> template [
         primary="start" style="--min: 300px; --divider-width: 24px;">
       <sl-icon slot="divider" name="grip-vertical"></sl-icon>
       <div slot="start">
-        <div class="smd-pane">
-          <div id="smdAppBarP2">
-            <slot name="appBarP2"></slot>
-          </div>
-          <div class="smd-pane-content">
-            <slot name="pane1P2"></slot>
-          </div>
+        <div id="smdTwoPaneLayoutX1" class="smd-pane">
+          <slot name="pane1P2"></slot>
         </div>
       </div>
       <div slot="end">
-        <div class="smd-pane">
-          <div class="smd-pane-content">
-            <slot name="pane2P2"></slot>
-          </div>
+        <div id="smdTwoPaneLayoutX2" class="smd-pane">
+          <slot name="pane2P2"></slot>
         </div>
       </div>
     </sl-split-panel>
   </div>
 </div>
 '
-]
-
-{ #category : #topAppBar }
-SlmdPaneLayoutView >> appBarDisplay: aBoolean [
-
-	self shadowElementId: 'smdAppBar' show: aBoolean.
-	self shadowElementId: 'smdAppBarP2' show: aBoolean.
-
 ]
 
 { #category : #actions }
@@ -112,16 +84,60 @@ SlmdPaneLayoutView >> pane1WidthSet: anInteger [
 
 ]
 
-{ #category : #topAppBar }
+{ #category : #actions }
+SlmdPaneLayoutView >> pane2Refresh [
+	| paneContent |
+
+	self traceCr: 'pane2Refresh'.
+	paneContent := nil.
+	paneContent ifNotNil: [ paneContent valueChanged ].
+
+]
+
+{ #category : #actions }
+SlmdPaneLayoutView >> primaryPaneDisplay: aBoolean [
+
+	self shadowElementId: 'smdOnePaneLayoutX1' show: aBoolean.
+	self shadowElementId: 'smdTwoPaneLayoutX1' show: aBoolean.
+
+]
+
+{ #category : #actions }
+SlmdPaneLayoutView >> primaryPaneOnly [
+
+	self primaryPaneDisplay: true.
+	self secondaryPaneDisplay: false.
+
+]
+
+{ #category : #actions }
+SlmdPaneLayoutView >> secondaryPaneDisplay: aBoolean [
+
+	self shadowElementId: 'smdOnePaneLayoutX2' show: aBoolean.
+	self shadowElementId: 'smdTwoPaneLayoutX2' show: aBoolean.
+
+]
+
+{ #category : #actions }
+SlmdPaneLayoutView >> secondaryPaneOnly [
+
+	self primaryPaneDisplay: false.
+	self secondaryPaneDisplay: true.
+
+]
+
+{ #category : #actions }
 SlmdPaneLayoutView >> useOnePaneLayout [
 
 	"self traceCr: 'View: useOnePaneLayout'."
 	self shadowElementId: 'smdTwoPaneLayout' show: false.
 	self shadowElementId: 'smdOnePaneLayout' show: true.
+	self shadowElementId: 'smdOnePaneLayoutX1' show: true.
+	self shadowElementId: 'smdOnePaneLayoutX2' show: false.
 
 ]
 
-{ #category : #topAppBar }
+{ #category : #actions }
 SlmdPaneLayoutView >> useTwoPaneLayout [
 
 	"self traceCr: 'View: useTwoPaneLayout'."

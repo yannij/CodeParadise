@@ -29,16 +29,6 @@ SlmdToolbarView >> addActionItem: anActionId [
 	self items add: anActionId asSymbol
 ]
 
-{ #category : #nav }
-SlmdToolbarView >> buildModalNavItem [
-	| tag modalMenuAction |
-
-	modalMenuAction := (SlmdNavAction id: #modalNavButton iconName: 'list' iconLabel: 'Menu' arg1: 'Show Modal Nav') asDictionary.
-	tag := self iconButtonForAction: modalMenuAction css: nil.
-
-	^ tag
-]
-
 { #category : #initialization }
 SlmdToolbarView >> initialize [
 

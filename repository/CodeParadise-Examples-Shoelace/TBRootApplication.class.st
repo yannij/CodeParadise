@@ -38,19 +38,26 @@ TBRootApplication >> applicationPresenterClass [
 
 { #category : #initialization }
 TBRootApplication >> initialize [
+	| pane1Model pane2Model pane1Content |
 
 	super initialize.
 
-	pane1Model := SlmdListDetailModel new.
-	pane1Model listSet: TBBlogModel current allBlogPosts.
+	pane1Content := SlmdListDetailModel new.
+	pane1Content listSet: TBBlogModel current allBlogPosts.
+	pane1Model := SlmdPaneModel id: 'smdPane1Content' content: 'Initial content 1'.
+	pane1Model paneContent: pane1Content.
+	pane2Model := SlmdPaneModel id: 'smdPane2Content' content: 'Initial content 2'.
+	pane2Model appBarModel beSecondary.
 	sidesheetModel := SlmdSidesheetModel new.
-	self setDetailWithIndex: 1.
 	layout := SlmdLayoutModel new.
+	layout paneLayout pane1: pane1Model.
+	layout paneLayout pane2: pane2Model.
 	layout layoutSettings colorThemeName: #cyan; fontFamily: #'var(--sl-font-serif)'.
 	navActions := OrderedCollection new
 		add: (SlmdNavAction id: #settings iconName: 'gear' iconLabel: 'Settings' arg1: 'Settings');
 		add: (SlmdNavAction id: #home iconName: 'house' iconLabel: 'Home' arg1: 'Home Page');
 		yourself.
+	self setDetailWithIndex: 1.
 
 ]
 
@@ -58,11 +65,11 @@ TBRootApplication >> initialize [
 TBRootApplication >> setDetailWithIndex: index [
 	| list detail |
 
-	list := self pane1Model list.
+	list := self pane1Model paneContent list.
 	detail := list at: index.
 	"detail := list at: (list size atRandom \\ list size) + 1."
 
-	self pane1Model detail: detail.
-	self pane2Model: detail.
+	self pane1Model paneContent detail: detail.
+	self pane2Model paneContent: detail.
 
 ]

@@ -3,7 +3,10 @@ Class {
 	#superclass : #SlmdModel,
 	#instVars : [
 		'id',
-		'content'
+		'content',
+		'paneContent',
+		'appBarModel',
+		'appBarDisplayed'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
@@ -15,6 +18,30 @@ SlmdPaneModel class >> id: id content: content [
 		id: id;
 		content: content;
 		yourself
+]
+
+{ #category : #accessing }
+SlmdPaneModel >> appBarDisplayed [
+
+	^ appBarDisplayed
+]
+
+{ #category : #accessing }
+SlmdPaneModel >> appBarDisplayed: anObject [
+
+	appBarDisplayed := anObject
+]
+
+{ #category : #accessing }
+SlmdPaneModel >> appBarModel [
+
+	^ appBarModel
+]
+
+{ #category : #accessing }
+SlmdPaneModel >> appBarModel: anObject [
+
+	appBarModel := anObject
 ]
 
 { #category : #accessing }
@@ -55,5 +82,19 @@ SlmdPaneModel >> initialize [
 
 	"id := nil."
 	content := ''.
+	appBarDisplayed := true.
+	appBarModel := SlmdAppBarModel new.
 
+]
+
+{ #category : #accessing }
+SlmdPaneModel >> paneContent [
+
+	^ paneContent
+]
+
+{ #category : #accessing }
+SlmdPaneModel >> paneContent: anObject [
+
+	paneContent := anObject
 ]

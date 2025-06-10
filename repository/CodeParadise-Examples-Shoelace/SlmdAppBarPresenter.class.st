@@ -4,18 +4,16 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
 }
 
-{ #category : #accessing }
+{ #category : #view }
 SlmdAppBarPresenter >> viewInitialized [
 
 	super viewInitialized.
 
-	self actionItemsInitialize.
+	self view setPrimary: self model primary.
 
-	self view
-		"renderLeadingAction: 'list';"
-		renderHeadline: self application class appName;
-		"renderTrailingActions;"
-		yourself.
-	self view actionItemsInitialize.
+	self model isPrimary ifTrue: [
+		self actionItemsInitialize.
+		self view renderHeadline: self application class appName.
+		self view actionItemsInitialize ].
 
 ]

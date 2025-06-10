@@ -42,13 +42,17 @@ MD3ExampleApplication >> applicationPresenterClass [
 
 { #category : #initialization }
 MD3ExampleApplication >> initialize [
+	| pane1Model pane2Model |
 
 	super initialize.
 
 	pane1Model := SlmdPaneModel id: 'smdPane1Content' content: 'Initial Pane1...'.
 	pane2Model := SlmdPaneModel id: 'smdPane2Content' content: 'Initial Pane2...'.
+	pane2Model appBarModel beSecondary.
 	sidesheetModel := SlmdSidesheetModel new.
 	layout := SlmdLayoutModel new.
+	layout paneLayout pane1: pane1Model.
+	layout paneLayout pane2: pane2Model.
 	navActions := OrderedCollection new
 		add: (SlmdNavAction id: #settings iconName: 'gear' iconLabel: 'Settings' arg1: 'Settings');
 		add: (SlmdNavAction id: #club iconName: 'suit-club' iconLabel: 'Club' arg1: 'Club Page');

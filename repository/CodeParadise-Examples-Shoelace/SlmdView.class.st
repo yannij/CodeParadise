@@ -44,6 +44,16 @@ SlmdView >> announceEvent: id key: key value: anObject [
 		} asDictionary).
 ]
 
+{ #category : #nav }
+SlmdView >> doBackNav [
+	| paneLayout |
+
+	paneLayout := SlmdPaneLayoutView first.
+	paneLayout ifNotNil: [
+		paneLayout primaryPaneOnly ].
+
+]
+
 { #category : #utilities }
 SlmdView >> dropdownMenu: actionList css: cssClass [
 	| menu trigger dropdown |
@@ -73,6 +83,19 @@ SlmdView >> dropdownMenu: actionList css: cssClass [
 
 ]
 
+{ #category : #utilities }
+SlmdView >> element: element show: aBoolean [
+
+	element ifNotNil: [
+		aBoolean
+			ifTrue: [ element removeStyleAt: 'display' ]
+			ifFalse: [ element styleAt: 'display' put: 'none' ] ].
+	"aBoolean
+		ifTrue: [ element removeClass: #'smd-hidden' ]
+		ifFalse: [ element addClass: #'smd-hidden' ]"
+
+]
+
 { #category : #nav }
 SlmdView >> executeNavAction: aNavAction [
 	| navId arg1 |
@@ -82,6 +105,8 @@ SlmdView >> executeNavAction: aNavAction [
 		^ self modalSettingsOpen ].
 	navId = #modalNavButton ifTrue: [
 		^ self modalNavOpen ].
+	navId = #backNavButton ifTrue: [
+		^ self doBackNav ].
 
 	arg1 := aNavAction at: #arg1.
 	self navigateTo: arg1.
@@ -119,6 +144,24 @@ SlmdView >> findByIdInShadowDom: anId ifNone: aBlock [
 	| element |
 
 	element := self shadowedElementWithId: anId.
+	element ifNil: [ ^ aBlock value ].
+	^ element
+
+]
+
+{ #category : #utilities }
+SlmdView >> findFirstDescendantInShadowDom: anId [
+
+	^ self
+		findFirstDescendantInShadowDom: anId
+		ifNone: [ self error: '#findFirstDescendantInShadowDom: ', anId asString, ' is nil' ].
+]
+
+{ #category : #utilities }
+SlmdView >> findFirstDescendantInShadowDom: anId ifNone: aBlock [
+	| element |
+
+	element := self shadowedFirstDescendantMatching: anId.
 	element ifNil: [ ^ aBlock value ].
 	^ element
 
@@ -262,12 +305,15 @@ SlmdView >> shadowElementId: elementId show: aBoolean [
 	| element |
 
 	element := self findByIdInShadowDom: elementId ifNone: [ nil ].
-	element ifNotNil: [
-		aBoolean
-			ifTrue: [ element removeStyleAt: 'display' ]
-			ifFalse: [ element styleAt: 'display' put: 'none' ] ].
-	"aBoolean
-		ifTrue: [ element removeClass: #'smd-hidden' ]
-		ifFalse: [ element addClass: #'smd-hidden' ]"
+	self element: element show: aBoolean.
+
+]
+
+{ #category : #utilities }
+SlmdView >> shadowFirstDescendantMatching: cssSelectorString show: aBoolean [
+	| element |
+
+	element := self shadowedFirstDescendantMatching: cssSelectorString.
+	self element: element show: aBoolean.
 
 ]

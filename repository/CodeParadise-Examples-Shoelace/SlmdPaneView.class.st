@@ -14,6 +14,8 @@ SlmdPaneView class >> style [
   padding: 8px;
   border-radius: 16px;
   background: var(--sl-color-primary-50);
+  overflow-x: auto;
+  overflow-y: auto;
 }
 '
 ]
@@ -25,7 +27,15 @@ SlmdPaneView class >> template [
 
 	^ '
 <div id="container">
-  <slot name="content"></slot>
+  <div class="smdAppBar">
+    <slot name="appBar"></slot>
+  </div>
+  <div class="smd-pane-content">
+    <slot name="content"></slot>
+  </div>
+  <div class="smd-pane-content">
+    <slot name="paneContent"></slot>
+  </div>
 </div>
 '
 ]
