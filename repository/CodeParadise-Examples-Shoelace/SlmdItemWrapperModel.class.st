@@ -1,15 +1,15 @@
 Class {
-	#name : #SlmdWrappedItemModel,
+	#name : #SlmdItemWrapperModel,
 	#superclass : #SlmdModel,
 	#instVars : [
 		'index',
 		'wrappedModel'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3ListDetail'
 }
 
 { #category : #'instance creation' }
-SlmdWrappedItemModel class >> on: aModel atIndex: anIndex [
+SlmdItemWrapperModel class >> on: aModel atIndex: anIndex [
 
 	^ self new
 		wrappedModel: aModel;
@@ -18,25 +18,25 @@ SlmdWrappedItemModel class >> on: aModel atIndex: anIndex [
 ]
 
 { #category : #accessing }
-SlmdWrappedItemModel >> index [
+SlmdItemWrapperModel >> index [
 
 	^ index
 ]
 
 { #category : #accessing }
-SlmdWrappedItemModel >> index: anObject [
+SlmdItemWrapperModel >> index: anObject [
 
 	index := anObject
 ]
 
 { #category : #accessing }
-SlmdWrappedItemModel >> wrappedModel [
+SlmdItemWrapperModel >> wrappedModel [
 
 	^ wrappedModel
 ]
 
 { #category : #accessing }
-SlmdWrappedItemModel >> wrappedModel: anObject [
+SlmdItemWrapperModel >> wrappedModel: anObject [
 
 	wrappedModel := anObject
 ]

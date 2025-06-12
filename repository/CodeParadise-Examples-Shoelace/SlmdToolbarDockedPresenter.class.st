@@ -1,11 +1,11 @@
 Class {
-	#name : #SlmdFloatingToolbarPresenter,
+	#name : #SlmdToolbarDockedPresenter,
 	#superclass : #SlmdToolbarPresenter,
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #view }
-SlmdFloatingToolbarPresenter >> viewInitialized [
+SlmdToolbarDockedPresenter >> viewInitialized [
 
 	super viewInitialized.
 

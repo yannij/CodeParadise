@@ -1,11 +1,11 @@
 Class {
-	#name : #SlmdFloatingToolbarModel,
+	#name : #SlmdToolbarFloatingModel,
 	#superclass : #SlmdToolbarModel,
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #initialization }
-SlmdFloatingToolbarModel >> initialize [
+SlmdToolbarFloatingModel >> initialize [
 
 	super initialize.
 

@@ -8,7 +8,7 @@ Class {
 		'appBarModel',
 		'appBarDisplayed'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #'instance creation' }

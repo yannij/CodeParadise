@@ -7,7 +7,7 @@ Class {
 		'layout',
 		'sidesheetModel'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Base'
 }
 
 { #category : #accessing }
@@ -35,7 +35,7 @@ SlmdWebApplication >> initialize [
 
 	super initialize.
 
-	layout := SlmdLayoutModel new.
+	layout := SlmdResponsiveLayoutModel new.
 	navActions := OrderedCollection new.
 	actionItems := OrderedCollection new.
 

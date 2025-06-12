@@ -3,22 +3,68 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'id',
+		'actionGroup',
 		'iconName',
 		'iconLabel',
+		'actionName',
 		'arg1'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Base'
 }
 
 { #category : #'instance creation' }
-SlmdNavAction class >> id: id iconName: iconName iconLabel: iconLabel arg1: arg1 [
+SlmdNavAction class >> id: id actionGroup: groupName iconName: iconName iconLabel: iconLabel arg1: arg1 [
+
+	^ self new
+		id: id;
+		actionGroup: groupName;
+		iconName: iconName;
+		iconLabel: iconLabel;
+		arg1: arg1;
+		yourself
+]
+
+{ #category : #'instance creation' }
+SlmdNavAction class >> id: id iconName: iconName iconLabel: iconLabel actionName: actionName actionGroup: groupName arg1: arg1 [
 
 	^ self new
 		id: id;
 		iconName: iconName;
 		iconLabel: iconLabel;
+		actionName: actionName;
+		actionGroup: groupName;
 		arg1: arg1;
 		yourself
+]
+
+{ #category : #'instance creation' }
+SlmdNavAction class >> id: id iconName: iconName iconLabel: iconLabel arg1: arg1 [
+
+	^ self id: id iconName: iconName iconLabel: iconLabel actionName: nil actionGroup: #primary arg1: arg1
+]
+
+{ #category : #accessing }
+SlmdNavAction >> actionGroup [
+
+	^ actionGroup
+]
+
+{ #category : #accessing }
+SlmdNavAction >> actionGroup: anObject [
+
+	actionGroup := anObject
+]
+
+{ #category : #accessing }
+SlmdNavAction >> actionName [
+
+	^ actionName
+]
+
+{ #category : #accessing }
+SlmdNavAction >> actionName: anObject [
+
+	actionName := anObject
 ]
 
 { #category : #accessing }
@@ -38,6 +84,8 @@ SlmdNavAction >> asDictionary [
 
 	^ Dictionary new
 		at: #id put: id;
+		at: #actionGroup put: actionGroup;
+		at: #actionName put: actionName;
 		at: #iconName put: iconName;
 		at: #iconLabel put: iconLabel;
 		at: #arg1 put: arg1;

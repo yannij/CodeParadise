@@ -17,7 +17,7 @@ Class {
 		'showDockedToolbar',
 		'showFloatingToolbar'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #converting }
@@ -112,7 +112,7 @@ SlmdLayoutSettingsModel >> layoutType: anObject [
 { #category : #accessing }
 SlmdLayoutSettingsModel >> layoutTypeDefault [
 
-	^ SlmdLayoutView layoutTypeExpanded
+	^ SlmdResponsiveLayoutView layoutTypeExpanded
 ]
 
 { #category : #accessing }

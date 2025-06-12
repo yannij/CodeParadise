@@ -7,7 +7,7 @@ Class {
 		'useTwoPaneBody',
 		'pane1Width'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #initialization }

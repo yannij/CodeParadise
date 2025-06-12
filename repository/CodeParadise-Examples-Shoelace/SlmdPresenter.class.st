@@ -4,7 +4,7 @@ Class {
 	#classVars : [
 		'TraceLevel'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Base'
 }
 
 { #category : #accessing }
@@ -24,6 +24,13 @@ SlmdPresenter class >> traceLevel: anObject [
 	"
 
 	^ TraceLevel := anObject
+]
+
+{ #category : #nav }
+SlmdPresenter >> crud: anObject [
+
+	self logTrace: anObject printString aspect: 'crud:' level: 3.
+
 ]
 
 { #category : #logging }
@@ -70,7 +77,7 @@ SlmdPresenter >> logTrace: aString aspect: aspect level: level [
 { #category : #logging }
 SlmdPresenter >> logTrace: aString method: methodName [
 
-	self logTrace: aString aspect: self class name, '>>', methodName
+	self logTrace: aString aspect: self class name, '>>', methodName, methodName level: 5
 ]
 
 { #category : #nav }

@@ -49,13 +49,18 @@ TBRootApplication >> initialize [
 	pane2Model := SlmdPaneModel id: 'smdPane2Content' content: 'Initial content 2'.
 	pane2Model appBarModel beSecondary.
 	sidesheetModel := SlmdSidesheetModel new.
-	layout := SlmdLayoutModel new.
+	layout := SlmdResponsiveLayoutModel new.
 	layout paneLayout pane1: pane1Model.
 	layout paneLayout pane2: pane2Model.
 	layout layoutSettings colorThemeName: #cyan; fontFamily: #'var(--sl-font-serif)'.
 	navActions := OrderedCollection new
 		add: (SlmdNavAction id: #settings iconName: 'gear' iconLabel: 'Settings' arg1: 'Settings');
 		add: (SlmdNavAction id: #home iconName: 'house' iconLabel: 'Home' arg1: 'Home Page');
+		yourself.
+	actionItems := OrderedCollection new
+		add: (SlmdNavAction id: #crudUpdate iconName: 'pencil' iconLabel: 'Edit' actionName: #crud actionGroup: #secondary arg1: 'update');
+		add: (SlmdNavAction id: #crudDelete iconName: 'x-lg' iconLabel: 'Delete' actionName: #crud actionGroup: #secondary arg1: 'delete');
+		add: (SlmdNavAction id: #crudCreate iconName: 'plus-lg' iconLabel: 'Add' actionName: #crud actionGroup: #secondary arg1: 'create');
 		yourself.
 	self setDetailWithIndex: 1.
 

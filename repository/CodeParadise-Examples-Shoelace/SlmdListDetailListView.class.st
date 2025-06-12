@@ -1,11 +1,11 @@
 Class {
-	#name : #SlmdListItemView,
+	#name : #SlmdListDetailListView,
 	#superclass : #SlmdView,
-	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3ListDetail'
 }
 
 { #category : #'web resources' }
-SlmdListItemView class >> globalStyle [
+SlmdListDetailListView class >> globalStyle [
 	<webResource: #css>
 
 	^ '
@@ -37,7 +37,7 @@ SlmdListItemView class >> globalStyle [
 ]
 
 { #category : #'web resources' }
-SlmdListItemView class >> template [
+SlmdListDetailListView class >> template [
 
 	<webResource: #html>
 
@@ -47,7 +47,7 @@ SlmdListItemView class >> template [
 ]
 
 { #category : #rendering }
-SlmdListItemView >> renderTextSlot: slotName value: aString index: index [
+SlmdListDetailListView >> renderTextSlot: slotName value: aString index: index [
 	| div |
 
 	div := #div asHtmlTag
@@ -64,14 +64,14 @@ SlmdListItemView >> renderTextSlot: slotName value: aString index: index [
 ]
 
 { #category : #rendering }
-SlmdListItemView >> secondaryPaneOnly [
+SlmdListDetailListView >> secondaryPaneOnly [
 
 	self layoutViewFind secondaryPaneOnly.
 
 ]
 
 { #category : #rendering }
-SlmdListItemView >> setDetail: index [
+SlmdListDetailListView >> setDetail: index [
 
 	self serverAnnounce: (CpActionRequested id: #detail parameters: { #index -> index } asDictionary).
 

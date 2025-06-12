@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'primary'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #'web resources' }
@@ -71,25 +71,36 @@ SlmdAppBarView class >> template [
 
 { #category : #initialization }
 SlmdAppBarView >> actionItemsInitialize [
-	| list buttons actionItem actionList overflowList |
+	| overflowThreshold buttons actionItem actionList overflowList |
 
-	list := self layoutViewLazy actionItems.
-	buttons := items collect: [ :each | list at: each ].
+	overflowThreshold := 3.
+	buttons := self actionItemsToUse.
 
-	buttons size <= 2 ifTrue: [
+	buttons size <= overflowThreshold ifTrue: [
 		buttons do: [ :each |
 			actionItem := self iconButtonForAction: each css: 'smd-toolbar-item'.
 			self appendChild: actionItem atSlotNamed: 'trailingActions' ].
 		^ self ].
 
-	actionList := buttons copyFrom: 1 to: 1.
+	actionList := buttons copyFrom: 1 to: overflowThreshold - 1.
 	actionList do: [ :each |
 		actionItem := self iconButtonForAction: each css: 'smd-toolbar-item'.
 		self appendChild: actionItem atSlotNamed: 'trailingActions' ].
 
-	overflowList := buttons copyFrom: 2 to: buttons size.
+	overflowList := buttons copyFrom: overflowThreshold to: buttons size.
 	self appendChild: (self dropdownMenu: overflowList css: 'smd-toolbar-item') atSlotNamed: 'trailingActions'.
 
+]
+
+{ #category : #initialization }
+SlmdAppBarView >> actionItemsToUse [
+	| list allActions groupName |
+
+	list := self layoutViewLazy actionItems.
+	allActions := items collect: [ :each | list at: each ].
+
+	groupName := self isPrimary ifTrue: [ #primary ] ifFalse: [ #secondary ].
+	^ allActions select: [ :each | (each at: #actionGroup) = groupName ]
 ]
 
 { #category : #rendering }

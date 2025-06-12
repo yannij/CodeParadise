@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'layoutView'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Base'
 }
 
 { #category : #accessing }

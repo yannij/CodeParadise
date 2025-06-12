@@ -1,11 +1,11 @@
 Class {
-	#name : #SlmdWrappedItemPresenter,
+	#name : #SlmdItemWrapperPresenter,
 	#superclass : #SlmdPresenter,
-	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3ListDetail'
 }
 
 { #category : #rendering }
-SlmdWrappedItemPresenter >> renderView [
+SlmdItemWrapperPresenter >> renderView [
 
 	self
 		renderChildViewForModel: self model wrappedModel

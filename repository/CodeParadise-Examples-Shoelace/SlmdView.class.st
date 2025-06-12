@@ -4,7 +4,7 @@ Class {
 	#classVars : [
 		'TraceLevel'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Base'
 }
 
 { #category : #accessing }
@@ -44,7 +44,7 @@ SlmdView >> announceEvent: id key: key value: anObject [
 		} asDictionary).
 ]
 
-{ #category : #nav }
+{ #category : #'actions - nav' }
 SlmdView >> doBackNav [
 	| paneLayout |
 
@@ -96,9 +96,11 @@ SlmdView >> element: element show: aBoolean [
 
 ]
 
-{ #category : #nav }
+{ #category : #'actions - nav' }
 SlmdView >> executeNavAction: aNavAction [
 	| navId arg1 |
+
+	self logTrace: aNavAction printString aspect: 'executeNavAction:' level: 3.
 
 	navId := aNavAction at: #id.
 	navId = #settings ifTrue: [
@@ -109,6 +111,11 @@ SlmdView >> executeNavAction: aNavAction [
 		^ self doBackNav ].
 
 	arg1 := aNavAction at: #arg1.
+	(aNavAction at: #actionName) = #crud ifTrue: [
+		arg1 = 'update' ifTrue: [
+			^ TBPostView first setEditable: true ].
+		^ self serverAnnounce: (CpActionRequested id: #crud parameters: { #to -> arg1 } asDictionary) ].
+
 	self navigateTo: arg1.
 
 ]
@@ -183,10 +190,10 @@ SlmdView >> iconButtonForAction: aNavAction css: cssClass [
 	^ tag
 ]
 
-{ #category : #utilities }
+{ #category : #'find element' }
 SlmdView >> layoutViewFind [
 
-	^ SlmdLayoutView first
+	^ SlmdResponsiveLayoutView first
 ]
 
 { #category : #logging }
@@ -233,24 +240,24 @@ SlmdView >> logTrace: aString aspect: aspect level: level [
 { #category : #logging }
 SlmdView >> logTrace: aString method: methodName [
 
-	self logTrace: aString aspect: self class name, '>>', methodName
+	self logTrace: aString aspect: self class name, '>>', methodName level: 5
 ]
 
 { #category : #logging }
 SlmdView >> logTraceAnnouncement: aString [
 
-	self logTrace: aString aspect: 'Announcement'
+	self logTrace: aString aspect: 'Announcement' level: 3
 ]
 
-{ #category : #utilities }
+{ #category : #'find element' }
 SlmdView >> modalDivFind [
 	"Locate the div where modal components can attach"
 
-	^ SlmdLayoutView first findByIdInShadowDom: 'smdModalDiv'
+	^ SlmdResponsiveLayoutView first findByIdInShadowDom: 'smdModalDiv'
 
 ]
 
-{ #category : #nav }
+{ #category : #'find element' }
 SlmdView >> modalNavElementOrNil [
 	| component |
 
@@ -258,7 +265,7 @@ SlmdView >> modalNavElementOrNil [
 	^ component ifNil: [ nil ] ifNotNil: [ component drawer ].
 ]
 
-{ #category : #nav }
+{ #category : #'actions - toolbar' }
 SlmdView >> modalNavOpen [
 	| drawer |
 
@@ -268,7 +275,7 @@ SlmdView >> modalNavOpen [
 		ifNotNil: [ drawer show ]
 ]
 
-{ #category : #settings }
+{ #category : #'find element' }
 SlmdView >> modalSettingsElement [
 	| component |
 
@@ -276,10 +283,10 @@ SlmdView >> modalSettingsElement [
 	^ component ifNil: [ self error: 'Not found: layout settings view' ] ifNotNil: [ component drawer ].
 ]
 
-{ #category : #settings }
+{ #category : #'actions - toolbar' }
 SlmdView >> modalSettingsOpen [
 
-	self logTrace: '' method: 'modalSettingsOpen'.
+	self logTrace: 'modalSettingsOpen'.
 	self modalSettingsElement beOpen
 
 ]
@@ -293,7 +300,7 @@ SlmdView >> moveChildrenFromSlot: fromSlot to: toSlot [
 
 ]
 
-{ #category : #nav }
+{ #category : #'actions - nav' }
 SlmdView >> navigateTo: aString [
 
 	self serverAnnounce: (CpActionRequested id: #navigate parameters: { #to -> aString } asDictionary).

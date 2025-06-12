@@ -6,7 +6,7 @@ Class {
 		'colorThemeName',
 		'fontFamily'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #'class initialization' }
@@ -201,7 +201,7 @@ SlmdLayoutSettingsView >> layoutTypeBuildChooser: props [
 
 	radioGroup when: SlChangeEvent do: [ self layoutTypeSet: radioGroup value ] for: self.
 
-	SlmdLayoutView layoutTypeList do: [ :each |
+	SlmdResponsiveLayoutView layoutTypeList do: [ :each |
 		radioGroup appendChild: (SlRadio new value: each key; textContent: each value; yourself) ].
 
 	^ self addAttributeContainerStyle: radioGroup

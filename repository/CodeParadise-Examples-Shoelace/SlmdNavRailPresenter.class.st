@@ -1,7 +1,7 @@
 Class {
 	#name : #SlmdNavRailPresenter,
 	#superclass : #SlmdNavPresenter,
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #view }

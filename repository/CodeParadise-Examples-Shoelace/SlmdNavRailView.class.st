@@ -5,7 +5,7 @@ Class {
 		'drawer',
 		'navRailExpanded'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #'class initialization' }

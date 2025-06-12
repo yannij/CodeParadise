@@ -1,7 +1,7 @@
 Class {
 	#name : #SlmdListDetailView,
 	#superclass : #SlmdView,
-	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3ListDetail'
 }
 
 { #category : #'web resources' }

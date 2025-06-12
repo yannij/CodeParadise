@@ -1,11 +1,11 @@
 Class {
-	#name : #SlmdFloatingToolbarView,
+	#name : #SlmdToolbarFloatingView,
 	#superclass : #SlmdToolbarView,
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #'web resources' }
-SlmdFloatingToolbarView class >> globalStyle [
+SlmdToolbarFloatingView class >> globalStyle [
 
 	<webResource: #css>
 
@@ -23,7 +23,7 @@ SlmdFloatingToolbarView class >> globalStyle [
 ]
 
 { #category : #'web resources' }
-SlmdFloatingToolbarView class >> style [
+SlmdToolbarFloatingView class >> style [
 
 	<webResource: #css>
 
@@ -60,7 +60,7 @@ SlmdFloatingToolbarView class >> style [
 ]
 
 { #category : #'web resources' }
-SlmdFloatingToolbarView class >> template [
+SlmdToolbarFloatingView class >> template [
 
 	<webResource: #html>
 

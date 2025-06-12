@@ -1,11 +1,11 @@
 Class {
-	#name : #SlmdWrappedItemView,
+	#name : #SlmdItemWrapperView,
 	#superclass : #SlmdView,
-	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3ListDetail'
 }
 
 { #category : #'web resources' }
-SlmdWrappedItemView class >> template [
+SlmdItemWrapperView class >> template [
 
 	<webResource: #html>
 

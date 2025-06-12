@@ -1,6 +1,9 @@
 Class {
 	#name : #TBPostView,
 	#superclass : #SlmdView,
+	#instVars : [
+		'card'
+	],
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
@@ -232,7 +235,6 @@ TBPostView >> inputLabel: aLabel textarea: aText [
 
 { #category : #rendering }
 TBPostView >> renderCardTitle: title text: text date: date category: category visible: visible [
-	| card |
 
 	card := SlCard new
 		addClass: 'tblog-post';
@@ -247,4 +249,11 @@ TBPostView >> renderCardTitle: title text: text date: date category: category vi
 
 	self replaceAllChildrenWith: card atSlotNamed: 'card'.
 
+]
+
+{ #category : #initialization }
+TBPostView >> setEditable: aBoolean [
+
+	card children do: [ :each |
+		each removeAttributeAt: #readonly  ]
 ]

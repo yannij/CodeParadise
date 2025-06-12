@@ -1,5 +1,5 @@
 Class {
-	#name : #SlmdLayoutModel,
+	#name : #SlmdResponsiveLayoutModel,
 	#superclass : #SlmdModel,
 	#instVars : [
 		'layoutSettings',
@@ -10,35 +10,35 @@ Class {
 		'dockedToolbar',
 		'floatingToolbar'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #accessing }
-SlmdLayoutModel >> dockedToolbar [
+SlmdResponsiveLayoutModel >> dockedToolbar [
 
 	^ dockedToolbar
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> dockedToolbar: anObject [
+SlmdResponsiveLayoutModel >> dockedToolbar: anObject [
 
 	dockedToolbar := anObject
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> floatingToolbar [
+SlmdResponsiveLayoutModel >> floatingToolbar [
 
 	^ floatingToolbar
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> floatingToolbar: anObject [
+SlmdResponsiveLayoutModel >> floatingToolbar: anObject [
 
 	floatingToolbar := anObject
 ]
 
 { #category : #initialization }
-SlmdLayoutModel >> initialize [
+SlmdResponsiveLayoutModel >> initialize [
 
 	super initialize.
 
@@ -47,67 +47,67 @@ SlmdLayoutModel >> initialize [
 	paneLayout := SlmdPaneLayoutModel new.
 	navRail := SlmdNavRailModel new.
 	navBar := SlmdNavBarModel new.
-	dockedToolbar := SlmdDockedToolbarModel new.
-	floatingToolbar := SlmdFloatingToolbarModel new.
+	dockedToolbar := SlmdToolbarDockedModel new.
+	floatingToolbar := SlmdToolbarFloatingModel new.
 
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> layoutSettings [
+SlmdResponsiveLayoutModel >> layoutSettings [
 
 	^ layoutSettings
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> layoutSettings: anObject [
+SlmdResponsiveLayoutModel >> layoutSettings: anObject [
 
 	layoutSettings := anObject
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> navBar [
+SlmdResponsiveLayoutModel >> navBar [
 
 	^ navBar
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> navBar: anObject [
+SlmdResponsiveLayoutModel >> navBar: anObject [
 
 	navBar := anObject
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> navRail [
+SlmdResponsiveLayoutModel >> navRail [
 
 	^ navRail
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> navRail: anObject [
+SlmdResponsiveLayoutModel >> navRail: anObject [
 
 	navRail := anObject
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> paneLayout [
+SlmdResponsiveLayoutModel >> paneLayout [
 
 	^ paneLayout
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> paneLayout: anObject [
+SlmdResponsiveLayoutModel >> paneLayout: anObject [
 
 	paneLayout := anObject
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> twoPaneSplitPosition [
+SlmdResponsiveLayoutModel >> twoPaneSplitPosition [
 
 	^ twoPaneSplitPosition
 ]
 
 { #category : #accessing }
-SlmdLayoutModel >> twoPaneSplitPosition: anObject [
+SlmdResponsiveLayoutModel >> twoPaneSplitPosition: anObject [
 
 	twoPaneSplitPosition := anObject
 ]

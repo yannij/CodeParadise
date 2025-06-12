@@ -1,27 +1,21 @@
 Class {
-	#name : #SlmdLayoutPresenter,
+	#name : #SlmdResponsiveLayoutPresenter,
 	#superclass : #SlmdPresenter,
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #view }
-SlmdLayoutPresenter >> handleViewAction: anObject [
+SlmdResponsiveLayoutPresenter >> handleViewAction: anObject [
 	| aspect aspectValue |
 
 	self logTrace: anObject printString.
 	aspect := anObject parameterAt: #aspect.
 	aspectValue := anObject parameterAt: #value.
 
-	"aspect = #aspect" "true ifTrue: [
-		self traceCr: aspect asString, ': ', (self model perform: aspect asSymbol) printString.
-		self model perform: (aspect, ':') asSymbol with: aspectValue.
-		self traceCr: aspect asString, ': ', (self model perform: aspect asSymbol) printString.
-		^ self ]."
-
 ]
 
 { #category : #view }
-SlmdLayoutPresenter >> renderView [
+SlmdResponsiveLayoutPresenter >> renderView [
 
 	self model navRail ifNotNil: [ :value |
 		"Render the navRail before the panes, so AppBar can find
@@ -49,7 +43,7 @@ SlmdLayoutPresenter >> renderView [
 ]
 
 { #category : #view }
-SlmdLayoutPresenter >> viewCreated [
+SlmdResponsiveLayoutPresenter >> viewCreated [
 
 	super viewCreated.
 
@@ -60,7 +54,7 @@ SlmdLayoutPresenter >> viewCreated [
 ]
 
 { #category : #view }
-SlmdLayoutPresenter >> viewInitialized [
+SlmdResponsiveLayoutPresenter >> viewInitialized [
 	| v |
 
 	super viewInitialized.

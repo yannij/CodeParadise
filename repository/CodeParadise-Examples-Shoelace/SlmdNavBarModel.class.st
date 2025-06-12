@@ -5,7 +5,7 @@ Class {
 		'isVisible',
 		'iconButtons'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #'as yet unclassified' }

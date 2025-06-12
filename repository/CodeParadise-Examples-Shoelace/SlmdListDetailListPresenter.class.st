@@ -1,11 +1,11 @@
 Class {
-	#name : #SlmdListItemPresenter,
+	#name : #SlmdListDetailListPresenter,
 	#superclass : #SlmdPresenter,
-	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3ListDetail'
 }
 
 { #category : #rendering }
-SlmdListItemPresenter >> renderView [
+SlmdListDetailListPresenter >> renderView [
 
 	self view
 		renderTextSlot: 'listItem'
@@ -14,7 +14,7 @@ SlmdListItemPresenter >> renderView [
 ]
 
 { #category : #initialization }
-SlmdListItemPresenter >> setDetail: request [
+SlmdListDetailListPresenter >> setDetail: request [
 	| paneLayoutModel |
 
 	"self logTrace: request printString."
@@ -27,7 +27,7 @@ SlmdListItemPresenter >> setDetail: request [
 ]
 
 { #category : #view }
-SlmdListItemPresenter >> viewCreated [
+SlmdListDetailListPresenter >> viewCreated [
 
 	self view when: (CpActionRequested id: #detail parameterKeys: #(#index)) send: #setDetail: to: self.
 

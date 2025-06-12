@@ -1,7 +1,7 @@
 Class {
 	#name : #SlmdSidesheetView,
 	#superclass : #SlmdLayoutComponentView,
-	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMaterialComponents'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #'web resources' }

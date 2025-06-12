@@ -50,7 +50,7 @@ MD3ExampleApplication >> initialize [
 	pane2Model := SlmdPaneModel id: 'smdPane2Content' content: 'Initial Pane2...'.
 	pane2Model appBarModel beSecondary.
 	sidesheetModel := SlmdSidesheetModel new.
-	layout := SlmdLayoutModel new.
+	layout := SlmdResponsiveLayoutModel new.
 	layout paneLayout pane1: pane1Model.
 	layout paneLayout pane2: pane2Model.
 	navActions := OrderedCollection new

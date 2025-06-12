@@ -5,7 +5,7 @@ Class {
 		'list',
 		'detail'
 	],
-	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
+	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3ListDetail'
 }
 
 { #category : #accessing }
@@ -23,7 +23,7 @@ SlmdListDetailModel >> detail: anObject [
 { #category : #actions }
 SlmdListDetailModel >> handleActionRequest: aBasicEvent [
 
-	Transcript crShow: (aBasicEvent parameterAt: #to).
+	self traceCr: (aBasicEvent parameterAt: #to).
 
 ]
 
@@ -45,7 +45,7 @@ SlmdListDetailModel >> listSet: aCollection [
 
 	wrappedList := OrderedCollection new.
 	aCollection withIndexDo: [ :each :index |
-		wrappedList add: (SlmdWrappedItemModel on: each atIndex: index) ].
+		wrappedList add: (SlmdItemWrapperModel on: each atIndex: index) ].
 
 	self list: wrappedList.
 
