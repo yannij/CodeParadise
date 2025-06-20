@@ -28,6 +28,12 @@ SlmdToolbarFloatingView class >> style [
 	<webResource: #css>
 
 	^ '
+.smd-hidden {
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+}
+
 .smd-toolbar {
   z-index: 10;
   display: flex;
@@ -65,14 +71,12 @@ SlmdToolbarFloatingView class >> template [
 	<webResource: #html>
 
 	^ '
-<div id="container">
-  <div class="smd-toolbar">
-    <div class="smd-toolbar-buttons">
-      <slot name="toolbar"></slot>
-    </div>
-    <div class="smd-toolbar-fab">
-      <slot name="fab"></slot>
-    </div>
+<div id="container" class="smd-toolbar">
+  <div class="smd-toolbar-buttons">
+    <slot name="toolbar"></slot>
+  </div>
+  <div class="smd-toolbar-fab">
+    <slot name="fab"></slot>
   </div>
 </div>
 '

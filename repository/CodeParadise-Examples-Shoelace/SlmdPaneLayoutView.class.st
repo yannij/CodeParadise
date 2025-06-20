@@ -1,6 +1,9 @@
 Class {
 	#name : #SlmdPaneLayoutView,
 	#superclass : #SlmdLayoutComponentView,
+	#instVars : [
+		'isUsingSinglePaneLayout'
+	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
@@ -16,6 +19,12 @@ SlmdPaneLayoutView class >> style [
 
 	<webResource: #css>
 	^ '
+.smd-hidden {
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+}
+
 .smd-pane-layout {
   height: 100%;
   overflow-y: auto;
@@ -45,12 +54,12 @@ SlmdPaneLayoutView class >> template [
 	<webResource: #html>
 	^ '
 <div id="container" class="smd-pane-layout">
-  <div id="smdOnePaneLayout">
-    <div id="smdOnePaneLayoutX1" class="smd-pane">
-      <slot name="pane1"></slot>
+  <div id="smdSinglePaneLayout">
+    <div id="smdSinglePaneLayoutP1" class="smd-pane">
+      <slot name="singlePaneLayoutP1"></slot>
     </div>
-    <div id="smdOnePaneLayoutX2" class="smd-pane">
-      <slot name="pane2"></slot>
+    <div id="smdSinglePaneLayoutP2" class="smd-pane">
+      <slot name="singlePaneLayoutP2"></slot>
     </div>
   </div>
   <div id="smdTwoPaneLayout">
@@ -59,19 +68,34 @@ SlmdPaneLayoutView class >> template [
         primary="start" style="--min: 300px; --divider-width: 24px;">
       <sl-icon slot="divider" name="grip-vertical"></sl-icon>
       <div slot="start">
-        <div id="smdTwoPaneLayoutX1" class="smd-pane">
-          <slot name="pane1P2"></slot>
+        <div id="smdTwoPaneLayoutP1" class="smd-pane">
+          <slot name="twoPaneLayoutP1"></slot>
         </div>
       </div>
       <div slot="end">
-        <div id="smdTwoPaneLayoutX2" class="smd-pane">
-          <slot name="pane2P2"></slot>
+        <div id="smdTwoPaneLayoutP2" class="smd-pane">
+          <slot name="twoPaneLayoutP2"></slot>
         </div>
       </div>
     </sl-split-panel>
   </div>
 </div>
 '
+]
+
+{ #category : #initialization }
+SlmdPaneLayoutView >> initialize [
+
+	super initialize.
+
+	isUsingSinglePaneLayout := false.
+
+]
+
+{ #category : #testing }
+SlmdPaneLayoutView >> isUsingSinglePaneLayout [
+
+	^ isUsingSinglePaneLayout.
 ]
 
 { #category : #actions }
@@ -85,20 +109,9 @@ SlmdPaneLayoutView >> pane1WidthSet: anInteger [
 ]
 
 { #category : #actions }
-SlmdPaneLayoutView >> pane2Refresh [
-	| paneContent |
-
-	self traceCr: 'pane2Refresh'.
-	paneContent := nil.
-	paneContent ifNotNil: [ paneContent valueChanged ].
-
-]
-
-{ #category : #actions }
 SlmdPaneLayoutView >> primaryPaneDisplay: aBoolean [
 
-	self shadowElementId: 'smdOnePaneLayoutX1' show: aBoolean.
-	self shadowElementId: 'smdTwoPaneLayoutX1' show: aBoolean.
+	self shadowElementId: 'smdSinglePaneLayoutP1' show: aBoolean.
 
 ]
 
@@ -113,13 +126,14 @@ SlmdPaneLayoutView >> primaryPaneOnly [
 { #category : #actions }
 SlmdPaneLayoutView >> secondaryPaneDisplay: aBoolean [
 
-	self shadowElementId: 'smdOnePaneLayoutX2' show: aBoolean.
-	self shadowElementId: 'smdTwoPaneLayoutX2' show: aBoolean.
+	self shadowElementId: 'smdSinglePaneLayoutP2' show: aBoolean.
 
 ]
 
 { #category : #actions }
 SlmdPaneLayoutView >> secondaryPaneOnly [
+
+	"self logTrace: '' method: 'secondaryPaneOnly'."
 
 	self primaryPaneDisplay: false.
 	self secondaryPaneDisplay: true.
@@ -127,13 +141,13 @@ SlmdPaneLayoutView >> secondaryPaneOnly [
 ]
 
 { #category : #actions }
-SlmdPaneLayoutView >> useOnePaneLayout [
+SlmdPaneLayoutView >> useSinglePaneLayout [
 
-	"self traceCr: 'View: useOnePaneLayout'."
+	"self traceCr: 'View: useSinglePaneLayout'."
+	isUsingSinglePaneLayout := true.
 	self shadowElementId: 'smdTwoPaneLayout' show: false.
-	self shadowElementId: 'smdOnePaneLayout' show: true.
-	self shadowElementId: 'smdOnePaneLayoutX1' show: true.
-	self shadowElementId: 'smdOnePaneLayoutX2' show: false.
+	self shadowElementId: 'smdSinglePaneLayout' show: true.
+	self primaryPaneOnly.
 
 ]
 
@@ -141,7 +155,8 @@ SlmdPaneLayoutView >> useOnePaneLayout [
 SlmdPaneLayoutView >> useTwoPaneLayout [
 
 	"self traceCr: 'View: useTwoPaneLayout'."
-	self shadowElementId: 'smdOnePaneLayout' show: false.
+	isUsingSinglePaneLayout := false.
+	self shadowElementId: 'smdSinglePaneLayout' show: false.
 	self shadowElementId: 'smdTwoPaneLayout' show: true.
 
 ]

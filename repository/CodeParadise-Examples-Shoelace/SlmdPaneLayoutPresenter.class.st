@@ -8,11 +8,11 @@ Class {
 SlmdPaneLayoutPresenter >> renderView [
 
 	self model pane1 ifNotNil: [ :value |
-		self renderChildViewForModel: value atSlotNamed: #pane1.
-		self renderChildViewForModel: value atSlotNamed: #pane1P2 ].
+		self renderChildViewForModel: value atSlotNamed: #singlePaneLayoutP1.
+		self renderChildViewForModel: value atSlotNamed: #twoPaneLayoutP1 ].
 
 	self model pane2 ifNotNil: [ :value |
-		self renderChildViewForModel: value atSlotNamed: #pane2.
-		self renderChildViewForModel: value atSlotNamed: #pane2P2 ].
+		self renderChildViewForModel: value atSlotNamed: #singlePaneLayoutP2.
+		self renderChildViewForModel: value atSlotNamed: #twoPaneLayoutP2 ].
 
 ]

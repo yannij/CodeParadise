@@ -27,9 +27,32 @@ SlmdPresenter class >> traceLevel: anObject [
 ]
 
 { #category : #nav }
-SlmdPresenter >> crud: anObject [
+SlmdPresenter >> handleActionEvent: anObject [
 
-	self logTrace: anObject printString aspect: 'crud:' level: 3.
+	self logTrace: self printString, '<==', anObject printString aspect: 'handleActionEvent:' level: 3.
+
+]
+
+{ #category : #nav }
+SlmdPresenter >> handleNavBack: anObject [
+
+	self application pane1Model valueChanged.
+
+]
+
+{ #category : #nav }
+SlmdPresenter >> handleNavTo: anObject [
+
+	self application pane1Model handleActionRequest: anObject; valueChanged.
+
+]
+
+{ #category : #nav }
+SlmdPresenter >> handleRefresh: anObject [
+
+	self logTrace: self printString, '<==', anObject printString aspect: 'handleRefresh:' level: 3.
+
+	self application pane1Model paneContent valueChanged.
 
 ]
 
@@ -78,13 +101,6 @@ SlmdPresenter >> logTrace: aString aspect: aspect level: level [
 SlmdPresenter >> logTrace: aString method: methodName [
 
 	self logTrace: aString aspect: self class name, '>>', methodName, methodName level: 5
-]
-
-{ #category : #nav }
-SlmdPresenter >> navigateTo: anObject [
-
-	self application pane1Model handleActionRequest: anObject; valueChanged.
-
 ]
 
 { #category : #view }

@@ -45,12 +45,26 @@ SlmdView >> announceEvent: id key: key value: anObject [
 ]
 
 { #category : #'actions - nav' }
-SlmdView >> doBackNav [
+SlmdView >> doAction: aNavAction [
+	"Subclasses may specialize"
+]
+
+{ #category : #'actions - nav' }
+SlmdView >> doNavBack [
 	| paneLayout |
+
+	self serverAnnounce: (CpActionRequested id: #navigate parameters: { #back -> nil } asDictionary).
 
 	paneLayout := SlmdPaneLayoutView first.
 	paneLayout ifNotNil: [
 		paneLayout primaryPaneOnly ].
+
+]
+
+{ #category : #'actions - nav' }
+SlmdView >> doNavTo: aString [
+
+	self serverAnnounce: (CpActionRequested id: #navigate parameters: { #to -> aString } asDictionary).
 
 ]
 
@@ -86,14 +100,10 @@ SlmdView >> dropdownMenu: actionList css: cssClass [
 { #category : #utilities }
 SlmdView >> element: element show: aBoolean [
 
-	element ifNotNil: [
-		aBoolean
-			ifTrue: [ element removeStyleAt: 'display' ]
-			ifFalse: [ element styleAt: 'display' put: 'none' ] ].
-	"aBoolean
-		ifTrue: [ element removeClass: #'smd-hidden' ]
-		ifFalse: [ element addClass: #'smd-hidden' ]"
+	"self logTrace: element printString method: 'element:show:'."
 
+	element ifNotNil: [
+		element classed: #'smd-hidden' if: aBoolean not ]
 ]
 
 { #category : #'actions - nav' }
@@ -108,15 +118,13 @@ SlmdView >> executeNavAction: aNavAction [
 	navId = #modalNavButton ifTrue: [
 		^ self modalNavOpen ].
 	navId = #backNavButton ifTrue: [
-		^ self doBackNav ].
+		^ self doNavBack ].
+
+	(aNavAction at: #actionName) = #action ifTrue: [
+		^ self doAction: aNavAction ].
 
 	arg1 := aNavAction at: #arg1.
-	(aNavAction at: #actionName) = #crud ifTrue: [
-		arg1 = 'update' ifTrue: [
-			^ TBPostView first setEditable: true ].
-		^ self serverAnnounce: (CpActionRequested id: #crud parameters: { #to -> arg1 } asDictionary) ].
-
-	self navigateTo: arg1.
+	self doNavTo: arg1.
 
 ]
 
@@ -240,7 +248,7 @@ SlmdView >> logTrace: aString aspect: aspect level: level [
 { #category : #logging }
 SlmdView >> logTrace: aString method: methodName [
 
-	self logTrace: aString aspect: self class name, '>>', methodName level: 5
+	self logTrace: aString aspect: self class name, '>>', methodName level: 3
 ]
 
 { #category : #logging }
@@ -297,13 +305,6 @@ SlmdView >> moveChildrenFromSlot: fromSlot to: toSlot [
 
 	list := self childrenAtSlotNamed: fromSlot.
 	list do: [ :each | self appendChild: each atSlotNamed: toSlot ].
-
-]
-
-{ #category : #'actions - nav' }
-SlmdView >> navigateTo: aString [
-
-	self serverAnnounce: (CpActionRequested id: #navigate parameters: { #to -> aString } asDictionary).
 
 ]
 

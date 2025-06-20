@@ -13,3 +13,9 @@ SlmdItemWrapperView class >> template [
   <slot name="wrapped"></slot>
 </div>'
 ]
+
+{ #category : #finding }
+SlmdItemWrapperView >> wrappedView [
+
+	^ self firstChildAtSlotNamed: #wrapped
+]

@@ -7,6 +7,8 @@ Class {
 { #category : #rendering }
 SlmdListDetailPresenter >> renderView [
 
+	"self logTrace: self printString aspect: 'renderView' level: 3."
+
 	self
 		renderAllChildViewsForModels: self model list
 		usingPresenter: SlmdListDetailListPresenter

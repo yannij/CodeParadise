@@ -48,7 +48,7 @@ SlmdResponsiveLayoutPresenter >> viewCreated [
 	super viewCreated.
 
 	self view
-		when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #navigateTo: to: self;
+		when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #handleNavTo: to: self;
 		yourself.
 
 ]

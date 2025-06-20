@@ -17,11 +17,10 @@ SlmdListDetailListPresenter >> renderView [
 SlmdListDetailListPresenter >> setDetail: request [
 	| paneLayoutModel |
 
-	"self logTrace: request printString."
+	self logTrace: request printString method: 'setDetail:'.
 
 	self application setDetailWithIndex: (request parameterAt: #index).
-	paneLayoutModel := application layout paneLayout.
-	paneLayoutModel pane2 valueChanged.
+	paneLayoutModel := application pane2Model valueChanged.
 	self view layoutViewFind secondaryPaneOnly.
 
 ]

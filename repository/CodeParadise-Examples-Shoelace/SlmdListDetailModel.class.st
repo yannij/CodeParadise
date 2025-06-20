@@ -20,13 +20,6 @@ SlmdListDetailModel >> detail: anObject [
 	detail := anObject
 ]
 
-{ #category : #actions }
-SlmdListDetailModel >> handleActionRequest: aBasicEvent [
-
-	self traceCr: (aBasicEvent parameterAt: #to).
-
-]
-
 { #category : #accessing }
 SlmdListDetailModel >> list [
 

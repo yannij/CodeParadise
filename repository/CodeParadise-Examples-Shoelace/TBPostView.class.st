@@ -1,9 +1,6 @@
 Class {
 	#name : #TBPostView,
-	#superclass : #SlmdView,
-	#instVars : [
-		'card'
-	],
+	#superclass : #SlmdCrudView,
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
@@ -192,68 +189,19 @@ TBPostView class >> template [
 ]
 
 { #category : #rendering }
-TBPostView >> inputLabel: aLabel switch: aBoolean [
-
-	^ SlSwitch new
-		addClass: 'slmd-switch';
-		checked: aBoolean;
-		replaceAllChildrenWith: aLabel asHtmlElement atSlotNamed: nil;
-		replaceAllChildrenWith: ('Help text...', aLabel) asHtmlElement atSlotNamed: #'help-text';
-		attributeAdd: #readonly;
-		yourself.
-
-]
-
-{ #category : #rendering }
-TBPostView >> inputLabel: aLabel text: aText [
-
-	^ SlInput new
-		addClass: 'slmd-input';
-		labelText: aLabel;
-		value: aText;
-		helpText: 'Help text...', aLabel;
-		attributeAdd: #readonly;
-		attributeAdd: #filled;
-		yourself.
-
-]
-
-{ #category : #rendering }
-TBPostView >> inputLabel: aLabel textarea: aText [
-
-	^ SlTextarea new
-		addClass: 'slmd-textarea';
-		rows: 4;
-		labelText: aLabel;
-		value: aText;
-		helpText: 'Help text...', aLabel;
-		attributeAdd: #readonly;
-		attributeAdd: #filled;
-		yourself.
-
-]
-
-{ #category : #rendering }
 TBPostView >> renderCardTitle: title text: text date: date category: category visible: visible [
 
 	card := SlCard new
 		addClass: 'tblog-post';
-		appendChild: (self inputLabel: 'Title' text: title);
-		appendChild: (self inputLabel: 'Text' textarea: text);
-		appendChild: (self inputLabel: 'Date' text: date);
-		appendChild: (self inputLabel: 'Category' text: category);
-		appendChild: (self inputLabel: 'Visible' switch: visible);
+		appendChild: (self fieldAt: 'title' label: 'Title' text: title);
+		appendChild: (self fieldAt: 'text' label: 'Text' textarea: text);
+		appendChild: (self fieldAt: 'date' label: 'Date' text: date);
+		appendChild: (self fieldAt: 'category' label: 'Category' text: category);
+		appendChild: (self fieldAt: 'visible' label: 'Visible' switch: visible);
 		yourself.
 
 	"card replaceAllChildrenWith: (title inHtmlTag: #span) atSlotNamed: #header."
 
 	self replaceAllChildrenWith: card atSlotNamed: 'card'.
 
-]
-
-{ #category : #initialization }
-TBPostView >> setEditable: aBoolean [
-
-	card children do: [ :each |
-		each removeAttributeAt: #readonly  ]
 ]

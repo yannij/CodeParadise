@@ -23,10 +23,6 @@ SlmdResponsiveLayoutView class >> globalStyle [
 	<webResource: #css>
 
 	^ '
-.smd-hidden {
-  display: none;
-}
-
 .smd-menu {
   padding: 8px 0;
 }
@@ -111,6 +107,12 @@ SlmdResponsiveLayoutView class >> style [
 	<webResource: #css>
 
 	^ '
+.smd-hidden {
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+}
+
 .smd-layout {
   background: var(--sl-color-primary-100);
 }
@@ -322,6 +324,30 @@ SlmdResponsiveLayoutView >> debounceResizeEvent: anEvent [
 
 	"Set timeout for the debounce"
 	debounceTransition startDelayedBy: 100.
+]
+
+{ #category : #'actions - nav' }
+SlmdResponsiveLayoutView >> doAction: aNavAction [
+	| arg1 wrappers |
+
+	self logTrace: aNavAction printString aspect: 'doAction:' level: 3.
+	(aNavAction at: #actionName) ~= #action ifTrue: [ ^ self ].
+
+	(aNavAction at: #id) = #refresh ifTrue: [
+		self serverAnnounce: (CpActionRequested id: #navigate parameters: { #refresh -> nil } asDictionary) ].
+
+	arg1 := aNavAction at: #arg1.
+
+	wrappers := SlmdItemWrapperView all.
+	arg1 = 'update' ifTrue: [
+		wrappers do: [ :each | each wrappedView setEditable: true ] ].
+
+	arg1 = 'save' ifTrue: [ | changes paneContentView |
+		paneContentView := self pane2View paneContentView.
+		paneContentView ifNil: [ ^ self ].
+		changes := paneContentView wrappedView changeMap.
+		paneContentView serverAnnounce: (CpActionRequested id: #action parameters: { #type -> arg1. #changes -> changes } asDictionary) ].
+
 ]
 
 { #category : #typography }
@@ -656,6 +682,24 @@ SlmdResponsiveLayoutView >> pane1WidthMin [
 	^ 300
 ]
 
+{ #category : #'accessing - components' }
+SlmdResponsiveLayoutView >> pane2View [
+	| paneLayoutView pane2SlotName |
+
+	paneLayoutView := self paneLayoutView.
+	paneLayoutView ifNil: [ ^ self ].
+	pane2SlotName := paneLayoutView isUsingSinglePaneLayout
+		ifTrue: [ 'singlePaneLayoutP2' ]
+		ifFalse: [ 'twoPaneLayoutP2' ].
+	^ paneLayoutView firstChildAtSlotNamed: pane2SlotName
+]
+
+{ #category : #'accessing - components' }
+SlmdResponsiveLayoutView >> paneLayoutView [
+
+	^ self firstChildAtSlotNamed: 'paneLayout'
+]
+
 { #category : #layout }
 SlmdResponsiveLayoutView >> resizeSetUp [
 
@@ -671,6 +715,8 @@ SlmdResponsiveLayoutView >> resizeSetUp [
 { #category : #body }
 SlmdResponsiveLayoutView >> secondaryPaneOnly [
 	| component |
+
+	"self logTrace: '' method: 'secondaryPaneOnly'."
 
 	component := SlmdPaneLayoutView first.
 	component ifNotNil: [
@@ -849,8 +895,14 @@ SlmdResponsiveLayoutView >> toolbarDockedDisplay: aBoolean [
 
 { #category : #toolbar }
 SlmdResponsiveLayoutView >> toolbarFloatingDisplay: aBoolean [
+	| element |
 
-	self shadowElementId: 'smdFloatingToolbar' show: aBoolean
+	"The floating toolbar CSS uses fixed position,
+	so the toolbar div itself must apply smd-hidden"
+	element := self firstChildAtSlotNamed: 'floatingToolbar'.
+	element ifNil: [ ^ self ].
+	element := element shadowedFirstDescendantMatching: '#container'.
+	self element: element show: aBoolean.
 
 ]
 
@@ -918,6 +970,6 @@ SlmdResponsiveLayoutView >> useTwoPaneBodyAdapt: anObject [
 	component ifNotNil: [
 		anObject
 			ifTrue: [ component useTwoPaneLayout ]
-			ifFalse: [ component useOnePaneLayout ] ].
+			ifFalse: [ component useSinglePaneLayout ] ].
 
 ]

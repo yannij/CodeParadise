@@ -40,6 +40,12 @@ SlmdPaneView class >> template [
 '
 ]
 
+{ #category : #accessing }
+SlmdPaneView >> paneContentView [
+
+	^ self firstChildAtSlotNamed: 'paneContent'
+]
+
 { #category : #rendering }
 SlmdPaneView >> renderId: paneId content: aString [
 

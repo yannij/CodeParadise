@@ -31,6 +31,22 @@ TBPostModel class >> unclassifiedTag [
    ^ 'Unclassified'
 ]
 
+{ #category : #rendering }
+TBPostModel >> applyChanges: changes [
+	| post |
+
+	post := self.
+
+	post title: (changes at: 'title').
+	post text: (changes at: 'text').
+	"post date: post date asString."
+	post category: (changes at: 'category').
+	post visible: (changes at: 'visible').
+	post valueChanged.
+	"self application pane1Model paneContent valueChanged."
+
+]
+
 { #category : #blinking }
 TBPostModel >> beVisible [
    self visible: true
@@ -58,6 +74,15 @@ TBPostModel >> date [
 TBPostModel >> date: anObject [
 
 	date := anObject
+]
+
+{ #category : #rendering }
+TBPostModel >> handleActionEvent: anObject [
+	| changes |
+
+	changes := anObject parameters at: #changes.
+	self applyChanges: changes.
+
 ]
 
 { #category : #initialization }

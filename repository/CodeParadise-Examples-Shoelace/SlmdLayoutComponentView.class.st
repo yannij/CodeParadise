@@ -7,6 +7,12 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Base'
 }
 
+{ #category : #'actions - nav' }
+SlmdLayoutComponentView >> doAction: aNavAction [
+
+	^ self layoutViewLazy doAction: aNavAction
+]
+
 { #category : #accessing }
 SlmdLayoutComponentView >> layoutView [
 

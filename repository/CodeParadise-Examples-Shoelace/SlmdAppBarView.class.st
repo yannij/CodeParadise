@@ -73,7 +73,7 @@ SlmdAppBarView class >> template [
 SlmdAppBarView >> actionItemsInitialize [
 	| overflowThreshold buttons actionItem actionList overflowList |
 
-	overflowThreshold := 3.
+	overflowThreshold := 2.
 	buttons := self actionItemsToUse.
 
 	buttons size <= overflowThreshold ifTrue: [

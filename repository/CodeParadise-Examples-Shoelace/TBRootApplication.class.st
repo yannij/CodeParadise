@@ -58,9 +58,12 @@ TBRootApplication >> initialize [
 		add: (SlmdNavAction id: #home iconName: 'house' iconLabel: 'Home' arg1: 'Home Page');
 		yourself.
 	actionItems := OrderedCollection new
-		add: (SlmdNavAction id: #crudUpdate iconName: 'pencil' iconLabel: 'Edit' actionName: #crud actionGroup: #secondary arg1: 'update');
-		add: (SlmdNavAction id: #crudDelete iconName: 'x-lg' iconLabel: 'Delete' actionName: #crud actionGroup: #secondary arg1: 'delete');
-		add: (SlmdNavAction id: #crudCreate iconName: 'plus-lg' iconLabel: 'Add' actionName: #crud actionGroup: #secondary arg1: 'create');
+		add: (SlmdNavAction id: #refresh iconName: 'arrow-clockwise' iconLabel: 'Refresh' actionName: #action actionGroup: #primary arg1: 'pane');
+		add: (SlmdNavAction id: #crudRead iconName: 'file-ruled' iconLabel: 'View' actionName: #action actionGroup: #secondary arg1: 'read');
+		add: (SlmdNavAction id: #crudDelete iconName: 'trash' iconLabel: 'Delete' actionName: #action actionGroup: #secondary arg1: 'delete');
+		add: (SlmdNavAction id: #crudUpdate iconName: 'pencil' iconLabel: 'Edit' actionName: #action actionGroup: #secondary arg1: 'update');
+		add: (SlmdNavAction id: #crudSave iconName: 'check-lg' iconLabel: 'Save' actionName: #action actionGroup: #secondary arg1: 'save');
+		add: (SlmdNavAction id: #crudCreate iconName: 'plus-lg' iconLabel: 'Add' actionName: #action actionGroup: #secondary arg1: 'create');
 		yourself.
 	self setDetailWithIndex: 1.
 
