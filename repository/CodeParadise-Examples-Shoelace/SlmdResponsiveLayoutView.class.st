@@ -602,7 +602,7 @@ SlmdResponsiveLayoutView >> navActions: anObject [
 { #category : #navbar }
 SlmdResponsiveLayoutView >> navBarDisplay: aBoolean [
 
-	self shadowElementId: 'smdNavBar' show: aBoolean
+	self shadowElementId: 'smdNavBar' display: aBoolean
 
 ]
 
@@ -700,6 +700,12 @@ SlmdResponsiveLayoutView >> paneLayoutView [
 	^ self firstChildAtSlotNamed: 'paneLayout'
 ]
 
+{ #category : #'actions - nav' }
+SlmdResponsiveLayoutView >> primaryPaneOnly [
+
+	self paneLayoutView primaryPaneOnly
+]
+
 { #category : #layout }
 SlmdResponsiveLayoutView >> resizeSetUp [
 
@@ -716,11 +722,12 @@ SlmdResponsiveLayoutView >> resizeSetUp [
 SlmdResponsiveLayoutView >> secondaryPaneOnly [
 	| component |
 
-	"self logTrace: '' method: 'secondaryPaneOnly'."
+	self logTrace5Method: 'secondaryPaneOnly'.
 
-	component := SlmdPaneLayoutView first.
-	component ifNotNil: [
-		component secondaryPaneOnly ].
+	component := self paneLayoutView.
+	component ifNil: [
+		^ self logError: 'Pane lyout not found' ].
+	component secondaryPaneOnly.
 
 ]
 
@@ -961,14 +968,14 @@ SlmdResponsiveLayoutView >> useTwoPaneBody: anObject [
 ]
 
 { #category : #body }
-SlmdResponsiveLayoutView >> useTwoPaneBodyAdapt: anObject [
+SlmdResponsiveLayoutView >> useTwoPaneBodyAdapt: aBoolean [
 	| component |
 
-	self logTrace: anObject printString method: 'useTwoPaneBodyAdapt:'.
+	self logTrace: aBoolean printString method: 'useTwoPaneBodyAdapt:'.
 
 	component := SlmdPaneLayoutView first.
 	component ifNotNil: [
-		anObject
+		aBoolean
 			ifTrue: [ component useTwoPaneLayout ]
 			ifFalse: [ component useSinglePaneLayout ] ].
 

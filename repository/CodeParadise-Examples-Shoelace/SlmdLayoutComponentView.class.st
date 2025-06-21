@@ -33,3 +33,9 @@ SlmdLayoutComponentView >> layoutViewLazy [
 
 	^ layoutView
 ]
+
+{ #category : #'actions - nav' }
+SlmdLayoutComponentView >> primaryPaneOnly [
+
+	self layoutViewLazy paneLayoutView primaryPaneOnly
+]

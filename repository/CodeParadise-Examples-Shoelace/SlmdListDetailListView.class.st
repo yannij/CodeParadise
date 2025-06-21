@@ -66,6 +66,8 @@ SlmdListDetailListView >> renderTextSlot: slotName value: aString index: index [
 { #category : #rendering }
 SlmdListDetailListView >> secondaryPaneOnly [
 
+	self logTrace5Method: 'secondaryPaneOnly'.
+
 	self layoutViewFind secondaryPaneOnly.
 
 ]

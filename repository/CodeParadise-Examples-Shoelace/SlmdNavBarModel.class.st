@@ -20,7 +20,7 @@ SlmdNavBarModel >> iconButtons: anObject [
 	iconButtons := anObject
 ]
 
-{ #category : #initialization }
+{ #category : #'as yet unclassified' }
 SlmdNavBarModel >> initialize [
 
 	super initialize.

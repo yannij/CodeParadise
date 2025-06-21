@@ -55,9 +55,9 @@ SlmdView >> doNavBack [
 
 	self serverAnnounce: (CpActionRequested id: #navigate parameters: { #back -> nil } asDictionary).
 
-	paneLayout := SlmdPaneLayoutView first.
+	"paneLayout := SlmdPaneLayoutView first.
 	paneLayout ifNotNil: [
-		paneLayout primaryPaneOnly ].
+		paneLayout primaryPaneOnly ]."
 
 ]
 
@@ -95,6 +95,17 @@ SlmdView >> dropdownMenu: actionList css: cssClass [
 
 	^ dropdown
 
+]
+
+{ #category : #utilities }
+SlmdView >> element: element display: aBoolean [
+
+	"self logTrace: element printString method: 'element:display:'."
+
+	element ifNotNil: [
+		aBoolean
+			ifTrue: [ element removeStyleAt: 'display' ]
+			ifFalse: [ element styleAt: 'display' put: 'none' ] ]
 ]
 
 { #category : #utilities }
@@ -223,6 +234,12 @@ SlmdView >> logTrace5: aString [
 ]
 
 { #category : #logging }
+SlmdView >> logTrace5Method: methodName [
+
+	self logTrace5: self class name, '>>', methodName
+]
+
+{ #category : #logging }
 SlmdView >> logTrace: aString [
 
 	self logTrace: aString aspect: nil
@@ -255,6 +272,12 @@ SlmdView >> logTrace: aString method: methodName [
 SlmdView >> logTraceAnnouncement: aString [
 
 	self logTrace: aString aspect: 'Announcement' level: 3
+]
+
+{ #category : #logging }
+SlmdView >> logTraceMethod: methodName [
+
+	self logTrace: self class name, '>>', methodName
 ]
 
 { #category : #'find element' }
@@ -305,6 +328,15 @@ SlmdView >> moveChildrenFromSlot: fromSlot to: toSlot [
 
 	list := self childrenAtSlotNamed: fromSlot.
 	list do: [ :each | self appendChild: each atSlotNamed: toSlot ].
+
+]
+
+{ #category : #utilities }
+SlmdView >> shadowElementId: elementId display: aBoolean [
+	| element |
+
+	element := self findByIdInShadowDom: elementId ifNone: [ nil ].
+	self element: element display: aBoolean.
 
 ]
 

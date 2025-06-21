@@ -81,3 +81,9 @@ SlmdToolbarFloatingView class >> template [
 </div>
 '
 ]
+
+{ #category : #initialization }
+SlmdToolbarFloatingView >> actionGroupToUse [
+
+	^ #toolbar
+]

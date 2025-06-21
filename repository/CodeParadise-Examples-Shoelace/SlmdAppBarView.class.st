@@ -70,6 +70,12 @@ SlmdAppBarView class >> template [
 ]
 
 { #category : #initialization }
+SlmdAppBarView >> actionGroupToUse [
+
+	^ self isPrimary ifTrue: [ #primary ] ifFalse: [ #secondary ]
+]
+
+{ #category : #initialization }
 SlmdAppBarView >> actionItemsInitialize [
 	| overflowThreshold buttons actionItem actionList overflowList |
 
@@ -90,17 +96,6 @@ SlmdAppBarView >> actionItemsInitialize [
 	overflowList := buttons copyFrom: overflowThreshold to: buttons size.
 	self appendChild: (self dropdownMenu: overflowList css: 'smd-toolbar-item') atSlotNamed: 'trailingActions'.
 
-]
-
-{ #category : #initialization }
-SlmdAppBarView >> actionItemsToUse [
-	| list allActions groupName |
-
-	list := self layoutViewLazy actionItems.
-	allActions := items collect: [ :each | list at: each ].
-
-	groupName := self isPrimary ifTrue: [ #primary ] ifFalse: [ #secondary ].
-	^ allActions select: [ :each | (each at: #actionGroup) = groupName ]
 ]
 
 { #category : #rendering }

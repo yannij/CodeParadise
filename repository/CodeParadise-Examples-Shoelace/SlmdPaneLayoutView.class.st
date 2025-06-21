@@ -118,6 +118,14 @@ SlmdPaneLayoutView >> primaryPaneDisplay: aBoolean [
 { #category : #actions }
 SlmdPaneLayoutView >> primaryPaneOnly [
 
+	self logTrace5Method: 'primaryPaneOnly'.
+
+	self layoutViewLazy
+		showNavBar: true;
+		showNavBarAdapt: true;
+		showFloatingToolbar: false;
+		showFloatingToolbarAdapt: false;
+		adjustBodyHeight.
 	self primaryPaneDisplay: true.
 	self secondaryPaneDisplay: false.
 
@@ -133,8 +141,14 @@ SlmdPaneLayoutView >> secondaryPaneDisplay: aBoolean [
 { #category : #actions }
 SlmdPaneLayoutView >> secondaryPaneOnly [
 
-	"self logTrace: '' method: 'secondaryPaneOnly'."
+	self logTrace5Method: 'secondaryPaneOnly'.
 
+	self layoutViewLazy
+		showNavBar: false;
+		showNavBarAdapt: false;
+		showFloatingToolbar: true;
+		showFloatingToolbarAdapt: true;
+		adjustBodyHeight.
 	self primaryPaneDisplay: false.
 	self secondaryPaneDisplay: true.
 

@@ -172,7 +172,7 @@ TBPostView class >> style [
 
 	^ '
 #container {
-  min-width: 400px;
+  min-width: 300px;
   width: 100%;
 }
 '

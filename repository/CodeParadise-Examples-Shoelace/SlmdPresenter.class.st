@@ -36,7 +36,7 @@ SlmdPresenter >> handleActionEvent: anObject [
 { #category : #nav }
 SlmdPresenter >> handleNavBack: anObject [
 
-	self application pane1Model valueChanged.
+	self view primaryPaneOnly
 
 ]
 
@@ -100,19 +100,19 @@ SlmdPresenter >> logTrace: aString aspect: aspect level: level [
 { #category : #logging }
 SlmdPresenter >> logTrace: aString method: methodName [
 
-	self logTrace: aString aspect: self class name, '>>', methodName, methodName level: 5
+	self logTrace: aString aspect: self class name, '>>', methodName level: 5
 ]
 
 { #category : #view }
 SlmdPresenter >> viewCreated [
 
-	self view logTrace: '' method: 'viewCreated'.
+	self view logTraceMethod: 'viewCreated'.
 	super viewCreated
 ]
 
 { #category : #view }
 SlmdPresenter >> viewInitialized [
 
-	self view logTrace: '' method: 'viewInitialized'.
+	self view logTraceMethod: 'viewInitialized'.
 	super viewInitialized
 ]

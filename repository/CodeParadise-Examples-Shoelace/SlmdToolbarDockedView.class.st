@@ -64,3 +64,9 @@ SlmdToolbarDockedView class >> template [
 </div>
 '
 ]
+
+{ #category : #initialization }
+SlmdToolbarDockedView >> actionGroupToUse [
+
+	^ #toolbar
+]
