@@ -7,7 +7,7 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Base'
 }
 
-{ #category : #'actions - nav' }
+{ #category : #actions }
 SlmdLayoutComponentView >> doAction: aNavAction [
 
 	^ self layoutViewLazy doAction: aNavAction
@@ -34,7 +34,7 @@ SlmdLayoutComponentView >> layoutViewLazy [
 	^ layoutView
 ]
 
-{ #category : #'actions - nav' }
+{ #category : #actions }
 SlmdLayoutComponentView >> primaryPaneOnly [
 
 	self layoutViewLazy paneLayoutView primaryPaneOnly

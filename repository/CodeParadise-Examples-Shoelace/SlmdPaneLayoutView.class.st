@@ -120,11 +120,13 @@ SlmdPaneLayoutView >> primaryPaneOnly [
 
 	self logTrace5Method: 'primaryPaneOnly'.
 
+	self isUsingSinglePaneLayout not ifTrue: [
+		^ self ].
+
 	self layoutViewLazy
 		showNavBar: true;
 		showNavBarAdapt: true;
-		showFloatingToolbar: false;
-		showFloatingToolbarAdapt: false;
+		floatingToolbarOff;
 		adjustBodyHeight.
 	self primaryPaneDisplay: true.
 	self secondaryPaneDisplay: false.
@@ -143,11 +145,13 @@ SlmdPaneLayoutView >> secondaryPaneOnly [
 
 	self logTrace5Method: 'secondaryPaneOnly'.
 
+	self isUsingSinglePaneLayout not ifTrue: [
+		^ self ].
+
 	self layoutViewLazy
 		showNavBar: false;
 		showNavBarAdapt: false;
-		showFloatingToolbar: true;
-		showFloatingToolbarAdapt: true;
+		floatingToolbarOn;
 		adjustBodyHeight.
 	self primaryPaneDisplay: false.
 	self secondaryPaneDisplay: true.
@@ -162,6 +166,7 @@ SlmdPaneLayoutView >> useSinglePaneLayout [
 	self shadowElementId: 'smdTwoPaneLayout' show: false.
 	self shadowElementId: 'smdSinglePaneLayout' show: true.
 	self primaryPaneOnly.
+	self layoutViewLazy appBar2LeadingButtonDisplay: true.
 
 ]
 
@@ -172,5 +177,8 @@ SlmdPaneLayoutView >> useTwoPaneLayout [
 	isUsingSinglePaneLayout := false.
 	self shadowElementId: 'smdSinglePaneLayout' show: false.
 	self shadowElementId: 'smdTwoPaneLayout' show: true.
+	self layoutViewLazy
+		floatingToolbarOn;
+		appBar2LeadingButtonDisplay: false.
 
 ]

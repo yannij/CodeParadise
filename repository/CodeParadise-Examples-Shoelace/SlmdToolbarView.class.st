@@ -7,6 +7,24 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Base'
 }
 
+{ #category : #'web resources' }
+SlmdToolbarView class >> globalStyle [
+
+	<webResource: #css>
+
+	^ '
+.smd-toolbar-item {
+  padding: 8px 0;
+  height: 48px;
+  width: 48px;
+}
+
+.smd-toolbar-icon {
+  font-size: 32px;
+}
+'
+]
+
 { #category : #initialization }
 SlmdToolbarView >> actionGroupToUse [
 
@@ -25,19 +43,25 @@ SlmdToolbarView >> actionItemFabOrNil [
 
 { #category : #nav }
 SlmdToolbarView >> actionItemsInitialize [
-	| buttons iconButton fab |
+	| buttons div iconButton fab |
 
 	buttons := self actionItemsToUse.
 
 	buttons ifNotEmpty: [
+		div := '' inHtmlTag: #div.
+		div addClass: self buttonCssClass.
 		buttons withIndexDo: [ :eachItem :index |
 			iconButton := self iconButtonForAction: eachItem css: 'smd-toolbar-item'.
-			self appendChild: iconButton atSlotNamed: 'toolbar' ].
+			div appendChild: iconButton ].
+		self appendChild: div atSlotNamed: 'toolbar' ].
 
-		fab := self actionItemFabOrNil.
-		fab ifNotNil: [
-			iconButton := self iconButtonForAction: fab css: nil.
-			self appendChild: iconButton atSlotNamed: 'fab' ] ].
+	fab := self actionItemFabOrNil.
+	fab ifNotNil: [
+		div := '' inHtmlTag: #div.
+		div addClass: self fabCssClass.
+		iconButton := self iconButtonForAction: fab css: nil.
+		div appendChild: iconButton.
+		self appendChild: div atSlotNamed: 'fab' ].
 
 ]
 
@@ -56,6 +80,34 @@ SlmdToolbarView >> actionItemsToUse [
 SlmdToolbarView >> addActionItem: anActionId [
 
 	self items add: anActionId asSymbol
+]
+
+{ #category : #nav }
+SlmdToolbarView >> buttonCssClass [
+
+	^ 'smd-toolbar-buttons'
+]
+
+{ #category : #nav }
+SlmdToolbarView >> fabCssClass [
+
+	^ 'smd-toolbar-fab'
+]
+
+{ #category : #utilities }
+SlmdToolbarView >> iconButtonForAction: aNavAction css: cssClass [
+	| iconName tag |
+
+	iconName := aNavAction at: #iconName.
+
+	tag := #div asHtmlTag
+		when: CpClickEvent basicPrimary do: [ self executeNavAction: aNavAction ] for: self;
+		appendChild: ((SlIconButton named: iconName) addClass: 'smd-toolbar-icon'; yourself);
+		yourself.
+
+	cssClass ifNotNil: [ tag addClass: cssClass ].
+
+	^ tag
 ]
 
 { #category : #initialization }

@@ -193,22 +193,6 @@ SlmdView >> findFirstDescendantInShadowDom: anId ifNone: aBlock [
 
 ]
 
-{ #category : #utilities }
-SlmdView >> iconButtonForAction: aNavAction css: cssClass [
-	| iconName tag |
-
-	iconName := aNavAction at: #iconName.
-
-	tag := #div asHtmlTag
-		when: CpClickEvent basicPrimary do: [ self executeNavAction: aNavAction ] for: self;
-		appendChild: ((SlIconButton named: iconName) addClass: 'smd-toolbar-icon'; yourself);
-		yourself.
-
-	cssClass ifNotNil: [ tag addClass: cssClass ].
-
-	^ tag
-]
-
 { #category : #'find element' }
 SlmdView >> layoutViewFind [
 

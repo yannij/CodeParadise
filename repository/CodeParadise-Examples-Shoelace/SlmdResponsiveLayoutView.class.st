@@ -213,6 +213,19 @@ SlmdResponsiveLayoutView >> adjustBodyHeight [
 ]
 
 { #category : #body }
+SlmdResponsiveLayoutView >> appBar2LeadingButtonDisplay: anObject [
+	| components |
+
+	components := SlmdAppBarView all.
+	components ifEmpty: [ self logError: 'appBarMenuDisplay: - No App bar found' ].
+
+	components do: [ :each |
+		each isSecondary ifTrue: [
+			each appBarLeadingButtonDisplay: anObject ] ].
+
+]
+
+{ #category : #body }
 SlmdResponsiveLayoutView >> appBarDisplay: anObject [
 	| components |
 
@@ -248,7 +261,7 @@ SlmdResponsiveLayoutView >> applyLayoutProfile: props [
 	self showSidesheetAdapt: (props at: #showSidesheet ifAbsent: [ false ]).
 	self showAppBarAdapt: (props at: #showAppBar ifAbsent: [ false ]).
 	self showDockedToolbarAdapt: (props at: #showDockedToolbar ifAbsent: [ false ]).
-	self showFloatingToolbarAdapt: (props at: #showFloatingToolbar ifAbsent: [ false ]).
+	"self showFloatingToolbarAdapt: (props at: #showFloatingToolbar ifAbsent: [ false ])."
 
 	self adjustBodyHeight.
 
@@ -347,6 +360,22 @@ SlmdResponsiveLayoutView >> doAction: aNavAction [
 		paneContentView ifNil: [ ^ self ].
 		changes := paneContentView wrappedView changeMap.
 		paneContentView serverAnnounce: (CpActionRequested id: #action parameters: { #type -> arg1. #changes -> changes } asDictionary) ].
+
+]
+
+{ #category : #toolbar }
+SlmdResponsiveLayoutView >> floatingToolbarOff [
+
+	self showFloatingToolbar: false.
+	self showFloatingToolbarAdapt: false.
+
+]
+
+{ #category : #toolbar }
+SlmdResponsiveLayoutView >> floatingToolbarOn [
+
+	self showFloatingToolbar: true.
+	self showFloatingToolbarAdapt: true.
 
 ]
 
@@ -742,7 +771,7 @@ SlmdResponsiveLayoutView >> setLayoutSettings: props [
 	self showSidesheet: (props at: #showSidesheet ifAbsent: [ false ]).
 	self showAppBar: (props at: #showAppBar ifAbsent: [ false ]).
 	self showDockedToolbar: (props at: #showDockedToolbar ifAbsent: [ false ]).
-	self showFloatingToolbar: (props at: #showFloatingToolbar ifAbsent: [ false ]).
+	"self showFloatingToolbar: (props at: #showFloatingToolbar ifAbsent: [ false ])."
 
 ]
 
