@@ -44,9 +44,8 @@ TBRootApplication >> initialize [
 
 	pane1Content := SlmdListDetailModel new.
 	pane1Content listSet: TBBlogModel current allBlogPosts.
-	pane1Model := SlmdPaneModel id: 'smdPane1Content' content: 'Initial content 1'.
-	pane1Model paneContent: pane1Content.
-	pane2Model := SlmdPaneModel id: 'smdPane2Content' content: 'Initial content 2'.
+	pane1Model := SlmdPaneModel on: pane1Content.
+	pane2Model := SlmdPaneModel new.
 	pane2Model appBarModel beSecondary.
 	sidesheetModel := SlmdSidesheetModel new.
 	layout := SlmdResponsiveLayoutModel new.

@@ -31,9 +31,6 @@ SlmdPaneView class >> template [
     <slot name="appBar"></slot>
   </div>
   <div class="smd-pane-content">
-    <slot name="content"></slot>
-  </div>
-  <div class="smd-pane-content">
     <slot name="paneContent"></slot>
   </div>
 </div>

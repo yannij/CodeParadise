@@ -12,11 +12,10 @@ Class {
 }
 
 { #category : #'instance creation' }
-SlmdPaneModel class >> id: id content: content [
+SlmdPaneModel class >> on: aPaneConetentModel [
 
 	^ self new
-		id: id;
-		content: content;
+		paneContent: aPaneConetentModel;
 		yourself
 ]
 
@@ -44,35 +43,11 @@ SlmdPaneModel >> appBarModel: anObject [
 	appBarModel := anObject
 ]
 
-{ #category : #accessing }
-SlmdPaneModel >> content [
-
-	^ content
-]
-
-{ #category : #accessing }
-SlmdPaneModel >> content: anObject [
-
-	content := anObject
-]
-
 { #category : #actions }
 SlmdPaneModel >> handleActionRequest: aBasicEvent [
 
-	self content: (aBasicEvent parameterAt: #to).
+	self paneContent handleActionRequest: aBasicEvent.
 
-]
-
-{ #category : #accessing }
-SlmdPaneModel >> id [
-
-	^ id
-]
-
-{ #category : #accessing }
-SlmdPaneModel >> id: anObject [
-
-	id := anObject
 ]
 
 { #category : #initialization }
@@ -80,8 +55,6 @@ SlmdPaneModel >> initialize [
 
 	super initialize.
 
-	"id := nil."
-	content := ''.
 	appBarDisplayed := true.
 	appBarModel := SlmdAppBarModel new.
 

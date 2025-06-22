@@ -46,8 +46,8 @@ MD3ExampleApplication >> initialize [
 
 	super initialize.
 
-	pane1Model := SlmdPaneModel id: 'smdPane1Content' content: 'Initial Pane1...'.
-	pane2Model := SlmdPaneModel id: 'smdPane2Content' content: 'Initial Pane2...'.
+	pane1Model := SlmdPaneModel on: (SlmdPaneContentModel on: 'Initial Pane1...').
+	pane2Model := SlmdPaneModel on: (SlmdPaneContentModel on: 'Initial Pane2...').
 	pane2Model appBarModel beSecondary.
 	sidesheetModel := SlmdSidesheetModel new.
 	layout := SlmdResponsiveLayoutModel new.

@@ -13,6 +13,4 @@ SlmdPanePresenter >> renderView [
 	self model paneContent ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: #paneContent ].
 
-	self view renderId: self model id content: self model content
-
 ]
