@@ -1,6 +1,6 @@
 Class {
 	#name : #TBPostView,
-	#superclass : #SlmdCrudView,
+	#superclass : #SlmdObjectView,
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
@@ -31,7 +31,14 @@ sl-input {
   --sl-input-height-medium: 56px;
 }
 
+sl-card.tblog-post::part(header) {
+  display: flex;
+  flex-direction: row nowrap;
+  margin-left: auto;
+}
+
 sl-card.tblog-post::part(base) {
+  display: flex;
   min-width: 400px;
   width: 100%;
   background: var(--sl-color-primary-100);
@@ -190,6 +197,7 @@ TBPostView class >> template [
 
 { #category : #rendering }
 TBPostView >> renderCardTitle: title text: text date: date category: category visible: visible [
+	| navAction |
 
 	card := SlCard new
 		addClass: 'tblog-post';
@@ -200,7 +208,13 @@ TBPostView >> renderCardTitle: title text: text date: date category: category vi
 		appendChild: (self fieldAt: 'visible' label: 'Visible' switch: visible);
 		yourself.
 
-	"card replaceAllChildrenWith: (title inHtmlTag: #span) atSlotNamed: #header."
+	"card replaceAllChildrenWith: self headerElements atSlotNamed: #header."
+	navAction := self layoutViewLazy actionItems at: #crudDelete.
+	card appendChild: (self iconButtonForAction: navAction css: 'cssClass') atSlotNamed: #header.
+	navAction := self layoutViewLazy actionItems at: #crudUpdate.
+	card appendChild: (self iconButtonForAction: navAction css: 'cssClass') atSlotNamed: #header.
+	navAction := self layoutViewLazy actionItems at: #crudSave.
+	card appendChild: (self iconButtonForAction: navAction css: 'cssClass') atSlotNamed: #header.
 
 	self replaceAllChildrenWith: card atSlotNamed: 'card'.
 

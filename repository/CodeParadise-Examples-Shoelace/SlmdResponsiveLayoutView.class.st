@@ -267,6 +267,15 @@ SlmdResponsiveLayoutView >> applyLayoutProfile: props [
 
 ]
 
+{ #category : #'actions - nav' }
+SlmdResponsiveLayoutView >> beEditablePane2 [
+	| wrappers |
+
+	wrappers := SlmdItemWrapperView all.
+	wrappers do: [ :each | each wrappedView setEditable: true ]
+
+]
+
 { #category : #body }
 SlmdResponsiveLayoutView >> bodyFind [
 
@@ -341,7 +350,7 @@ SlmdResponsiveLayoutView >> debounceResizeEvent: anEvent [
 
 { #category : #'actions - nav' }
 SlmdResponsiveLayoutView >> doAction: aNavAction [
-	| arg1 wrappers |
+	| arg1 |
 
 	self logTrace: aNavAction printString aspect: 'doAction:' level: 3.
 	(aNavAction at: #actionName) ~= #action ifTrue: [ ^ self ].
@@ -351,15 +360,20 @@ SlmdResponsiveLayoutView >> doAction: aNavAction [
 
 	arg1 := aNavAction at: #arg1.
 
-	wrappers := SlmdItemWrapperView all.
 	arg1 = 'update' ifTrue: [
-		wrappers do: [ :each | each wrappedView setEditable: true ] ].
+		self beEditablePane2 ].
 
 	arg1 = 'save' ifTrue: [ | changes paneContentView |
 		paneContentView := self pane2View paneContentView.
 		paneContentView ifNil: [ ^ self ].
 		changes := paneContentView wrappedView changeMap.
 		paneContentView serverAnnounce: (CpActionRequested id: #action parameters: { #type -> arg1. #changes -> changes } asDictionary) ].
+
+	arg1 = 'create' ifTrue: [
+		self serverAnnounce: (CpActionRequested id: #action parameters: { #type -> arg1 } asDictionary) ].
+
+	arg1 = 'delete' ifTrue: [
+		self serverAnnounce: (CpActionRequested id: #action parameters: { #type -> arg1 } asDictionary) ].
 
 ]
 

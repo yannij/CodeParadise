@@ -17,6 +17,12 @@ SlmdItemWrapperModel class >> on: aModel atIndex: anIndex [
 		yourself
 ]
 
+{ #category : #'instance creation' }
+SlmdItemWrapperModel class >> onNewModel: aModel [
+
+	^ self on: aModel atIndex: nil
+]
+
 { #category : #accessing }
 SlmdItemWrapperModel >> index [
 
@@ -27,6 +33,12 @@ SlmdItemWrapperModel >> index [
 SlmdItemWrapperModel >> index: anObject [
 
 	index := anObject
+]
+
+{ #category : #testing }
+SlmdItemWrapperModel >> isNew [
+
+	^ self index isNil
 ]
 
 { #category : #accessing }

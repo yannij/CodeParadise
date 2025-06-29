@@ -33,13 +33,34 @@ SlmdListDetailModel >> list: anObject [
 ]
 
 { #category : #accessing }
+SlmdListDetailModel >> listAdd: aWrappedModel [
+
+	TBBlogModel current writeBlogPost: detail wrappedModel.
+	self listSet: TBBlogModel current allBlogPosts.
+
+]
+
+{ #category : #accessing }
+SlmdListDetailModel >> listRemove: aModel [
+
+	TBBlogModel current removeBlogPost: aModel.
+	self listSet: TBBlogModel current allBlogPosts.
+
+]
+
+{ #category : #accessing }
 SlmdListDetailModel >> listSet: aCollection [
-	| wrappedList |
 
-	wrappedList := OrderedCollection new.
+	list := OrderedCollection new.
 	aCollection withIndexDo: [ :each :index |
-		wrappedList add: (SlmdItemWrapperModel on: each atIndex: index) ].
+		list add: (SlmdItemWrapperModel on: each atIndex: index) ].
+	self valueChanged.
 
-	self list: wrappedList.
+]
+
+{ #category : #accessing }
+SlmdListDetailModel >> removeDetail [
+
+	self listRemove: detail wrappedModel.
 
 ]

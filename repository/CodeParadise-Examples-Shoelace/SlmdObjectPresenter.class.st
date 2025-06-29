@@ -1,11 +1,11 @@
 Class {
-	#name : #SlmdCrudPresenter,
+	#name : #SlmdObjectPresenter,
 	#superclass : #SlmdPresenter,
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
 { #category : #view }
-SlmdCrudPresenter >> viewCreated [
+SlmdObjectPresenter >> viewCreated [
 
 	super viewCreated.
 

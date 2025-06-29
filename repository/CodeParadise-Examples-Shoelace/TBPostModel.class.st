@@ -1,6 +1,6 @@
 Class {
 	#name : #TBPostModel,
-	#superclass : #SlmdModel,
+	#superclass : #SlmdObjectModel,
 	#instVars : [
 		'title',
 		'text',
@@ -74,15 +74,6 @@ TBPostModel >> date [
 TBPostModel >> date: anObject [
 
 	date := anObject
-]
-
-{ #category : #rendering }
-TBPostModel >> handleActionEvent: anObject [
-	| changes |
-
-	changes := anObject parameters at: #changes.
-	self applyChanges: changes.
-
 ]
 
 { #category : #initialization }

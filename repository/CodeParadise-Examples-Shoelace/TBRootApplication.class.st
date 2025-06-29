@@ -69,6 +69,17 @@ TBRootApplication >> initialize [
 ]
 
 { #category : #accessing }
+TBRootApplication >> setDetailAddNew [
+	| detail |
+
+	detail := SlmdItemWrapperModel onNewModel: TBPostModel new.
+
+	self pane1Model paneContent detail: detail.
+	self pane2Model paneContent: detail.
+
+]
+
+{ #category : #accessing }
 TBRootApplication >> setDetailWithIndex: index [
 	| list detail |
 

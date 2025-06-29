@@ -94,22 +94,6 @@ SlmdToolbarView >> fabCssClass [
 	^ 'smd-toolbar-fab'
 ]
 
-{ #category : #utilities }
-SlmdToolbarView >> iconButtonForAction: aNavAction css: cssClass [
-	| iconName tag |
-
-	iconName := aNavAction at: #iconName.
-
-	tag := #div asHtmlTag
-		when: CpClickEvent basicPrimary do: [ self executeNavAction: aNavAction ] for: self;
-		appendChild: ((SlIconButton named: iconName) addClass: 'smd-toolbar-icon'; yourself);
-		yourself.
-
-	cssClass ifNotNil: [ tag addClass: cssClass ].
-
-	^ tag
-]
-
 { #category : #initialization }
 SlmdToolbarView >> initialize [
 

@@ -5,6 +5,28 @@ Class {
 }
 
 { #category : #view }
+SlmdResponsiveLayoutPresenter >> handleActionEvent: anObject [
+	| type |
+
+	type := anObject parameterAt: #type.
+	self logTrace: 'Layout>>handleActionEvent: ', anObject printString.
+
+	type = 'delete' ifTrue: [ | listDetail |
+		self view primaryPaneOnly.
+		listDetail := self application pane1Model paneContent.
+		listDetail removeDetail.
+		self application setDetailWithIndex: 1.
+		self application pane2Model valueChanged ].
+
+	type = 'create' ifTrue: [
+		self logTrace: 'create' method: 'handleActionEvent:'.
+		self application setDetailAddNew.
+		self application pane2Model valueChanged.
+		self view beEditablePane2 ]
+
+]
+
+{ #category : #view }
 SlmdResponsiveLayoutPresenter >> handleViewAction: anObject [
 	| aspect aspectValue |
 
@@ -47,9 +69,8 @@ SlmdResponsiveLayoutPresenter >> viewCreated [
 
 	super viewCreated.
 
-	self view
-		when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #handleNavTo: to: self;
-		yourself.
+	self view when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #handleNavTo: to: self.
+	self view when: (CpActionRequested id: #action) send: #handleActionEvent: to: self.
 
 ]
 

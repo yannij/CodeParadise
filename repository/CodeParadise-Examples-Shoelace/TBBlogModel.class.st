@@ -1,6 +1,6 @@
 Class {
 	#name : #TBBlogModel,
-	#superclass : #SlmdModel,
+	#superclass : #SlmdObjectModel,
 	#instVars : [
 		'posts'
 	],
@@ -68,6 +68,12 @@ TBBlogModel >> initialize [
 { #category : #actions }
 TBBlogModel >> removeAllPosts [
    posts := OrderedCollection new
+]
+
+{ #category : #actions }
+TBBlogModel >> removeBlogPost: aPost [
+
+   posts remove: aPost ifAbsent: []
 ]
 
 { #category : #actions }
