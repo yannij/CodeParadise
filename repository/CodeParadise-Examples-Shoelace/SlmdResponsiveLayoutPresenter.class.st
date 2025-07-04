@@ -22,7 +22,8 @@ SlmdResponsiveLayoutPresenter >> handleActionEvent: anObject [
 		self logTrace: 'create' method: 'handleActionEvent:'.
 		self application setDetailAddNew.
 		self application pane2Model valueChanged.
-		self view beEditablePane2 ]
+		self view beEditablePane2.
+		self view secondaryPaneOnly ]
 
 ]
 
@@ -58,6 +59,9 @@ SlmdResponsiveLayoutPresenter >> renderView [
 
 	self model floatingToolbar ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: #floatingToolbar ].
+
+	self model fab ifNotNil: [ :value |
+		self renderChildViewForModel: value atSlotNamed: #fab ].
 
 	self model layoutSettings ifNotNil: [ :value |
 		self renderChildViewForModel: value atSlotNamed: nil ].

@@ -2,23 +2,10 @@ Class {
 	#name : #SlmdObjectView,
 	#superclass : #SlmdLayoutComponentView,
 	#instVars : [
-		'fieldElements',
-		'card'
+		'fieldElements'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
-
-{ #category : #accessing }
-SlmdObjectView >> card [
-
-	^ card
-]
-
-{ #category : #accessing }
-SlmdObjectView >> card: anObject [
-
-	card := anObject
-]
 
 { #category : #rendering }
 SlmdObjectView >> changeMap [
@@ -117,8 +104,18 @@ SlmdObjectView >> initialize [
 
 { #category : #rendering }
 SlmdObjectView >> setEditable: aBoolean [
+	| first index |
 
+	index := 1.
+	first := true.
 	self fieldElements valuesDo: [ :each |
+		self logTrace: each name asString.
+		"(first and: [ aBoolean ])" index = 2 ifTrue: [
+			self logTrace: 'focus() - ', each printString.
+			each focus.
+			first := false ].
 		"each removeAttributeAt: #readonly"
-		each disabled: aBoolean not ]
+		index := index + 1.
+		each disabled: aBoolean not ].
+
 ]

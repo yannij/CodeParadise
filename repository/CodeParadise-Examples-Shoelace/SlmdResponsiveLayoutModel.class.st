@@ -8,7 +8,8 @@ Class {
 		'navRail',
 		'navBar',
 		'dockedToolbar',
-		'floatingToolbar'
+		'floatingToolbar',
+		'fab'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
@@ -23,6 +24,18 @@ SlmdResponsiveLayoutModel >> dockedToolbar [
 SlmdResponsiveLayoutModel >> dockedToolbar: anObject [
 
 	dockedToolbar := anObject
+]
+
+{ #category : #accessing }
+SlmdResponsiveLayoutModel >> fab [
+
+	^ fab
+]
+
+{ #category : #accessing }
+SlmdResponsiveLayoutModel >> fab: anObject [
+
+	fab := anObject
 ]
 
 { #category : #accessing }
@@ -49,6 +62,7 @@ SlmdResponsiveLayoutModel >> initialize [
 	navBar := SlmdNavBarModel new.
 	dockedToolbar := SlmdToolbarDockedModel new.
 	floatingToolbar := SlmdToolbarFloatingModel new.
+	fab := SlmdFabModel new.
 
 ]
 

@@ -6,7 +6,10 @@ Class {
 		'layoutSettingsView',
 		'layoutWidthCached',
 		'navActions',
-		'actionItems'
+		'actionItems',
+		'activeToolbarDocked',
+		'activeToolbarFloating',
+		'activeFab'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
@@ -164,6 +167,7 @@ SlmdResponsiveLayoutView class >> template [
     <div id="smdFloatingToolbar">
       <slot name="floatingToolbar"></slot>
     </div>
+    <slot name="fab"></slot>
   </div>
   <div id="smdModalDiv"></div>
 </div>
@@ -180,6 +184,42 @@ SlmdResponsiveLayoutView >> actionItems [
 SlmdResponsiveLayoutView >> actionItems: anObject [
 
 	actionItems := anObject
+]
+
+{ #category : #accessing }
+SlmdResponsiveLayoutView >> activeFab [
+
+	^ activeFab
+]
+
+{ #category : #accessing }
+SlmdResponsiveLayoutView >> activeFab: anObject [
+
+	activeFab := anObject
+]
+
+{ #category : #accessing }
+SlmdResponsiveLayoutView >> activeToolbarDocked [
+
+	^ activeToolbarDocked
+]
+
+{ #category : #accessing }
+SlmdResponsiveLayoutView >> activeToolbarDocked: anObject [
+
+	activeToolbarDocked := anObject
+]
+
+{ #category : #accessing }
+SlmdResponsiveLayoutView >> activeToolbarFloating [
+
+	^ activeToolbarFloating
+]
+
+{ #category : #accessing }
+SlmdResponsiveLayoutView >> activeToolbarFloating: anObject [
+
+	activeToolbarFloating := anObject
 ]
 
 { #category : #events }
@@ -361,6 +401,7 @@ SlmdResponsiveLayoutView >> doAction: aNavAction [
 	arg1 := aNavAction at: #arg1.
 
 	arg1 = 'update' ifTrue: [
+		self logTrace: aNavAction printString aspect: 'doAction:(update3)' level: 3.
 		self beEditablePane2 ].
 
 	arg1 = 'save' ifTrue: [ | changes paneContentView |
@@ -378,6 +419,25 @@ SlmdResponsiveLayoutView >> doAction: aNavAction [
 ]
 
 { #category : #toolbar }
+SlmdResponsiveLayoutView >> dockedToolbarOff [
+
+	self showDockedToolbar: false.
+	self showDockedToolbarAdapt: false.
+
+]
+
+{ #category : #toolbar }
+SlmdResponsiveLayoutView >> dockedToolbarOn [
+
+	self activeToolbarDocked ifFalse: [
+		^ self ].
+
+	self showDockedToolbar: true.
+	self showDockedToolbarAdapt: true.
+
+]
+
+{ #category : #toolbar }
 SlmdResponsiveLayoutView >> floatingToolbarOff [
 
 	self showFloatingToolbar: false.
@@ -387,6 +447,9 @@ SlmdResponsiveLayoutView >> floatingToolbarOff [
 
 { #category : #toolbar }
 SlmdResponsiveLayoutView >> floatingToolbarOn [
+
+	self activeToolbarFloating ifFalse: [
+		^ self ].
 
 	self showFloatingToolbar: true.
 	self showFloatingToolbarAdapt: true.
@@ -440,6 +503,9 @@ SlmdResponsiveLayoutView >> initialize [
 	layoutWidthCached := 0.
 	navActions := Dictionary new.
 	actionItems := Dictionary new.
+	activeToolbarDocked := false.
+	activeToolbarFloating := false.
+	activeFab := false.
 
 ]
 
@@ -785,7 +851,7 @@ SlmdResponsiveLayoutView >> setLayoutSettings: props [
 	self showSidesheet: (props at: #showSidesheet ifAbsent: [ false ]).
 	self showAppBar: (props at: #showAppBar ifAbsent: [ false ]).
 	self showDockedToolbar: (props at: #showDockedToolbar ifAbsent: [ false ]).
-	"self showFloatingToolbar: (props at: #showFloatingToolbar ifAbsent: [ false ])."
+	self showFloatingToolbar: (props at: #showFloatingToolbar ifAbsent: [ false ]).
 
 ]
 
@@ -866,10 +932,14 @@ SlmdResponsiveLayoutView >> showNavBar: anObject [
 
 { #category : #navbar }
 SlmdResponsiveLayoutView >> showNavBarAdapt: aBoolean [
+	| fabView |
 
 	self logTrace: aBoolean printString method: 'showNavBarAdapt:'.
 
 	self navBarDisplay: aBoolean.
+
+	fabView := SlmdFabView first.
+	fabView ifNotNil: [ fabView setExtraOffset: aBoolean ].
 
 ]
 

@@ -43,25 +43,9 @@ SlmdToolbarView >> actionItemFabOrNil [
 
 { #category : #nav }
 SlmdToolbarView >> actionItemsInitialize [
-	| buttons div iconButton fab |
 
-	buttons := self actionItemsToUse.
-
-	buttons ifNotEmpty: [
-		div := '' inHtmlTag: #div.
-		div addClass: self buttonCssClass.
-		buttons withIndexDo: [ :eachItem :index |
-			iconButton := self iconButtonForAction: eachItem css: 'smd-toolbar-item'.
-			div appendChild: iconButton ].
-		self appendChild: div atSlotNamed: 'toolbar' ].
-
-	fab := self actionItemFabOrNil.
-	fab ifNotNil: [
-		div := '' inHtmlTag: #div.
-		div addClass: self fabCssClass.
-		iconButton := self iconButtonForAction: fab css: nil.
-		div appendChild: iconButton.
-		self appendChild: div atSlotNamed: 'fab' ].
+	self appendButtonActions.
+	self appendFabAction.
 
 ]
 
@@ -80,6 +64,36 @@ SlmdToolbarView >> actionItemsToUse [
 SlmdToolbarView >> addActionItem: anActionId [
 
 	self items add: anActionId asSymbol
+]
+
+{ #category : #nav }
+SlmdToolbarView >> appendButtonActions [
+	| buttons div iconButton |
+
+	buttons := self actionItemsToUse.
+
+	buttons ifNotEmpty: [
+		div := '' inHtmlTag: #div.
+		div addClass: self buttonCssClass.
+		buttons withIndexDo: [ :eachItem :index |
+			iconButton := self iconButtonForAction: eachItem css: 'smd-toolbar-item'.
+			div appendChild: iconButton ].
+		self appendChild: div atSlotNamed: 'toolbar' ].
+
+]
+
+{ #category : #nav }
+SlmdToolbarView >> appendFabAction [
+	| div iconButton fab |
+
+	fab := self actionItemFabOrNil.
+	fab ifNotNil: [
+		div := '' inHtmlTag: #div.
+		div addClass: self fabCssClass.
+		iconButton := self iconButtonForAction: fab css: nil.
+		div appendChild: iconButton.
+		self appendChild: div atSlotNamed: 'fab' ].
+
 ]
 
 { #category : #nav }

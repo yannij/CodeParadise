@@ -197,8 +197,9 @@ TBPostView class >> template [
 
 { #category : #rendering }
 TBPostView >> renderCardTitle: title text: text date: date category: category visible: visible [
-	| navAction |
+	| card navAction |
 
+	fieldElements := OrderedDictionary new.
 	card := SlCard new
 		addClass: 'tblog-post';
 		appendChild: (self fieldAt: 'title' label: 'Title' text: title);
