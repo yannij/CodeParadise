@@ -253,6 +253,19 @@ SlmdResponsiveLayoutView >> adjustBodyHeight [
 ]
 
 { #category : #body }
+SlmdResponsiveLayoutView >> appBar2Display: anObject [
+	| components |
+
+	self logTrace: anObject printString method: 'appBar2Display:'.
+	components := SlmdAppBarView all.
+
+	components do: [ :each |
+		each isSecondary ifTrue: [
+			each appBarDisplay: anObject ] ].
+
+]
+
+{ #category : #body }
 SlmdResponsiveLayoutView >> appBar2LeadingButtonDisplay: anObject [
 	| components |
 
@@ -273,7 +286,8 @@ SlmdResponsiveLayoutView >> appBarDisplay: anObject [
 	components := SlmdAppBarView all.
 
 	components do: [ :each |
-		each appBarDisplay: anObject ].
+		each isPrimary ifTrue: [
+			each appBarDisplay: anObject ] ].
 
 ]
 
@@ -312,7 +326,11 @@ SlmdResponsiveLayoutView >> beEditablePane2 [
 	| wrappers |
 
 	wrappers := SlmdItemWrapperView all.
-	wrappers do: [ :each | each wrappedView setEditable: true ]
+	wrappers do: [ :each |
+		each wrappedView
+			setEditable: true;
+			"setFocus;"
+			yourself ]
 
 ]
 
@@ -400,9 +418,12 @@ SlmdResponsiveLayoutView >> doAction: aNavAction [
 
 	arg1 := aNavAction at: #arg1.
 
-	arg1 = 'update' ifTrue: [
+	"arg1 = 'update' ifTrue: [
 		self logTrace: aNavAction printString aspect: 'doAction:(update3)' level: 3.
-		self beEditablePane2 ].
+		self beEditablePane2 ]."
+
+	arg1 = 'update' ifTrue: [
+		self serverAnnounce: (CpActionRequested id: #action parameters: { #type -> arg1 } asDictionary) ].
 
 	arg1 = 'save' ifTrue: [ | changes paneContentView |
 		paneContentView := self pane2View paneContentView.
@@ -995,12 +1016,12 @@ SlmdResponsiveLayoutView >> themeUpdate [
 '.
 		self colorThemeFrom: self colorThemeName asString on: s.
 		"s nextPutAll: '--sl-focus-ring-style: none;'.
-		s nextPutAll: '--sl-input-background-color: cyan;'.
-		s nextPutAll: '--sl-input-background-color-hover red;'.
-		s nextPutAll: '--sl-input-background-color-focus: yellow;'.
-		s nextPutAll: '--sl-input-filled-background-color: cyan;'.
-		s nextPutAll: '--sl-input-filled-background-color-hover red;'.
-		s nextPutAll: '--sl-input-filled-background-color-focus: yellow;'."
+		s nextPutAll: '--sl-input-color: #1D1B20;'.
+		s nextPutAll: '--sl-input-color-disabled: #1D1B20;'.
+		s nextPutAll: '--sl-input-background-color-focus: #E6E0E9;'.
+		s nextPutAll: '--sl-input-filled-color: #1D1B20;'.
+		s nextPutAll: '--sl-input-filled-color-disabled: #1D1B20;'.
+		s nextPutAll: '--sl-input-filled-background-color-focus: #E6E0E9;'."
 		s nextPutAll: '
 }
 ' ]

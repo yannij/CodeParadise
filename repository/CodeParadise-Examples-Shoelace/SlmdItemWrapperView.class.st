@@ -5,6 +5,18 @@ Class {
 }
 
 { #category : #'web resources' }
+SlmdItemWrapperView class >> style [
+
+	<webResource: #css>
+
+	^ '
+#container {
+  display: flex;
+}
+'
+]
+
+{ #category : #'web resources' }
 SlmdItemWrapperView class >> template [
 
 	<webResource: #html>

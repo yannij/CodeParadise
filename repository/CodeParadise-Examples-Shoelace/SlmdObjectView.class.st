@@ -2,7 +2,8 @@ Class {
 	#name : #SlmdObjectView,
 	#superclass : #SlmdLayoutComponentView,
 	#instVars : [
-		'fieldElements'
+		'fieldElements',
+		'memento'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
@@ -12,10 +13,11 @@ SlmdObjectView >> changeMap [
 	| map |
 
 	map := Dictionary new.
-	self fieldElements valuesDo: [ :each |
-		map at: each name put: each value.
-		each class = SlSwitch ifTrue: [
-			map at: each name put: each isChecked ] ].
+	self fieldElements valuesDo: [ :each | | oldValue newValue |
+		oldValue := self memento at: each name.
+		newValue := each slmdValue.
+		oldValue ~= newValue ifTrue: [
+			map at: each name put: each slmdValue ] ].
 	^ map
 ]
 
@@ -33,6 +35,7 @@ SlmdObjectView >> fieldAt: key label: aLabel switch: aBoolean [
 		disabled: true;
 		yourself.
 
+	self mementoAt: key put: aBoolean.
 	^ self fieldElementsAt: key put: element
 ]
 
@@ -51,6 +54,7 @@ SlmdObjectView >> fieldAt: key label: aLabel text: aText [
 		attributeAdd: #filled;
 		yourself.
 
+	self mementoAt: key put: aText.
 	^ self fieldElementsAt: key put: element
 
 ]
@@ -71,6 +75,7 @@ SlmdObjectView >> fieldAt: key label: aLabel textarea: aText [
 		attributeAdd: #filled;
 		yourself.
 
+	self mementoAt: key put: aText.
 	^ self fieldElementsAt: key put: element
 
 ]
@@ -98,8 +103,27 @@ SlmdObjectView >> initialize [
 
 	super initialize.
 
+	memento := OrderedDictionary new.
 	fieldElements := OrderedDictionary new.
 
+]
+
+{ #category : #accessing }
+SlmdObjectView >> memento [
+
+	^ memento
+]
+
+{ #category : #accessing }
+SlmdObjectView >> memento: anObject [
+
+	memento := anObject
+]
+
+{ #category : #accessing }
+SlmdObjectView >> mementoAt: key put: element [
+
+	^ self memento at: key put: element
 ]
 
 { #category : #rendering }
@@ -110,12 +134,14 @@ SlmdObjectView >> setEditable: aBoolean [
 	first := true.
 	self fieldElements valuesDo: [ :each |
 		self logTrace: each name asString.
-		"(first and: [ aBoolean ])" index = 2 ifTrue: [
+		each disabled: aBoolean not.
+		"(first and: [ aBoolean ])" each name = 'date' ifTrue: [
 			self logTrace: 'focus() - ', each printString.
 			each focus.
+			"each attributeAt: 'autofocus' put: true."
+			"each autofocus: true."
 			first := false ].
 		"each removeAttributeAt: #readonly"
-		index := index + 1.
-		each disabled: aBoolean not ].
+		index := index + 1 ].
 
 ]

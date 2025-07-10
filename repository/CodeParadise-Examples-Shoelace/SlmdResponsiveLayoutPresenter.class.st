@@ -11,6 +11,10 @@ SlmdResponsiveLayoutPresenter >> handleActionEvent: anObject [
 	type := anObject parameterAt: #type.
 	self logTrace: 'Layout>>handleActionEvent: ', anObject printString.
 
+	type = 'update' ifTrue: [
+		self logTrace: 'update' method: 'handleActionEvent:'.
+		self view beEditablePane2 ].
+
 	type = 'delete' ifTrue: [ | listDetail |
 		self view primaryPaneOnly.
 		listDetail := self application pane1Model paneContent.
@@ -23,7 +27,7 @@ SlmdResponsiveLayoutPresenter >> handleActionEvent: anObject [
 		self application setDetailAddNew.
 		self application pane2Model valueChanged.
 		self view beEditablePane2.
-		self view secondaryPaneOnly ]
+		self view secondaryPaneOnly ].
 
 ]
 

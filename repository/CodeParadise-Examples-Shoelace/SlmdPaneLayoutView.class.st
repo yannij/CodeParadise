@@ -164,9 +164,14 @@ SlmdPaneLayoutView >> useSinglePaneLayout [
 	"self traceCr: 'View: useSinglePaneLayout'."
 	isUsingSinglePaneLayout := true.
 	self shadowElementId: 'smdTwoPaneLayout' show: false.
+	self moveChildrenFromSlot: 'twoPaneLayoutP1' to: 'singlePaneLayoutP1'.
+	self moveChildrenFromSlot: 'twoPaneLayoutP2' to: 'singlePaneLayoutP2'.
 	self shadowElementId: 'smdSinglePaneLayout' show: true.
 	self primaryPaneOnly.
-	self layoutViewLazy appBar2LeadingButtonDisplay: true.
+	self layoutViewLazy
+		appBar2Display: true;
+		"appBar2LeadingButtonDisplay: true;"
+		yourself.
 
 ]
 
@@ -176,9 +181,13 @@ SlmdPaneLayoutView >> useTwoPaneLayout [
 	"self traceCr: 'View: useTwoPaneLayout'."
 	isUsingSinglePaneLayout := false.
 	self shadowElementId: 'smdSinglePaneLayout' show: false.
+	self moveChildrenFromSlot: 'singlePaneLayoutP1' to: 'twoPaneLayoutP1'.
+	self moveChildrenFromSlot: 'singlePaneLayoutP2' to: 'twoPaneLayoutP2'.
 	self shadowElementId: 'smdTwoPaneLayout' show: true.
 	self layoutViewLazy
 		floatingToolbarOn;
-		appBar2LeadingButtonDisplay: false.
+		appBar2Display: false;
+		"appBar2LeadingButtonDisplay: false;"
+		yourself.
 
 ]

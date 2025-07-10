@@ -37,11 +37,11 @@ TBPostModel >> applyChanges: changes [
 
 	post := self.
 
-	post title: (changes at: 'title').
-	post text: (changes at: 'text').
-	"post date: post date asString."
-	post category: (changes at: 'category').
-	post visible: (changes at: 'visible').
+	changes at: 'title' ifPresent: [ :value | post title: value ].
+	changes at: 'text' ifPresent: [ :value | post text: value ].
+	"changes at: 'date' ifPresent: [ :value | post date: value ]."
+	changes at: 'category' ifPresent: [ :value | post category: value ].
+	changes at: 'visible' ifPresent: [ :value | post visible: value ].
 	post valueChanged.
 	"self application pane1Model paneContent valueChanged."
 

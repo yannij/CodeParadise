@@ -101,7 +101,11 @@ SlmdAppBarView >> actionItemsInitialize [
 { #category : #rendering }
 SlmdAppBarView >> appBarDisplay: aBoolean [
 
-	self element: self show: aBoolean
+	"self element: self show: aBoolean"
+	
+	aBoolean
+		ifTrue: [ self removeStyleAt: 'display' ]
+		ifFalse: [ self styleAt: 'display' put: 'none' ]
 ]
 
 { #category : #rendering }

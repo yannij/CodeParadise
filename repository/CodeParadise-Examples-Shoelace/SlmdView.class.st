@@ -200,8 +200,7 @@ SlmdView >> iconButtonForAction: aNavAction css: cssClass [
 	iconName := aNavAction at: #iconName.
 
 	tag := #div asHtmlTag
-		when: CpClickEvent basicPrimary do: [ self executeNavAction: aNavAction ] for: self;
-		appendChild: (self iconButtonNamed: iconName class: 'smd-toolbar-icon');
+		appendChild: (self iconButtonNamed: iconName class: 'smd-toolbar-icon' navAction: aNavAction);
 		yourself.
 
 	cssClass ifNotNil: [ tag addClass: cssClass ].
@@ -210,9 +209,10 @@ SlmdView >> iconButtonForAction: aNavAction css: cssClass [
 ]
 
 { #category : #utilities }
-SlmdView >> iconButtonNamed: iconName class: cssClass [
+SlmdView >> iconButtonNamed: iconName class: cssClass navAction: aNavAction [
 
 	^ (SlIconButton named: iconName)
+		when: CpClickEvent primary do: [ :event | self executeNavAction: aNavAction ] for: self;
 		addClass: cssClass;
 		yourself
 ]

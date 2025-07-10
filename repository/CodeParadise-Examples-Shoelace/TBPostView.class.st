@@ -22,9 +22,13 @@ TBPostView class >> globalStyle [
   --sl-focus-ring-style: none;
 }
 
+.slmd-input::part(input):disabled, .slmd-textarea::part(textarea):disabled {
+  --sl-input-color: #000000;
+}
+
 sl-input, sl-textarea {
-  --sl-input-filled-background-color-focus: yellow;
   box-sizing: content-box;
+  --sl-input-filled-background-color-focus: #E6E0E9;
 }
 
 sl-input {
@@ -32,6 +36,12 @@ sl-input {
 }
 
 sl-card.tblog-post::part(header) {
+  display: flex;
+  flex-direction: row nowrap;
+  margin-left: auto;
+}
+
+sl-card.tblog-post::part(footer) {
   display: flex;
   flex-direction: row nowrap;
   margin-left: auto;
@@ -48,7 +58,7 @@ sl-card.tblog-post::part(body){
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 0;
+  padding: 0 8px;
 }
 '
 , self globalStyleInput
@@ -97,7 +107,7 @@ TBPostView class >> globalStyleInput [
 .slmd-input::part(form-control-help-text) {
   position: absolute; bottom: 0; left: 0;
   height: 16px;
-  width: 100%;
+  width: calc(100% - 32px);
   font-size: 12px;
   padding: 4px 16px 0 16px;
   background: var(--sl-color-primary-100);
@@ -164,7 +174,7 @@ TBPostView class >> globalStyleTextarea [
 
 .slmd-textarea::part(form-control-help-text) {
   height: 16px;
-  width: 100%;
+  width: calc(100% - 32px);
   font-size: 12px;
   padding: 4px 16px 0 16px;
   background: var(--sl-color-primary-100);
@@ -209,13 +219,15 @@ TBPostView >> renderCardTitle: title text: text date: date category: category vi
 		appendChild: (self fieldAt: 'visible' label: 'Visible' switch: visible);
 		yourself.
 
-	"card replaceAllChildrenWith: self headerElements atSlotNamed: #header."
 	navAction := self layoutViewLazy actionItems at: #crudDelete.
 	card appendChild: (self iconButtonForAction: navAction css: 'cssClass') atSlotNamed: #header.
 	navAction := self layoutViewLazy actionItems at: #crudUpdate.
 	card appendChild: (self iconButtonForAction: navAction css: 'cssClass') atSlotNamed: #header.
+
 	navAction := self layoutViewLazy actionItems at: #crudSave.
-	card appendChild: (self iconButtonForAction: navAction css: 'cssClass') atSlotNamed: #header.
+	card appendChild: (self iconButtonForAction: navAction css: 'cssClass') atSlotNamed: #footer.
+	navAction := self layoutViewLazy actionItems at: #crudCancel.
+	card appendChild: (self iconButtonForAction: navAction css: 'cssClass') atSlotNamed: #footer.
 
 	self replaceAllChildrenWith: card atSlotNamed: 'card'.
 
