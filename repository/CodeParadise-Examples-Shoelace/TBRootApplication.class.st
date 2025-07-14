@@ -76,7 +76,7 @@ TBRootApplication >> setDetailAddNew [
 	detail := SlmdItemWrapperModel onNewModel: TBPostModel new.
 
 	self pane1Model paneContent detail: detail.
-	self pane2Model paneContent: detail.
+	self pane2Model setPaneContent: detail.
 
 ]
 
@@ -86,9 +86,8 @@ TBRootApplication >> setDetailWithIndex: index [
 
 	list := self pane1Model paneContent list.
 	detail := list at: index.
-	"detail := list at: (list size atRandom \\ list size) + 1."
 
 	self pane1Model paneContent detail: detail.
-	self pane2Model paneContent: detail.
+	self pane2Model setPaneContent: detail.
 
 ]

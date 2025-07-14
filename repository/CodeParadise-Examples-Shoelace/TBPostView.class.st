@@ -35,30 +35,12 @@ sl-input {
   --sl-input-height-medium: 56px;
 }
 
-sl-card.tblog-post::part(header) {
-  display: flex;
-  flex-direction: row nowrap;
-  margin-left: auto;
-}
-
-sl-card.tblog-post::part(footer) {
-  display: flex;
-  flex-direction: row nowrap;
-  margin-left: auto;
-}
-
-sl-card.tblog-post::part(base) {
-  display: flex;
-  min-width: 400px;
-  width: 100%;
-  background: var(--sl-color-primary-100);
-}
-
-sl-card.tblog-post::part(body){
+.tblog-post{
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 0 8px;
+  padding: 8px;
+  background: var(--sl-color-primary-200);
 }
 '
 , self globalStyleInput
@@ -110,7 +92,7 @@ TBPostView class >> globalStyleInput [
   width: calc(100% - 32px);
   font-size: 12px;
   padding: 4px 16px 0 16px;
-  background: var(--sl-color-primary-100);
+  background: var(--sl-color-primary-200);
 }
 '
 ]
@@ -131,7 +113,7 @@ TBPostView class >> globalStyleSwitch [
   width: 100%;
   font-size: 12px;
   padding: 4px 16px 0 16px;
-  background: var(--sl-color-primary-100);
+  background: var(--sl-color-primary-200);
 }
 '
 ]
@@ -177,7 +159,7 @@ TBPostView class >> globalStyleTextarea [
   width: calc(100% - 32px);
   font-size: 12px;
   padding: 4px 16px 0 16px;
-  background: var(--sl-color-primary-100);
+  background: var(--sl-color-primary-200);
 }
 '
 ]
@@ -206,28 +188,18 @@ TBPostView class >> template [
 ]
 
 { #category : #rendering }
-TBPostView >> renderCardTitle: title text: text date: date category: category visible: visible [
-	| card navAction |
+TBPostView >> fieldsSetUp: props [
+	| card |
 
 	fieldElements := OrderedDictionary new.
-	card := SlCard new
+	card := #div asHtmlTag
 		addClass: 'tblog-post';
-		appendChild: (self fieldAt: 'title' label: 'Title' text: title);
-		appendChild: (self fieldAt: 'text' label: 'Text' textarea: text);
-		appendChild: (self fieldAt: 'date' label: 'Date' text: date);
-		appendChild: (self fieldAt: 'category' label: 'Category' text: category);
-		appendChild: (self fieldAt: 'visible' label: 'Visible' switch: visible);
+		appendChild: (self fieldAt: 'title' label: 'Title' text: (props at: 'title'));
+		appendChild: (self fieldAt: 'text' label: 'Text' textarea: (props at: 'text'));
+		appendChild: (self fieldAt: 'date' label: 'Date' text: (props at: 'date'));
+		appendChild: (self fieldAt: 'category' label: 'Category' text: (props at: 'category'));
+		appendChild: (self fieldAt: 'visible' label: 'Visible' switch: (props at: 'visible'));
 		yourself.
-
-	navAction := self layoutViewLazy actionItems at: #crudDelete.
-	card appendChild: (self iconButtonForAction: navAction css: 'cssClass') atSlotNamed: #header.
-	navAction := self layoutViewLazy actionItems at: #crudUpdate.
-	card appendChild: (self iconButtonForAction: navAction css: 'cssClass') atSlotNamed: #header.
-
-	navAction := self layoutViewLazy actionItems at: #crudSave.
-	card appendChild: (self iconButtonForAction: navAction css: 'cssClass') atSlotNamed: #footer.
-	navAction := self layoutViewLazy actionItems at: #crudCancel.
-	card appendChild: (self iconButtonForAction: navAction css: 'cssClass') atSlotNamed: #footer.
 
 	self replaceAllChildrenWith: card atSlotNamed: 'card'.
 

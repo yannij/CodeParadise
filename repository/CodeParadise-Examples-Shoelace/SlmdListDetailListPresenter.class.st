@@ -20,7 +20,6 @@ SlmdListDetailListPresenter >> setDetail: request [
 
 	self view secondaryPaneOnly.
 	self application setDetailWithIndex: (request parameterAt: #index).
-	self application pane2Model valueChanged.
 
 ]
 

@@ -18,8 +18,9 @@ SlmdListDetailListView class >> globalStyle [
 .smd-item {
   display: flex;
   height: 40px;
-  padding: 8px 15px;
+  padding: 8px 16px;
   background: var(--sl-color-primary-200);
+  border-top: 1px solid var(--sl-color-neutral-400);
 }
 
 .smd-item-icon {

@@ -4,6 +4,13 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
 
+{ #category : #converting }
+SlmdObjectModel >> asProperties [
+	"Subclasses may override"
+
+	^ Dictionary new
+]
+
 { #category : #rendering }
 SlmdObjectModel >> handleDelete: anObject [
 
@@ -21,5 +28,12 @@ SlmdObjectModel >> handleSave: anObject [
 
 	changes := anObject parameters at: #changes.
 	self applyChanges: changes.
+
+]
+
+{ #category : #rendering }
+SlmdObjectModel >> handleUpdate: anObject [
+
+	self traceCr: anObject printString.
 
 ]

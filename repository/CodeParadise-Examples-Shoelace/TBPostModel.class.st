@@ -47,6 +47,18 @@ TBPostModel >> applyChanges: changes [
 
 ]
 
+{ #category : #converting }
+TBPostModel >> asProperties [
+
+	^ Dictionary new
+		at: 'title' put: self title;
+		at: 'text' put: self text;
+		at: 'date' put: self date asString;
+		at: 'category' put: self category;
+		at: 'visible' put: self visible;
+		yourself
+]
+
 { #category : #blinking }
 TBPostModel >> beVisible [
    self visible: true

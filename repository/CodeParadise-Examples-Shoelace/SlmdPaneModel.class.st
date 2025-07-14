@@ -71,3 +71,11 @@ SlmdPaneModel >> paneContent: anObject [
 
 	paneContent := anObject
 ]
+
+{ #category : #accessing }
+SlmdPaneModel >> setPaneContent: anObject [
+
+	self paneContent: anObject.
+	self valueChanged.
+
+]

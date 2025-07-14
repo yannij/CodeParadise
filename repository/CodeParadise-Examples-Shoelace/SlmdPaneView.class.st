@@ -11,9 +11,7 @@ SlmdPaneView class >> style [
 
 	^ '
 .smd-pane-content {
-  padding: 8px;
-  border-radius: 16px;
-  background: var(--sl-color-primary-50);
+  background: var(--sl-color-primary-100);
   overflow-x: auto;
   overflow-y: auto;
 }

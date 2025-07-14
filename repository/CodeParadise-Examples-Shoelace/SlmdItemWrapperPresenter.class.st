@@ -11,6 +11,9 @@ SlmdItemWrapperPresenter >> handleActionEvent: anObject [
 	self logTrace: anObject printString method: 'handleActionEvent:'.
 	type := anObject parameterAt: #type.
 
+	type = 'update' ifTrue: [
+		self model wrappedModel handleUpdate: anObject ].
+
 	type = 'delete' ifTrue: [
 		self model wrappedModel handleDelete: anObject ].
 
@@ -26,6 +29,8 @@ SlmdItemWrapperPresenter >> handleActionEvent: anObject [
 
 { #category : #rendering }
 SlmdItemWrapperPresenter >> renderView [
+
+	self view renderButtons.
 
 	self
 		renderChildViewForModel: self model wrappedModel

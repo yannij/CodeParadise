@@ -13,14 +13,14 @@ SlmdResponsiveLayoutPresenter >> handleActionEvent: anObject [
 
 	type = 'update' ifTrue: [
 		self logTrace: 'update' method: 'handleActionEvent:'.
+		self application pane2Model valueChanged.
 		self view beEditablePane2 ].
 
 	type = 'delete' ifTrue: [ | listDetail |
 		self view primaryPaneOnly.
 		listDetail := self application pane1Model paneContent.
 		listDetail removeDetail.
-		self application setDetailWithIndex: 1.
-		self application pane2Model valueChanged ].
+		self application setDetailWithIndex: 1 ].
 
 	type = 'create' ifTrue: [
 		self logTrace: 'create' method: 'handleActionEvent:'.
