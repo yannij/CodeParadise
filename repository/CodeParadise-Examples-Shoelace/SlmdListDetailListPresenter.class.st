@@ -16,7 +16,7 @@ SlmdListDetailListPresenter >> renderView [
 { #category : #initialization }
 SlmdListDetailListPresenter >> setDetail: request [
 
-	self logTrace: request printString method: 'setDetail:'.
+	self logTrace5: request printString method: 'setDetail:'.
 
 	self view secondaryPaneOnly.
 	self application setDetailWithIndex: (request parameterAt: #index).
@@ -26,6 +26,6 @@ SlmdListDetailListPresenter >> setDetail: request [
 { #category : #view }
 SlmdListDetailListPresenter >> viewCreated [
 
-	self view when: (CpActionRequested id: #detail parameterKeys: #(#index)) send: #setDetail: to: self.
+	self view when: (SlmdNavActionRequest id: #detail parameterKeys: #(#index)) send: #setDetail: to: self.
 
 ]

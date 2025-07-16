@@ -76,8 +76,8 @@ SlmdListDetailListView >> secondaryPaneOnly [
 { #category : #rendering }
 SlmdListDetailListView >> setDetail: index [
 
-	self logTrace: index printString method: 'setDetail:'.
+	self logTrace5: index printString method: 'setDetail:'.
 
-	self serverAnnounce: (CpActionRequested id: #detail parameters: { #index -> index } asDictionary).
+	self serverAnnounce: (SlmdNavActionRequest id: #detail parameters: { #index -> index } asDictionary).
 
 ]

@@ -256,7 +256,7 @@ SlmdResponsiveLayoutView >> adjustBodyHeight [
 SlmdResponsiveLayoutView >> appBar2Display: anObject [
 	| components |
 
-	self logTrace: anObject printString method: 'appBar2Display:'.
+	self logTrace5: anObject printString method: 'appBar2Display:'.
 	components := SlmdAppBarView all.
 
 	components do: [ :each |
@@ -282,7 +282,7 @@ SlmdResponsiveLayoutView >> appBar2LeadingButtonDisplay: anObject [
 SlmdResponsiveLayoutView >> appBarDisplay: anObject [
 	| components |
 
-	self logTrace: anObject printString method: 'appBarDisplay:'.
+	self logTrace5: anObject printString method: 'appBarDisplay:'.
 	components := SlmdAppBarView all.
 
 	components do: [ :each |
@@ -362,7 +362,7 @@ SlmdResponsiveLayoutView >> bodySplitPanelAdapt [
 { #category : #'color theme' }
 SlmdResponsiveLayoutView >> colorThemeAdapt: aColorName [
 
-	self logTrace: aColorName printString method: 'colorThemeAdapt:'.
+	self logTrace5: aColorName printString method: 'colorThemeAdapt:'.
 	aColorName ifNil: [ ^ self ].
 	self updateGlobalStyle.
 
@@ -414,7 +414,7 @@ SlmdResponsiveLayoutView >> doAction: aNavAction [
 	(aNavAction at: #actionName) ~= #action ifTrue: [ ^ self ].
 
 	(aNavAction at: #id) = #refresh ifTrue: [
-		self serverAnnounce: (CpActionRequested id: #navigate parameters: { #refresh -> nil } asDictionary) ].
+		self serverAnnounce: (SlmdNavActionRequest navWith: { #refresh -> nil } asDictionary) ].
 
 	arg1 := aNavAction at: #arg1.
 
@@ -423,19 +423,19 @@ SlmdResponsiveLayoutView >> doAction: aNavAction [
 		self beEditablePane2 ]."
 
 	arg1 = 'update' ifTrue: [
-		self serverAnnounce: (CpActionRequested id: #action parameters: { #type -> arg1 } asDictionary) ].
+		self serverAnnounce: (SlmdNavActionRequest actionWith: { #type -> arg1 } asDictionary) ].
 
 	arg1 = 'save' ifTrue: [ | changes paneContentView |
 		paneContentView := self pane2View paneContentView.
 		paneContentView ifNil: [ ^ self ].
 		changes := paneContentView wrappedView changeMap.
-		paneContentView serverAnnounce: (CpActionRequested id: #action parameters: { #type -> arg1. #changes -> changes } asDictionary) ].
+		paneContentView serverAnnounce: (SlmdNavActionRequest actionWith: { #type -> arg1. #changes -> changes } asDictionary) ].
 
 	arg1 = 'create' ifTrue: [
-		self serverAnnounce: (CpActionRequested id: #action parameters: { #type -> arg1 } asDictionary) ].
+		self serverAnnounce: (SlmdNavActionRequest actionWith: { #type -> arg1 } asDictionary) ].
 
 	arg1 = 'delete' ifTrue: [
-		self serverAnnounce: (CpActionRequested id: #action parameters: { #type -> arg1 } asDictionary) ].
+		self serverAnnounce: (SlmdNavActionRequest actionWith: { #type -> arg1 } asDictionary) ].
 
 ]
 
@@ -553,7 +553,7 @@ SlmdResponsiveLayoutView >> layoutAdaptToWidth [
 SlmdResponsiveLayoutView >> layoutInitialSetUp: props [
 	"Invoked by presenter's viewCreated"
 
-	self logTrace: props printString method: 'layoutInitialSetUp:'.
+	self logTrace5: props printString method: 'layoutInitialSetUp:'.
 	self resizeSetUp.
 
 	self colorThemeAdapt: (props at: #colorThemeName ifAbsent: []).
@@ -684,7 +684,7 @@ SlmdResponsiveLayoutView >> layoutType: anObject [
 SlmdResponsiveLayoutView >> layoutTypeAdapt: aLayoutType [
 	| props |
 
-	self logTrace: aLayoutType printString method: 'layoutTypeAdapt:'.
+	self logTrace5: aLayoutType printString method: 'layoutTypeAdapt:'.
 
 	aLayoutType = self class layoutTypeCompact ifTrue: [
 		props := self layoutProfileCompact ].
@@ -752,7 +752,7 @@ SlmdResponsiveLayoutView >> navRailExpanded: anObject [
 SlmdResponsiveLayoutView >> navRailExpandedAdapt: aBoolean [
 	| modalElement navComponent |
 
-	self logTrace: aBoolean printString method: 'navRailExpandedAdapt:'.
+	self logTrace5: aBoolean printString method: 'navRailExpandedAdapt:'.
 
 	"Set type in nav view"
 	navComponent := SlmdNavRailView first.
@@ -891,7 +891,7 @@ SlmdResponsiveLayoutView >> showAppBar: anObject [
 { #category : #toolbar }
 SlmdResponsiveLayoutView >> showAppBarAdapt: aBoolean [
 
-	self logTrace: aBoolean printString method: 'showAppBarAdapt:'.
+	self logTrace5: aBoolean printString method: 'showAppBarAdapt:'.
 
 	self appBarDisplay: aBoolean.
 
@@ -912,7 +912,7 @@ SlmdResponsiveLayoutView >> showDockedToolbar: anObject [
 { #category : #toolbar }
 SlmdResponsiveLayoutView >> showDockedToolbarAdapt: aBoolean [
 
-	self logTrace: aBoolean printString method: 'showDockedToolbarAdapt:'.
+	self logTrace5: aBoolean printString method: 'showDockedToolbarAdapt:'.
 
 	self toolbarDockedDisplay: aBoolean.
 
@@ -933,7 +933,7 @@ SlmdResponsiveLayoutView >> showFloatingToolbar: anObject [
 { #category : #toolbar }
 SlmdResponsiveLayoutView >> showFloatingToolbarAdapt: aBoolean [
 
-	self logTrace: aBoolean printString method: 'showFloatingToolbarAdapt:'.
+	self logTrace5: aBoolean printString method: 'showFloatingToolbarAdapt:'.
 
 	self toolbarFloatingDisplay: aBoolean.
 
@@ -955,7 +955,7 @@ SlmdResponsiveLayoutView >> showNavBar: anObject [
 SlmdResponsiveLayoutView >> showNavBarAdapt: aBoolean [
 	| fabView |
 
-	self logTrace: aBoolean printString method: 'showNavBarAdapt:'.
+	self logTrace5: aBoolean printString method: 'showNavBarAdapt:'.
 
 	self navBarDisplay: aBoolean.
 
@@ -992,7 +992,7 @@ SlmdResponsiveLayoutView >> showSidesheet: anObject [
 { #category : #sidesheet }
 SlmdResponsiveLayoutView >> showSidesheetAdapt: aBoolean [
 
-	self logTrace: aBoolean printString method: 'showSidesheetAdapt:'.
+	self logTrace5: aBoolean printString method: 'showSidesheetAdapt:'.
 
 	self sidesheetDisplay: aBoolean.
 
@@ -1050,7 +1050,7 @@ SlmdResponsiveLayoutView >> toolbarFloatingDisplay: aBoolean [
 { #category : #initialization }
 SlmdResponsiveLayoutView >> updateGlobalStyle [
 
-	self logTrace: 'colorThemeName = ', self colorThemeName printString method: 'updateGlobalStyle'.
+	self logTrace5: 'colorThemeName = ', self colorThemeName printString method: 'updateGlobalStyle'.
 	CpHtmlElement documentAddStyle: self themeUpdate.
 
 ]
@@ -1082,7 +1082,7 @@ SlmdResponsiveLayoutView >> useModalNav: anObject [
 { #category : #navrail }
 SlmdResponsiveLayoutView >> useModalNavAdapt: aBoolean [
 
-	self logTrace: aBoolean printString method: 'useModalNavAdapt:'.
+	self logTrace5: aBoolean printString method: 'useModalNavAdapt:'.
 
 	self navRegionDisplay: aBoolean not.
 	self bodySplitPanelAdapt.
@@ -1105,7 +1105,7 @@ SlmdResponsiveLayoutView >> useTwoPaneBody: anObject [
 SlmdResponsiveLayoutView >> useTwoPaneBodyAdapt: aBoolean [
 	| component |
 
-	self logTrace: aBoolean printString method: 'useTwoPaneBodyAdapt:'.
+	self logTrace5: aBoolean printString method: 'useTwoPaneBodyAdapt:'.
 
 	component := SlmdPaneLayoutView first.
 	component ifNotNil: [

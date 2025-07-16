@@ -3,7 +3,8 @@ Class {
 	#superclass : #SlmdModel,
 	#instVars : [
 		'index',
-		'wrappedModel'
+		'wrappedModel',
+		'crudState'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3ListDetail'
 }
@@ -23,6 +24,42 @@ SlmdItemWrapperModel class >> onNewModel: aModel [
 	^ self on: aModel atIndex: nil
 ]
 
+{ #category : #states }
+SlmdItemWrapperModel >> beCreating [
+
+	self crudState: #creating
+]
+
+{ #category : #states }
+SlmdItemWrapperModel >> beDeleting [
+
+	self crudState: #deleting
+]
+
+{ #category : #states }
+SlmdItemWrapperModel >> beReading [
+
+	self crudState: #reading
+]
+
+{ #category : #states }
+SlmdItemWrapperModel >> beUpdating [
+
+	self crudState: #updating
+]
+
+{ #category : #accessing }
+SlmdItemWrapperModel >> crudState [
+
+	^ crudState
+]
+
+{ #category : #accessing }
+SlmdItemWrapperModel >> crudState: anObject [
+
+	crudState := anObject
+]
+
 { #category : #accessing }
 SlmdItemWrapperModel >> index [
 
@@ -35,10 +72,43 @@ SlmdItemWrapperModel >> index: anObject [
 	index := anObject
 ]
 
+{ #category : #initialization }
+SlmdItemWrapperModel >> initialize [
+
+	super initialize.
+
+	crudState := #reading.
+
+]
+
+{ #category : #testing }
+SlmdItemWrapperModel >> isCreating [
+
+	^ self crudState = #creating
+]
+
+{ #category : #testing }
+SlmdItemWrapperModel >> isDeleting [
+
+	^ self crudState = #deleting
+]
+
 { #category : #testing }
 SlmdItemWrapperModel >> isNew [
 
 	^ self index isNil
+]
+
+{ #category : #testing }
+SlmdItemWrapperModel >> isReading [
+
+	^ self crudState = #reading
+]
+
+{ #category : #testing }
+SlmdItemWrapperModel >> isUpdating [
+
+	^ self crudState = #updating
 ]
 
 { #category : #accessing }

@@ -11,7 +11,7 @@ SlmdPaneContentView class >> template [
 
 	^ '
 <div id="container">
-  <div class="smd-pane-content">
+  <div class="smd-pane-content" style="padding: 8px">
     <slot name="content"></slot>
   </div>
 </div>

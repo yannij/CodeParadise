@@ -8,9 +8,15 @@ Class {
 }
 
 { #category : #accessing }
-SlmdView class >> eventIdModelUpdate [
+SlmdView class >> eventAspectCrud [
 
-	^ #modelUpdate
+	^ #crud
+]
+
+{ #category : #accessing }
+SlmdView class >> eventAspectSettings [
+
+	^ #settings
 ]
 
 { #category : #accessing }
@@ -28,44 +34,20 @@ SlmdView class >> traceLevel: anObject [
 { #category : #events }
 SlmdView >> announceAspect: key value: anObject [
 
-	self announceEvent: self class eventIdModelUpdate key: key value: anObject
-]
+	self logTraceAnnouncement: self class eventAspectSettings printString, ': ', key printString, ' -> ', anObject printString.
 
-{ #category : #events }
-SlmdView >> announceEvent: id key: key value: anObject [
-
-	self logTraceAnnouncement: id printString, ': ', key printString, ' -> ', anObject printString.
-
-	self serverAnnounce: (CpActionRequested
-		id: id
+	self serverAnnounce: (SlmdNavActionRequest
+		id: self class eventAspectSettings
 		parameters: {
 			#aspect -> key.
 			#value -> anObject
 		} asDictionary).
+
 ]
 
 { #category : #'actions - nav' }
 SlmdView >> doAction: aNavAction [
 	"Subclasses may specialize"
-]
-
-{ #category : #'actions - nav' }
-SlmdView >> doNavBack [
-	| paneLayout |
-
-	self serverAnnounce: (CpActionRequested id: #navigate parameters: { #back -> nil } asDictionary).
-
-	"paneLayout := SlmdPaneLayoutView first.
-	paneLayout ifNotNil: [
-		paneLayout primaryPaneOnly ]."
-
-]
-
-{ #category : #'actions - nav' }
-SlmdView >> doNavTo: aString [
-
-	self serverAnnounce: (CpActionRequested id: #navigate parameters: { #to -> aString } asDictionary).
-
 ]
 
 { #category : #utilities }
@@ -128,14 +110,12 @@ SlmdView >> executeNavAction: aNavAction [
 		^ self modalSettingsOpen ].
 	navId = #modalNavButton ifTrue: [
 		^ self modalNavOpen ].
-	navId = #backNavButton ifTrue: [
-		^ self doNavBack ].
 
 	(aNavAction at: #actionName) = #action ifTrue: [
 		^ self doAction: aNavAction ].
 
 	arg1 := aNavAction at: #arg1.
-	self doNavTo: arg1.
+	self serverAnnounce: (SlmdNavActionRequest navWith: { #to -> arg1 } asDictionary).
 
 ]
 
@@ -242,9 +222,15 @@ SlmdView >> logTrace5: aString [
 ]
 
 { #category : #logging }
+SlmdView >> logTrace5: aString method: methodName [
+
+	self logTrace: aString aspect: self class name, '>>', methodName level: 5
+]
+
+{ #category : #logging }
 SlmdView >> logTrace5Method: methodName [
 
-	self logTrace5: self class name, '>>', methodName
+	self logTrace5: '' method: methodName
 ]
 
 { #category : #logging }
@@ -268,12 +254,6 @@ SlmdView >> logTrace: aString aspect: aspect level: level [
 	aspect
 		ifNil: [ self log: aString ]
 		ifNotNil: [ self log: '[', aspect, '] ', aString ]
-]
-
-{ #category : #logging }
-SlmdView >> logTrace: aString method: methodName [
-
-	self logTrace: aString aspect: self class name, '>>', methodName level: 3
 ]
 
 { #category : #logging }

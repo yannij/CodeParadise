@@ -8,7 +8,7 @@ Class {
 SlmdItemWrapperPresenter >> handleActionEvent: anObject [
 	| type |
 
-	self logTrace: anObject printString method: 'handleActionEvent:'.
+	self logTrace5: anObject printString method: 'handleActionEvent:'.
 	type := anObject parameterAt: #type.
 
 	type = 'update' ifTrue: [
@@ -42,6 +42,6 @@ SlmdItemWrapperPresenter >> viewCreated [
 
 	super viewCreated.
 
-	self view when: (CpActionRequested id: #action) send: #handleActionEvent: to: self.
+	self view when: SlmdNavActionRequest actionRequest send: #handleActionEvent: to: self.
 
 ]

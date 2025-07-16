@@ -34,14 +34,10 @@ SlmdPresenter >> handleActionEvent: anObject [
 ]
 
 { #category : #nav }
-SlmdPresenter >> handleNavBack: anObject [
-
-	self view primaryPaneOnly
-
-]
-
-{ #category : #nav }
 SlmdPresenter >> handleNavTo: anObject [
+
+	(anObject parameterAt: #to) = #back ifTrue: [
+		^ self view primaryPaneOnly ].
 
 	self application pane1Model handleActionRequest: anObject; valueChanged.
 
@@ -75,6 +71,12 @@ SlmdPresenter >> logTrace5: aString [
 ]
 
 { #category : #logging }
+SlmdPresenter >> logTrace5: aString method: methodName [
+
+	self logTrace: aString aspect: self class name, '>>', methodName level: 5
+]
+
+{ #category : #logging }
 SlmdPresenter >> logTrace: aString [
 
 	self logTrace: aString aspect: nil
@@ -95,12 +97,6 @@ SlmdPresenter >> logTrace: aString aspect: aspect level: level [
 	aspect
 		ifNil: [ self log: aString ]
 		ifNotNil: [ self log: '[', aspect, '] ', aString ]
-]
-
-{ #category : #logging }
-SlmdPresenter >> logTrace: aString method: methodName [
-
-	self logTrace: aString aspect: self class name, '>>', methodName level: 5
 ]
 
 { #category : #view }

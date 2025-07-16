@@ -1,32 +1,8 @@
 Class {
 	#name : #SlmdObjectPresenter,
 	#superclass : #SlmdPresenter,
-	#instVars : [
-		'isEditing'
-	],
 	#category : #'CodeParadise-Examples-Shoelace-TinyBlogApp'
 }
-
-{ #category : #initialization }
-SlmdObjectPresenter >> initialize [
-
-	super initialize.
-
-	isEditing := false.
-
-]
-
-{ #category : #accessing }
-SlmdObjectPresenter >> isEditing [
-
-	^ isEditing
-]
-
-{ #category : #accessing }
-SlmdObjectPresenter >> isEditing: anObject [
-
-	isEditing := anObject
-]
 
 { #category : #rendering }
 SlmdObjectPresenter >> renderView [
@@ -43,6 +19,6 @@ SlmdObjectPresenter >> viewCreated [
 
 	super viewCreated.
 
-	self view when: (CpActionRequested id: #action) send: #handleActionEvent: to: self.
+	self view when: SlmdNavActionRequest actionRequest send: #handleActionEvent: to: self.
 
 ]

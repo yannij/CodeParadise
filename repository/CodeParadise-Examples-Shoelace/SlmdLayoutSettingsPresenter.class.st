@@ -5,10 +5,10 @@ Class {
 }
 
 { #category : #view }
-SlmdLayoutSettingsPresenter >> handleViewAction: anObject [
+SlmdLayoutSettingsPresenter >> handleAspectSettings: anObject [
 	| aspect aspectValue |
 
-	self logTrace: anObject printString method: 'handleViewAction:'.
+	self logTrace5: anObject printString method: 'handleViewAction:'.
 	aspect := anObject parameterAt: #aspect.
 	aspectValue := anObject parameterAt: #value.
 
@@ -26,7 +26,7 @@ SlmdLayoutSettingsPresenter >> handleViewAction: anObject [
 SlmdLayoutSettingsPresenter >> layoutUpdate: props [
 	| m |
 
-	self logTrace: props printString method: 'layoutUpdate:'.
+	self logTrace5: props printString method: 'layoutUpdate:'.
 
 	m := self model.
 	props keysAndValuesDo: [ :k :v | | setAccessor |
@@ -44,7 +44,7 @@ SlmdLayoutSettingsPresenter >> viewCreated [
 	super viewCreated.
 
 	self view
-		when: (CpActionRequested id: SlmdView eventIdModelUpdate) send: #handleViewAction: to: self;
+		when: (SlmdNavActionRequest id: SlmdView eventAspectSettings) send: #handleAspectSettings: to: self;
 		yourself.
 
 ]

@@ -12,7 +12,7 @@ SlmdResponsiveLayoutPresenter >> handleActionEvent: anObject [
 	self logTrace: 'Layout>>handleActionEvent: ', anObject printString.
 
 	type = 'update' ifTrue: [
-		self logTrace: 'update' method: 'handleActionEvent:'.
+		self logTrace5: 'update' method: 'handleActionEvent:'.
 		self application pane2Model valueChanged.
 		self view beEditablePane2 ].
 
@@ -23,7 +23,7 @@ SlmdResponsiveLayoutPresenter >> handleActionEvent: anObject [
 		self application setDetailWithIndex: 1 ].
 
 	type = 'create' ifTrue: [
-		self logTrace: 'create' method: 'handleActionEvent:'.
+		self logTrace5: 'create' method: 'handleActionEvent:'.
 		self application setDetailAddNew.
 		self application pane2Model valueChanged.
 		self view beEditablePane2.
@@ -32,7 +32,7 @@ SlmdResponsiveLayoutPresenter >> handleActionEvent: anObject [
 ]
 
 { #category : #view }
-SlmdResponsiveLayoutPresenter >> handleViewAction: anObject [
+SlmdResponsiveLayoutPresenter >> handleAspectSettings: anObject [
 	| aspect aspectValue |
 
 	self logTrace: anObject printString.
@@ -77,8 +77,8 @@ SlmdResponsiveLayoutPresenter >> viewCreated [
 
 	super viewCreated.
 
-	self view when: (CpActionRequested id: #navigate parameterKeys: #(#to)) send: #handleNavTo: to: self.
-	self view when: (CpActionRequested id: #action) send: #handleActionEvent: to: self.
+	self view when: (SlmdNavActionRequest navParameterKeys: #(#to)) send: #handleNavTo: to: self.
+	self view when: SlmdNavActionRequest actionRequest send: #handleActionEvent: to: self.
 
 ]
 

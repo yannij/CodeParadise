@@ -195,7 +195,7 @@ SlmdAppBarView >> setPrimary: aBoolean [
 SlmdAppBarView >> setUpBackAction [
 	| actionItem leadingAction |
 
-	leadingAction := (SlmdNavAction id: #backNavButton iconName: 'arrow-left' iconLabel: 'Back' arg1: 'Go back') asDictionary.
+	leadingAction := (SlmdNavAction id: #backNavButton iconName: 'arrow-left' iconLabel: 'Back' arg1: #back) asDictionary.
 	actionItem := self iconButtonForAction: leadingAction css: nil.
 
 	self appendChild: actionItem atSlotNamed: 'leadingAction'.
@@ -206,7 +206,7 @@ SlmdAppBarView >> setUpBackAction [
 SlmdAppBarView >> setUpLeadingAction [
 	| actionItem leadingAction |
 
-	leadingAction := (SlmdNavAction id: #modalNavButton iconName: 'list' iconLabel: 'Menu' arg1: 'Show Modal Nav') asDictionary.
+	leadingAction := (SlmdNavAction id: #modalNavButton iconName: 'list' iconLabel: 'Menu' arg1: #modalNav) asDictionary.
 	actionItem := self iconButtonForAction: leadingAction css: nil.
 
 	self appendChild: actionItem atSlotNamed: 'leadingAction'.
