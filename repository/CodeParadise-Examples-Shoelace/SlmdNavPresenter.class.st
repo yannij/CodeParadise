@@ -18,6 +18,6 @@ SlmdNavPresenter >> viewCreated [
 
 	super viewCreated.
 
-	self view when: (SlmdNavActionRequest navParameterKeys: #(#to)) send: #handleNavTo: to: self.
+	self subscribeToNavRequest.
 
 ]

@@ -14,12 +14,6 @@ SlmdView class >> eventAspectCrud [
 ]
 
 { #category : #accessing }
-SlmdView class >> eventAspectSettings [
-
-	^ #settings
-]
-
-{ #category : #accessing }
 SlmdView class >> traceLevel [
 
 	^ TraceLevel ifNil: [ TraceLevel := 3 ]
@@ -32,13 +26,33 @@ SlmdView class >> traceLevel: anObject [
 ]
 
 { #category : #events }
-SlmdView >> announceAspect: key value: anObject [
+SlmdView >> announceActionKey: key value: value [
 
-	self logTraceAnnouncement: self class eventAspectSettings printString, ': ', key printString, ' -> ', anObject printString.
+	self serverAnnounce: (SlmdNavActionRequest actionParameter: { key -> value } asDictionary).
 
-	self serverAnnounce: (SlmdNavActionRequest
-		id: self class eventAspectSettings
-		parameters: {
+]
+
+{ #category : #events }
+SlmdView >> announceActionKey: key value: value key2: key2 value2: value2 [
+
+	self serverAnnounce: (SlmdNavActionRequest actionParameter: {
+		key -> value.
+		key2 -> value2
+	} asDictionary).
+
+]
+
+{ #category : #events }
+SlmdView >> announceNavKey: key value: value [
+
+	self serverAnnounce: (SlmdNavActionRequest navParameter: { key -> value } asDictionary).
+
+]
+
+{ #category : #events }
+SlmdView >> announceSetting: key value: anObject [
+
+	self serverAnnounce: (SlmdNavActionRequest actionParameter: {
 			#aspect -> key.
 			#value -> anObject
 		} asDictionary).
@@ -115,7 +129,7 @@ SlmdView >> executeNavAction: aNavAction [
 		^ self doAction: aNavAction ].
 
 	arg1 := aNavAction at: #arg1.
-	self serverAnnounce: (SlmdNavActionRequest navWith: { #to -> arg1 } asDictionary).
+	self announceNavKey: #to value: arg1.
 
 ]
 
@@ -254,12 +268,6 @@ SlmdView >> logTrace: aString aspect: aspect level: level [
 	aspect
 		ifNil: [ self log: aString ]
 		ifNotNil: [ self log: '[', aspect, '] ', aString ]
-]
-
-{ #category : #logging }
-SlmdView >> logTraceAnnouncement: aString [
-
-	self logTrace: aString aspect: 'Announcement' level: 3
 ]
 
 { #category : #logging }

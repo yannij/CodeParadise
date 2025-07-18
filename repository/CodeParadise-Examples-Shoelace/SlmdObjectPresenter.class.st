@@ -19,6 +19,6 @@ SlmdObjectPresenter >> viewCreated [
 
 	super viewCreated.
 
-	self view when: SlmdNavActionRequest actionRequest send: #handleActionEvent: to: self.
+	self subscribeToActionRequest.
 
 ]

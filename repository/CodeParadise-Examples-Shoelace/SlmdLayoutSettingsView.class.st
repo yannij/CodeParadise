@@ -74,7 +74,7 @@ SlmdLayoutSettingsView >> colorThemeNameSet: anObject [
 
 	self colorThemeName: anObject.
 	self layoutViewLazy colorThemeAdapt: anObject.
-	self announceAspect: #colorThemeName value: anObject.
+	self announceSetting: #colorThemeName value: anObject.
 
 ]
 
@@ -164,7 +164,7 @@ SlmdLayoutSettingsView >> fontFamilySet: anObject [
 
 	self fontFamily: anObject.
 	self layoutViewLazy fontFamilyAdapt: anObject.
-	self announceAspect: #fontFamily value: anObject.
+	self announceSetting: #fontFamily value: anObject.
 
 ]
 
@@ -213,7 +213,7 @@ SlmdLayoutSettingsView >> layoutTypeSet: anObject [
 	self useAutoLayoutUpdate: false.
 
 	self layoutViewLazy layoutTypeAdapt: anObject.
-	self announceAspect: #layoutType value: anObject.
+	self announceSetting: #layoutType value: anObject.
 
 ]
 
@@ -230,7 +230,7 @@ SlmdLayoutSettingsView >> layoutUpdate [
 		#useModalNav -> self useModalNav.
 	} asDictionary.
 
-	self announceAspect: #layoutUpdate value: props
+	self announceSetting: #layoutUpdate value: props
 ]
 
 { #category : #initalize }
@@ -310,7 +310,7 @@ SlmdLayoutSettingsView >> navRailExpandedSet: aBoolean [
 	self useAutoLayoutUpdate: false.
 
 	self layoutViewLazy navRailExpandedAdapt: aBoolean.
-	self announceAspect: #navRailExpanded value: aBoolean.
+	self announceSetting: #navRailExpanded value: aBoolean.
 
 ]
 
@@ -355,7 +355,7 @@ SlmdLayoutSettingsView >> showAppBarSet: aBoolean [
 	self useAutoLayoutUpdate: false.
 
 	self layoutViewLazy appBarDisplay: aBoolean.
-	self announceAspect: #showAppBar value: aBoolean.
+	self announceSetting: #showAppBar value: aBoolean.
 
 ]
 
@@ -394,7 +394,7 @@ SlmdLayoutSettingsView >> showDockedToolbarSet: aBoolean [
 	self useAutoLayoutUpdate: false.
 
 	self layoutViewLazy showDockedToolbarAdapt: aBoolean; adjustBodyHeight.
-	self announceAspect: #showDockedToolbar value: aBoolean.
+	self announceSetting: #showDockedToolbar value: aBoolean.
 
 ]
 
@@ -433,7 +433,7 @@ SlmdLayoutSettingsView >> showFloatingToolbarSet: aBoolean [
 	self useAutoLayoutUpdate: false.
 
 	self layoutViewLazy showFloatingToolbarAdapt: aBoolean.
-	self announceAspect: #showFloatingToolbar value: aBoolean.
+	self announceSetting: #showFloatingToolbar value: aBoolean.
 
 ]
 
@@ -472,7 +472,7 @@ SlmdLayoutSettingsView >> showNavBarSet: aBoolean [
 	self useAutoLayoutUpdate: false.
 
 	self layoutViewLazy showNavBarAdapt: aBoolean; adjustBodyHeight.
-	self announceAspect: #showNavBar value: aBoolean.
+	self announceSetting: #showNavBar value: aBoolean.
 
 ]
 
@@ -511,7 +511,7 @@ SlmdLayoutSettingsView >> showNavMenuButtonSet: aBoolean [
 	self useAutoLayoutUpdate: false.
 
 	self layoutViewLazy showNavMenuButtonAdapt: aBoolean.
-	self announceAspect: #showNavMenuButton value: aBoolean.
+	self announceSetting: #showNavMenuButton value: aBoolean.
 
 ]
 
@@ -550,7 +550,7 @@ SlmdLayoutSettingsView >> showSidesheetSet: aBoolean [
 	self useAutoLayoutUpdate: false.
 
 	self layoutViewLazy sidesheetDisplay: aBoolean.
-	self announceAspect: #showSidesheet value: aBoolean.
+	self announceSetting: #showSidesheet value: aBoolean.
 
 ]
 
@@ -617,7 +617,7 @@ SlmdLayoutSettingsView >> useAutoLayoutNewSwitch: props [
 SlmdLayoutSettingsView >> useAutoLayoutSet: aBoolean [
 
 	aBoolean ifTrue: [ self layoutViewLazy layoutAdaptToWidth ].
-	self announceAspect: #useAutoLayout value: aBoolean.
+	self announceSetting: #useAutoLayout value: aBoolean.
 
 ]
 
@@ -625,7 +625,7 @@ SlmdLayoutSettingsView >> useAutoLayoutSet: aBoolean [
 SlmdLayoutSettingsView >> useAutoLayoutUpdate: aBoolean [
 
 	self useAutoLayout: aBoolean.
-	self announceAspect: #useAutoLayout value: aBoolean.
+	self announceSetting: #useAutoLayout value: aBoolean.
 
 ]
 
@@ -666,7 +666,7 @@ SlmdLayoutSettingsView >> useModalNavSet: aBoolean [
 	self layoutViewLazy
 		useModalNavAdapt: aBoolean;
 		showNavMenuButtonAdapt: aBoolean.
-	self announceAspect: #useModalNav value: aBoolean.
+	self announceSetting: #useModalNav value: aBoolean.
 
 ]
 
@@ -705,6 +705,6 @@ SlmdLayoutSettingsView >> useTwoPaneBodySet: aBoolean [
 	self useAutoLayoutUpdate: false.
 
 	self layoutViewLazy useTwoPaneBodyAdapt: aBoolean.
-	self announceAspect: #useTwoPaneBody value: aBoolean.
+	self announceSetting: #useTwoPaneBody value: aBoolean.
 
 ]

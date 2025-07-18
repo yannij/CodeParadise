@@ -78,6 +78,6 @@ SlmdListDetailListView >> setDetail: index [
 
 	self logTrace5: index printString method: 'setDetail:'.
 
-	self serverAnnounce: (SlmdNavActionRequest id: #detail parameters: { #index -> index } asDictionary).
+	self announceActionKey: #index value: index.
 
 ]

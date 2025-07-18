@@ -4,12 +4,13 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
-{ #category : #view }
-SlmdResponsiveLayoutPresenter >> handleActionEvent: anObject [
+{ #category : #events }
+SlmdResponsiveLayoutPresenter >> handleAction: anObject [
 	| type |
 
+	self logTrace5: anObject printString method: 'handleAction:'.
+
 	type := anObject parameterAt: #type.
-	self logTrace: 'Layout>>handleActionEvent: ', anObject printString.
 
 	type = 'update' ifTrue: [
 		self logTrace5: 'update' method: 'handleActionEvent:'.
@@ -31,17 +32,7 @@ SlmdResponsiveLayoutPresenter >> handleActionEvent: anObject [
 
 ]
 
-{ #category : #view }
-SlmdResponsiveLayoutPresenter >> handleAspectSettings: anObject [
-	| aspect aspectValue |
-
-	self logTrace: anObject printString.
-	aspect := anObject parameterAt: #aspect.
-	aspectValue := anObject parameterAt: #value.
-
-]
-
-{ #category : #view }
+{ #category : #rendering }
 SlmdResponsiveLayoutPresenter >> renderView [
 
 	self model navRail ifNotNil: [ :value |
@@ -77,8 +68,8 @@ SlmdResponsiveLayoutPresenter >> viewCreated [
 
 	super viewCreated.
 
-	self view when: (SlmdNavActionRequest navParameterKeys: #(#to)) send: #handleNavTo: to: self.
-	self view when: SlmdNavActionRequest actionRequest send: #handleActionEvent: to: self.
+	self subscribeToActionRequest.
+	self subscribeToNavRequest.
 
 ]
 

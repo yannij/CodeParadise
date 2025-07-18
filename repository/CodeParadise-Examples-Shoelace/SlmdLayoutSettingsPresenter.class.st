@@ -4,7 +4,13 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
-{ #category : #view }
+{ #category : #events }
+SlmdLayoutSettingsPresenter >> handleAction: anObject [
+
+	self handleAspectSettings: anObject
+]
+
+{ #category : #events }
 SlmdLayoutSettingsPresenter >> handleAspectSettings: anObject [
 	| aspect aspectValue |
 
@@ -22,7 +28,7 @@ SlmdLayoutSettingsPresenter >> handleAspectSettings: anObject [
 
 ]
 
-{ #category : #actions }
+{ #category : #events }
 SlmdLayoutSettingsPresenter >> layoutUpdate: props [
 	| m |
 
@@ -43,9 +49,7 @@ SlmdLayoutSettingsPresenter >> viewCreated [
 
 	super viewCreated.
 
-	self view
-		when: (SlmdNavActionRequest id: SlmdView eventAspectSettings) send: #handleAspectSettings: to: self;
-		yourself.
+	self subscribeToActionRequest.
 
 ]
 

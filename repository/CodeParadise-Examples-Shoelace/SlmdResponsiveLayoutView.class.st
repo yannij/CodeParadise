@@ -411,31 +411,26 @@ SlmdResponsiveLayoutView >> doAction: aNavAction [
 	| arg1 |
 
 	self logTrace: aNavAction printString aspect: 'doAction:' level: 3.
-	(aNavAction at: #actionName) ~= #action ifTrue: [ ^ self ].
-
-	(aNavAction at: #id) = #refresh ifTrue: [
-		self serverAnnounce: (SlmdNavActionRequest navWith: { #refresh -> nil } asDictionary) ].
 
 	arg1 := aNavAction at: #arg1.
 
-	"arg1 = 'update' ifTrue: [
-		self logTrace: aNavAction printString aspect: 'doAction:(update3)' level: 3.
-		self beEditablePane2 ]."
+	(aNavAction at: #id) = #slmdRefresh ifTrue: [
+		self announceNavKey: #to value: arg1 ].
 
 	arg1 = 'update' ifTrue: [
-		self serverAnnounce: (SlmdNavActionRequest actionWith: { #type -> arg1 } asDictionary) ].
+		self announceActionKey: #type value: arg1 ].
 
 	arg1 = 'save' ifTrue: [ | changes paneContentView |
 		paneContentView := self pane2View paneContentView.
 		paneContentView ifNil: [ ^ self ].
 		changes := paneContentView wrappedView changeMap.
-		paneContentView serverAnnounce: (SlmdNavActionRequest actionWith: { #type -> arg1. #changes -> changes } asDictionary) ].
+		paneContentView announceActionKey: #type value: arg1 key2: #changes value2: changes ].
 
 	arg1 = 'create' ifTrue: [
-		self serverAnnounce: (SlmdNavActionRequest actionWith: { #type -> arg1 } asDictionary) ].
+		self announceActionKey: #type value: arg1 ].
 
 	arg1 = 'delete' ifTrue: [
-		self serverAnnounce: (SlmdNavActionRequest actionWith: { #type -> arg1 } asDictionary) ].
+		self announceActionKey: #type value: arg1 ].
 
 ]
 

@@ -57,7 +57,7 @@ TBRootApplication >> initialize [
 		add: (SlmdNavAction id: #home iconName: 'house' iconLabel: 'Home' arg1: 'Home Page');
 		yourself.
 	actionItems := OrderedCollection new
-		add: (SlmdNavAction id: #refresh iconName: 'arrow-clockwise' iconLabel: 'Refresh' actionName: #action actionGroup: #primary arg1: 'pane');
+		add: (SlmdNavAction id: #slmdRefresh iconName: 'arrow-clockwise' iconLabel: 'Refresh' actionName: #action actionGroup: #primary arg1: 'refresh');
 		add: (SlmdNavAction id: #crudCreate iconName: 'plus' iconLabel: 'Add' actionName: #action actionGroup: #fab arg1: 'create');
 		add: (SlmdNavAction id: #crudRead iconName: 'file-ruled' iconLabel: 'View' actionName: #action actionGroup: #toolbar arg1: 'read');
 		add: (SlmdNavAction id: #crudDelete iconName: 'trash' iconLabel: 'Delete' actionName: #action actionGroup: #toolbar arg1: 'delete');

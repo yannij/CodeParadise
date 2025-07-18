@@ -4,11 +4,12 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3ListDetail'
 }
 
-{ #category : #nav }
-SlmdItemWrapperPresenter >> handleActionEvent: anObject [
+{ #category : #events }
+SlmdItemWrapperPresenter >> handleAction: anObject [
 	| type |
 
-	self logTrace5: anObject printString method: 'handleActionEvent:'.
+	self logTrace5: anObject printString method: 'handleAction:'.
+
 	type := anObject parameterAt: #type.
 
 	type = 'update' ifTrue: [
@@ -42,6 +43,6 @@ SlmdItemWrapperPresenter >> viewCreated [
 
 	super viewCreated.
 
-	self view when: SlmdNavActionRequest actionRequest send: #handleActionEvent: to: self.
+	self subscribeToActionRequest.
 
 ]

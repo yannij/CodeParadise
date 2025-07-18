@@ -18,8 +18,7 @@ SlmdToolbarPresenter >> viewCreated [
 
 	super viewCreated.
 
-	self view when: (SlmdNavActionRequest navParameterKeys: #(#to)) send: #handleNavTo: to: self.
-	self view when: (SlmdNavActionRequest navParameterKeys: #(#refresh)) send: #handleRefresh: to: self.
-	self view when: SlmdNavActionRequest actionRequest send: #handleActionEvent: to: self.
+	self subscribeToActionRequest.
+	self subscribeToNavRequest.
 
 ]

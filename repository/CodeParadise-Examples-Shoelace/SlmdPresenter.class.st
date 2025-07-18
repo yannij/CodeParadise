@@ -26,29 +26,33 @@ SlmdPresenter class >> traceLevel: anObject [
 	^ TraceLevel := anObject
 ]
 
-{ #category : #nav }
-SlmdPresenter >> handleActionEvent: anObject [
-
-	self logTrace: self printString, '<==', anObject printString aspect: 'handleActionEvent:' level: 3.
-
-]
-
-{ #category : #nav }
-SlmdPresenter >> handleNavTo: anObject [
-
-	(anObject parameterAt: #to) = #back ifTrue: [
-		^ self view primaryPaneOnly ].
-
-	self application pane1Model handleActionRequest: anObject; valueChanged.
-
-]
-
-{ #category : #nav }
-SlmdPresenter >> handleRefresh: anObject [
+{ #category : #events }
+SlmdPresenter >> doRefresh: anObject [
 
 	self logTrace: self printString, '<==', anObject printString aspect: 'handleRefresh:' level: 3.
 
 	self application pane1Model paneContent valueChanged.
+	self application pane1Model valueChanged.
+
+]
+
+{ #category : #events }
+SlmdPresenter >> handleAction: anObject [
+
+	self logTrace5: self printString, '<==', anObject printString method: 'handleAction:'.
+
+]
+
+{ #category : #events }
+SlmdPresenter >> handleNav: anObject [
+
+	(anObject parameterAt: #to) = #back ifTrue: [
+		^ self view primaryPaneOnly ].
+
+	(anObject parameterAt: #to) = #refresh ifTrue: [
+		^ self doRefresh: anObject ].
+
+	self application pane1Model handleActionRequest: anObject; valueChanged.
 
 ]
 
@@ -97,6 +101,18 @@ SlmdPresenter >> logTrace: aString aspect: aspect level: level [
 	aspect
 		ifNil: [ self log: aString ]
 		ifNotNil: [ self log: '[', aspect, '] ', aString ]
+]
+
+{ #category : #events }
+SlmdPresenter >> subscribeToActionRequest [
+
+	self view when: SlmdNavActionRequest actionRequest send: #handleAction: to: self
+]
+
+{ #category : #events }
+SlmdPresenter >> subscribeToNavRequest [
+
+	self view when: (SlmdNavActionRequest navParameterKeys: #(#to)) send: #handleNav: to: self
 ]
 
 { #category : #view }

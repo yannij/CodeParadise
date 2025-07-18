@@ -4,6 +4,12 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3ListDetail'
 }
 
+{ #category : #events }
+SlmdListDetailListPresenter >> handleAction: event [
+
+	self setDetail: event
+]
+
 { #category : #rendering }
 SlmdListDetailListPresenter >> renderView [
 
@@ -13,7 +19,7 @@ SlmdListDetailListPresenter >> renderView [
 		index: self model index
 ]
 
-{ #category : #initialization }
+{ #category : #events }
 SlmdListDetailListPresenter >> setDetail: request [
 
 	self logTrace5: request printString method: 'setDetail:'.
@@ -26,6 +32,8 @@ SlmdListDetailListPresenter >> setDetail: request [
 { #category : #view }
 SlmdListDetailListPresenter >> viewCreated [
 
-	self view when: (SlmdNavActionRequest id: #detail parameterKeys: #(#index)) send: #setDetail: to: self.
+	super viewCreated.
+
+	self subscribeToActionRequest.
 
 ]
