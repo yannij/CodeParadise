@@ -135,7 +135,7 @@ SlmdObjectView >> setEditable: aBoolean [
 	self fieldElements valuesDo: [ :each |
 		self logTrace: each name asString.
 		each disabled: aBoolean not.
-		"(first and: [ aBoolean ])" each name = 'date' ifTrue: [
+		"(first and: [ aBoolean ])" each name = 'text' ifTrue: [
 			self logTrace: 'focus() - ', each printString.
 			each focus.
 			"each attributeAt: 'autofocus' put: true."

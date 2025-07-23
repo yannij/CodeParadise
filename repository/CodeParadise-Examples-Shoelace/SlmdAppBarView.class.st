@@ -69,35 +69,6 @@ SlmdAppBarView class >> template [
 '
 ]
 
-{ #category : #initialization }
-SlmdAppBarView >> actionGroupToUse [
-
-	^ self isPrimary ifTrue: [ #primary ] ifFalse: [ #secondary ]
-]
-
-{ #category : #initialization }
-SlmdAppBarView >> actionItemsInitialize [
-	| overflowThreshold buttons actionItem actionList overflowList |
-
-	overflowThreshold := 2.
-	buttons := self actionItemsToUse.
-
-	buttons size <= overflowThreshold ifTrue: [
-		buttons do: [ :each |
-			actionItem := self iconButtonForAction: each css: 'smd-toolbar-item'.
-			self appendChild: actionItem atSlotNamed: 'trailingActions' ].
-		^ self ].
-
-	actionList := buttons copyFrom: 1 to: overflowThreshold - 1.
-	actionList do: [ :each |
-		actionItem := self iconButtonForAction: each css: 'smd-toolbar-item'.
-		self appendChild: actionItem atSlotNamed: 'trailingActions' ].
-
-	overflowList := buttons copyFrom: overflowThreshold to: buttons size.
-	self appendChild: (self dropdownMenu: overflowList css: 'smd-toolbar-item') atSlotNamed: 'trailingActions'.
-
-]
-
 { #category : #rendering }
 SlmdAppBarView >> appBarDisplay: aBoolean [
 
@@ -181,34 +152,49 @@ SlmdAppBarView >> renderHeadline: aString [
 
 ]
 
-{ #category : #initialization }
-SlmdAppBarView >> setPrimary: aBoolean [
+{ #category : #rendering }
+SlmdAppBarView >> renderTrailingActions: buttons [
+	| overflowThreshold actionItem actionList overflowList |
 
-	self primary: aBoolean.
+	self removeChildrenAtSlotNamed: 'trailingActions'.
+	overflowThreshold := 2.
 
-	aBoolean
-		ifTrue: [ self setUpLeadingAction ]
-		ifFalse: [ self setUpBackAction ]
+	buttons size <= overflowThreshold ifTrue: [
+		buttons do: [ :each |
+			actionItem := self iconButtonForAction: each css: 'smd-toolbar-item'.
+			self appendChild: actionItem atSlotNamed: 'trailingActions' ].
+		^ self ].
+
+	actionList := buttons copyFrom: 1 to: overflowThreshold - 1.
+	actionList do: [ :each |
+		actionItem := self iconButtonForAction: each css: 'smd-toolbar-item'.
+		self appendChild: actionItem atSlotNamed: 'trailingActions' ].
+
+	overflowList := buttons copyFrom: overflowThreshold to: buttons size.
+	self appendChild: (self dropdownMenu: overflowList css: 'smd-toolbar-item') atSlotNamed: 'trailingActions'.
+
 ]
 
-{ #category : #initialization }
+{ #category : #rendering }
 SlmdAppBarView >> setUpBackAction [
 	| actionItem leadingAction |
 
 	leadingAction := (SlmdNavAction id: #backNavButton iconName: 'arrow-left' iconLabel: 'Back' arg1: #back) asDictionary.
 	actionItem := self iconButtonForAction: leadingAction css: nil.
 
+	self removeChildrenAtSlotNamed: 'leadingAction'.
 	self appendChild: actionItem atSlotNamed: 'leadingAction'.
 
 ]
 
-{ #category : #initialization }
+{ #category : #rendering }
 SlmdAppBarView >> setUpLeadingAction [
 	| actionItem leadingAction |
 
 	leadingAction := (SlmdNavAction id: #modalNavButton iconName: 'list' iconLabel: 'Menu' arg1: #modalNav) asDictionary.
 	actionItem := self iconButtonForAction: leadingAction css: nil.
 
+	self removeChildrenAtSlotNamed: 'leadingAction'.
 	self appendChild: actionItem atSlotNamed: 'leadingAction'.
 
 ]

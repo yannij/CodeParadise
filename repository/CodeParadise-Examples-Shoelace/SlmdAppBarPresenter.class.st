@@ -5,15 +5,42 @@ Class {
 }
 
 { #category : #view }
+SlmdAppBarPresenter >> actionGroupToUse [
+
+	^ self model isPrimary ifTrue: [ #primary ] ifFalse: [ #secondary ]
+]
+
+{ #category : #view }
+SlmdAppBarPresenter >> actionItemsToUse [
+	| list groupName |
+
+	list := self application actionItems.
+	groupName := self actionGroupToUse.
+	^ list select: [ :each | each actionGroup = groupName ]
+]
+
+{ #category : #view }
+SlmdAppBarPresenter >> renderView [
+	| list |
+
+	self model isPrimary
+		ifTrue: [ self view setUpLeadingAction ]
+		ifFalse: [ self view setUpBackAction ].
+
+	self model isPrimary ifTrue: [
+		self view renderHeadline: self application class appName ].
+
+	list := self actionItemsToUse collect: [ :each | each asDictionary ].
+	list isEmpty ifTrue: [ ^ self ].
+	self view renderTrailingActions: list asArray.
+
+]
+
+{ #category : #view }
 SlmdAppBarPresenter >> viewInitialized [
 
 	super viewInitialized.
 
-	self view setPrimary: self model primary.
-	self actionItemsInitialize.
-
-	self model isPrimary ifTrue: [
-		self view renderHeadline: self application class appName ].
-	self view actionItemsInitialize.
+	self view primary: self model primary.
 
 ]

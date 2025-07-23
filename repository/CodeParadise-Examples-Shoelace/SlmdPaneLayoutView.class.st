@@ -43,7 +43,7 @@ SlmdPaneLayoutView class >> style [
 }
 
 .smd-pane-layout sl-split-panel::part(divider) {
-  background-color: var(--sl-color-primary-50);
+  background-color: var(--sl-color-primary-100);
 }
 '
 ]

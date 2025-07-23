@@ -23,14 +23,14 @@ SlmdSidesheetView class >> style [
 }
 
 .smd-sidesheet-content {
-  padding: 16px 16px 16px 0;
+  padding: 8px;
   width: 300px;
   height: 100%;
   background: var(--sl-color-primary-100);
 }
 
 .smd-sidesheet-card {
-  border-radius: 16px;
+  border-radius: 8px;
   padding: 8px;
   background: var(--sl-color-primary-200);
 }

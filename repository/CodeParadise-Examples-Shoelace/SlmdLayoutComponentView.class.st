@@ -7,6 +7,16 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Base'
 }
 
+{ #category : #initialization }
+SlmdLayoutComponentView >> actionItemAt: id [
+	| item |
+
+	item := self layoutViewLazy actionItems at: id.
+	item ifNotNil: [ ^ item ].
+	^ self layoutViewLazy navItems at: id
+
+]
+
 { #category : #actions }
 SlmdLayoutComponentView >> doAction: aNavAction [
 

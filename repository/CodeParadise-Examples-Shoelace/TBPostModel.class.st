@@ -90,10 +90,13 @@ TBPostModel >> date: anObject [
 
 { #category : #initialization }
 TBPostModel >> initialize [
+
 	super initialize.
+
 	self category: self class unclassifiedTag.
 	self date: Date today.
-	self notVisible
+	self notVisible.
+
 ]
 
 { #category : #testing }
