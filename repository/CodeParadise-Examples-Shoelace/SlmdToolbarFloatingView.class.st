@@ -68,12 +68,6 @@ SlmdToolbarFloatingView class >> template [
 '
 ]
 
-{ #category : #initialization }
-SlmdToolbarFloatingView >> actionGroupToUse [
-
-	^ #toolbar
-]
-
 { #category : #nav }
 SlmdToolbarFloatingView >> buttonCssClass [
 

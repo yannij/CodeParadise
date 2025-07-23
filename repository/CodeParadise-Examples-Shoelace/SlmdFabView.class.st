@@ -61,19 +61,6 @@ SlmdFabView class >> template [
 '
 ]
 
-{ #category : #initialization }
-SlmdFabView >> actionGroupToUse [
-
-	^ #fab
-]
-
-{ #category : #nav }
-SlmdFabView >> actionItemsInitialize [
-
-	self appendFabAction.
-
-]
-
 { #category : #nav }
 SlmdFabView >> fabCssClass [
 

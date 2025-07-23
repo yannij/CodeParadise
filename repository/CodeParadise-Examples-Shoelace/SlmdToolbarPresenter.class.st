@@ -4,13 +4,27 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Base'
 }
 
-{ #category : #nav }
-SlmdToolbarPresenter >> actionItemsInitialize [
-	| v |
+{ #category : #initialization }
+SlmdToolbarPresenter >> actionGroupToUse [
 
-	v := self view.
-	self application actionItems do: [ :each |
-		v addActionItem: each id ]
+	self subclassResponsibility
+]
+
+{ #category : #view }
+SlmdToolbarPresenter >> actionItemFabOrNil [
+	| list |
+
+	list := self application actionItems.
+	^ list detect: [ :each | each actionGroup = #fab ] ifNone: []
+]
+
+{ #category : #view }
+SlmdToolbarPresenter >> actionItemsToUse [
+	| list groupName |
+
+	list := self application actionItems.
+	groupName := self actionGroupToUse.
+	^ list select: [ :each | each actionGroup = groupName ]
 ]
 
 { #category : #view }

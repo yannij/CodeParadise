@@ -4,13 +4,19 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
-{ #category : #view }
-SlmdToolbarFloatingPresenter >> viewInitialized [
+{ #category : #initialization }
+SlmdToolbarFloatingPresenter >> actionGroupToUse [
 
-	super viewInitialized.
+	^ #toolbar
+]
 
-	self actionItemsInitialize.
+{ #category : #rendering }
+SlmdToolbarFloatingPresenter >> renderView [
+	| list |
 
-	self view actionItemsInitialize.
+	list := self actionItemsToUse collect: [ :each | each asDictionary ].
+	list isEmpty ifTrue: [ ^ self ].
+	self view renderButtons: list asArray.
+	self view renderFab: self actionItemFabOrNil asDictionary.
 
 ]

@@ -11,15 +11,6 @@ SlmdAppBarPresenter >> actionGroupToUse [
 ]
 
 { #category : #view }
-SlmdAppBarPresenter >> actionItemsToUse [
-	| list groupName |
-
-	list := self application actionItems.
-	groupName := self actionGroupToUse.
-	^ list select: [ :each | each actionGroup = groupName ]
-]
-
-{ #category : #view }
 SlmdAppBarPresenter >> renderView [
 	| list |
 

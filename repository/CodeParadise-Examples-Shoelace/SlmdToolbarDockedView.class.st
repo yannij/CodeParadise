@@ -61,12 +61,6 @@ SlmdToolbarDockedView class >> template [
 '
 ]
 
-{ #category : #initialization }
-SlmdToolbarDockedView >> actionGroupToUse [
-
-	^ #toolbar
-]
-
 { #category : #nav }
 SlmdToolbarDockedView >> buttonCssClass [
 
