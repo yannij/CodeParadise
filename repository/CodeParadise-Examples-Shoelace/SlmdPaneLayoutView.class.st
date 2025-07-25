@@ -186,7 +186,7 @@ SlmdPaneLayoutView >> useTwoPaneLayout [
 	self shadowElementId: 'smdTwoPaneLayout' show: true.
 	self layoutViewLazy
 		floatingToolbarOn;
-		appBar2Display: false;
+		"appBar2Display: false;"
 		"appBar2LeadingButtonDisplay: false;"
 		yourself.
 

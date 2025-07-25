@@ -2,21 +2,64 @@ Class {
 	#name : #SlmdAppBarModel,
 	#superclass : #SlmdToolbarModel,
 	#instVars : [
-		'primary'
+		'primary',
+		'actionItems',
+		'actionGroupToUse'
 	],
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
 { #category : #accessing }
+SlmdAppBarModel >> actionGroupToUse [
+
+	^ actionGroupToUse
+]
+
+{ #category : #accessing }
+SlmdAppBarModel >> actionGroupToUse: anObject [
+
+	actionGroupToUse := anObject
+]
+
+{ #category : #accessing }
+SlmdAppBarModel >> actionItems [
+
+	^ actionItems
+]
+
+{ #category : #accessing }
+SlmdAppBarModel >> actionItems: anObject [
+
+	actionItems := anObject
+]
+
+{ #category : #accessing }
+SlmdAppBarModel >> actionItemsAdd: anObject [
+
+	self actionItems add: anObject
+]
+
+{ #category : #accessing }
+SlmdAppBarModel >> actionItemsClear [
+
+	self actionItems: OrderedCollection new.
+
+]
+
+{ #category : #accessing }
 SlmdAppBarModel >> bePrimary [
 
-	self primary: true
+	self primary: true.
+	self actionGroupToUse: #primary.
+
 ]
 
 { #category : #accessing }
 SlmdAppBarModel >> beSecondary [
 
-	self primary: false
+	self primary: false.
+	self actionGroupToUse: #secondary.
+
 ]
 
 { #category : #initialization }
@@ -24,7 +67,8 @@ SlmdAppBarModel >> initialize [
 
 	super initialize.
 
-	primary := true.
+	actionItems := OrderedCollection new.
+	self bePrimary.
 
 ]
 

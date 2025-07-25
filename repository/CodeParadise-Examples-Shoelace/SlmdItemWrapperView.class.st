@@ -51,17 +51,10 @@ SlmdItemWrapperView >> renderButtons [
 
 	div := #div asHtmlTag
 		addClass: 'slmd-item-wrapper-header';
-		appendChild: (self iconButtonForAction: (items at: #crudDelete) css: 'cssClass');
-		appendChild: (self iconButtonForAction: (items at: #crudUpdate) css: 'cssClass');
-		yourself.
-	self replaceAllChildrenWith: div atSlotNamed: #header.
-
-	div := #div asHtmlTag
-		addClass: 'slmd-item-wrapper-header';
 		appendChild: (self iconButtonForAction: (items at: #crudSave) css: 'cssClass');
 		appendChild: (self iconButtonForAction: (items at: #crudCancel) css: 'cssClass');
 		yourself.
-	self replaceAllChildrenWith: div atSlotNamed: #footer.
+	self replaceAllChildrenWith: div atSlotNamed: #header.
 
 ]
 

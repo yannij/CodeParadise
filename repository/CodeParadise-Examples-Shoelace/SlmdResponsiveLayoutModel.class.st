@@ -14,6 +14,18 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Components'
 }
 
+{ #category : #'accessing - derived' }
+SlmdResponsiveLayoutModel >> appBar1 [
+
+	^ self pane1 appBarModel
+]
+
+{ #category : #'accessing - derived' }
+SlmdResponsiveLayoutModel >> appBar2 [
+
+	^ self pane2 appBarModel
+]
+
 { #category : #accessing }
 SlmdResponsiveLayoutModel >> dockedToolbar [
 
@@ -100,6 +112,18 @@ SlmdResponsiveLayoutModel >> navRail [
 SlmdResponsiveLayoutModel >> navRail: anObject [
 
 	navRail := anObject
+]
+
+{ #category : #'accessing - derived' }
+SlmdResponsiveLayoutModel >> pane1 [
+
+	^ self paneLayout pane1
+]
+
+{ #category : #'accessing - derived' }
+SlmdResponsiveLayoutModel >> pane2 [
+
+	^ self paneLayout pane2
 ]
 
 { #category : #accessing }

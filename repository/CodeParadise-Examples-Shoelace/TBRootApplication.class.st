@@ -46,7 +46,7 @@ TBRootApplication >> initialize [
 	pane1Content listSet: TBBlogModel current allBlogPosts.
 	pane1Model := SlmdPaneModel on: pane1Content.
 	pane2Model := SlmdPaneModel new.
-	pane2Model appBarModel beSecondary.
+	pane2Model appBarModel beSecondary; actionGroupToUse: #toolbar.
 	sidesheetModel := SlmdSidesheetModel new.
 	layout := SlmdResponsiveLayoutModel new.
 	layout paneLayout pane1: pane1Model.
@@ -65,6 +65,7 @@ TBRootApplication >> initialize [
 		add: (SlmdNavAction id: #crudSave iconName: 'check' iconLabel: 'Save' actionName: #action actionGroup: #toolbar arg1: 'save');
 		add: (SlmdNavAction id: #crudCancel iconName: 'x' iconLabel: 'Cancel' actionName: #action actionGroup: #toolbar arg1: 'cancel');
 		yourself.
+	self setUpAppBar2.
 	self setDetailWithIndex: 1.
 
 ]
@@ -89,5 +90,15 @@ TBRootApplication >> setDetailWithIndex: index [
 
 	self pane1Model paneContent detail: detail.
 	self pane2Model setPaneContent: detail.
+
+]
+
+{ #category : #initialization }
+TBRootApplication >> setUpAppBar2 [
+
+	self layout pane2 appBarModel
+		actionItemsAdd: (self actionItemNamed: #crudDelete);
+		actionItemsAdd: (self actionItemNamed: #crudUpdate);
+		yourself.
 
 ]

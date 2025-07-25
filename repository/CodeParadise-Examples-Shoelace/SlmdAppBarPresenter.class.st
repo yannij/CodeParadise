@@ -7,7 +7,19 @@ Class {
 { #category : #view }
 SlmdAppBarPresenter >> actionGroupToUse [
 
-	^ self model isPrimary ifTrue: [ #primary ] ifFalse: [ #secondary ]
+	^ self model actionGroupToUse
+]
+
+{ #category : #view }
+SlmdAppBarPresenter >> actionItemsToUse [
+	| list groupName |
+
+	self model actionItems ifNotEmpty: [ :value |
+		^ value ].
+
+	list := self application actionItems.
+	groupName := self actionGroupToUse.
+	^ list select: [ :each | each actionGroup = groupName ]
 ]
 
 { #category : #view }

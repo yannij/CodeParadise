@@ -5,6 +5,32 @@ Class {
 }
 
 { #category : #events }
+SlmdResponsiveLayoutPresenter >> appBar2ButtonsSetEditDelete [
+	| app |
+
+	app := self application.
+	app layout appBar2
+		actionItemsClear;
+		actionItemsAdd: (app actionItemNamed: #crudDelete);
+		actionItemsAdd: (app actionItemNamed: #crudUpdate);
+		valueChanged;
+		yourself
+]
+
+{ #category : #events }
+SlmdResponsiveLayoutPresenter >> appBar2ButtonsSetSaveCancel [
+	| app |
+
+	app := self application.
+	app layout appBar2
+		actionItemsClear;
+		actionItemsAdd: (app actionItemNamed: #crudSave);
+		actionItemsAdd: (app actionItemNamed: #crudCancel);
+		valueChanged;
+		yourself
+]
+
+{ #category : #events }
 SlmdResponsiveLayoutPresenter >> handleAction: anObject [
 	| type |
 
@@ -12,9 +38,24 @@ SlmdResponsiveLayoutPresenter >> handleAction: anObject [
 
 	type := anObject parameterAt: #type.
 
-	type = 'update' ifTrue: [
-		self logTrace5: 'update' method: 'handleActionEvent:'.
-		self application pane2Model valueChanged.
+	type = 'save' ifTrue: [ | app theModel |
+		app := self application.
+		theModel := app pane2Model paneContent.
+		theModel wrappedModel handleSave: anObject.
+		theModel valueChanged.
+		app pane2Model valueChanged.
+		self appBar2ButtonsSetEditDelete.
+		theModel isNew ifTrue: [
+			self application pane1Model paneContent listAdd: theModel.
+			self application setDetailWithIndex: 1 ] ].
+
+	type = 'cancel' ifTrue: [
+		self appBar2ButtonsSetEditDelete ].
+
+	type = 'update' ifTrue: [ | app |
+		app := self application.
+		app pane2Model valueChanged.
+		self appBar2ButtonsSetSaveCancel.
 		self view beEditablePane2 ].
 
 	type = 'delete' ifTrue: [ | listDetail |
@@ -24,11 +65,11 @@ SlmdResponsiveLayoutPresenter >> handleAction: anObject [
 		self application setDetailWithIndex: 1 ].
 
 	type = 'create' ifTrue: [
-		self logTrace5: 'create' method: 'handleActionEvent:'.
 		self application setDetailAddNew.
 		self application pane2Model valueChanged.
 		self view beEditablePane2.
-		self view secondaryPaneOnly ].
+		self view secondaryPaneOnly.
+		self appBar2ButtonsSetSaveCancel ].
 
 ]
 

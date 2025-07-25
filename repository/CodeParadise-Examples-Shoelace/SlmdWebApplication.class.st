@@ -11,6 +11,12 @@ Class {
 }
 
 { #category : #accessing }
+SlmdWebApplication >> actionItemNamed: aKey [
+
+	^ self actionItems detect: [ :each | each id = aKey ] ifNone: []
+]
+
+{ #category : #accessing }
 SlmdWebApplication >> actionItems [
 
 	^ actionItems
