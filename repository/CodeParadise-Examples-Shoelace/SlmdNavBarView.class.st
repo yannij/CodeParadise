@@ -68,29 +68,6 @@ SlmdNavBarView class >> template [
 ]
 
 { #category : #rendering }
-SlmdNavBarView >> navInitialize [
-	| list buttons navList overflowList |
-
-	navItems ifNil: [ ^ self ].
-
-	list := self navActions.
-	buttons := navItems collect: [ :each | list at: each ].
-
-	buttons size <= 4 ifTrue: [
-		buttons do: [ :each |
-			self appendChild: (self navbarBuildItem: each) atSlotNamed: 'navBar' ].
-		^ self ].
-
-	navList := buttons copyFrom: 1 to: 3.
-	navList do: [ :each  |
-		self appendChild: (self navbarBuildItem: each) atSlotNamed: 'navBar' ].
-
-	overflowList := buttons copyFrom: 4 to: buttons size.
-	self appendChild: (self dropdownMenu: overflowList css: nil) atSlotNamed: 'navBar'.
-
-]
-
-{ #category : #rendering }
 SlmdNavBarView >> navbarBuildItem: aNavAction [
 	| iconName |
 
@@ -106,4 +83,24 @@ SlmdNavBarView >> navbarBuildItem: aNavAction [
 			textContent: (aNavAction at: #iconLabel);
 			yourself);
 		yourself
+]
+
+{ #category : #rendering }
+SlmdNavBarView >> renderNavContent: buttons [
+	| navList overflowList |
+
+	self removeChildrenAtSlotNamed: 'navBar'.
+
+	buttons size <= 4 ifTrue: [
+		buttons do: [ :each |
+			self appendChild: (self navbarBuildItem: each) atSlotNamed: 'navBar' ].
+		^ self ].
+
+	navList := buttons copyFrom: 1 to: 3.
+	navList do: [ :each  |
+		self appendChild: (self navbarBuildItem: each) atSlotNamed: 'navBar' ].
+
+	overflowList := buttons copyFrom: 4 to: buttons size.
+	self appendChild: (self dropdownMenu: overflowList css: nil) atSlotNamed: 'navBar'.
+
 ]

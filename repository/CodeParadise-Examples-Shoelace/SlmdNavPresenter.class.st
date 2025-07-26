@@ -4,13 +4,11 @@ Class {
 	#category : #'CodeParadise-Examples-Shoelace-ShoelaceMD3Base'
 }
 
-{ #category : #nav }
-SlmdNavPresenter >> navInitialize [
-	| v |
+{ #category : #rendering }
+SlmdNavPresenter >> renderView [
 
-	v := self view.
-	self application navActions do: [ :eachNavAction |
-		v addNavItem: eachNavAction id ]
+	self view renderNavContent: (self application navActions collect: [ :each | each asDictionary ]) asArray.
+
 ]
 
 { #category : #view }

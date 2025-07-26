@@ -9,9 +9,6 @@ SlmdNavRailPresenter >> viewInitialized [
 
 	super viewInitialized.
 
-	self navInitialize.
-
 	self view navModalPaneSetUp.
-	self view navInitialize.
 
 ]

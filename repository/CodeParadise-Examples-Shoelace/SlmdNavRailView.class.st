@@ -141,25 +141,11 @@ SlmdNavRailView >> initialize [
 ]
 
 { #category : #nav }
-SlmdNavRailView >> navContentBuild [
+SlmdNavRailView >> navContent: items [
 
-	self navRailExpanded ifTrue: [
-		^ self navrailExpandedBuild ].
-
-	^ self navrailNarrowBuild
-]
-
-{ #category : #nav }
-SlmdNavRailView >> navInitialize [
-
-	self modalNavElementOrNil
-		replaceAllChildrenWith: self navContentBuild
-		atSlotNamed: nil.
-
-	self
-		replaceAllChildrenWith: self navContentBuild
-		atSlotNamed: 'navRegion'.
-
+	^ self navRailExpanded
+		ifTrue: [ self navrailExpandedBuild: items ]
+		ifFalse: [ self navrailNarrowBuild: items ]
 ]
 
 { #category : #nav }
@@ -211,23 +197,16 @@ SlmdNavRailView >> navRailWidth [
 ]
 
 { #category : #nav }
-SlmdNavRailView >> navrailExpandedBuild [
-	| element list |
-
-	list := self navActions.
+SlmdNavRailView >> navrailExpandedBuild: list [
+	| element |
 
 	element := #div asHtmlTag
 		addClass: 'smd-navrailx';
-		"appendChild: (#div asHtmlTag
-			addClass: 'smd-navdrawer-headline';
-			addClass: 'smd-nav-font';
-			textContent: 'Headline';
-			yourself);"
 		yourself.
-	navItems ifNotNil: [
-		navItems do: [ :eachItem | | navItem |
-			navItem := self navrailExpandedBuildItem: (list at: eachItem).
-			element appendChild: navItem ] ].
+
+	list do: [ :eachItem | | navItem |
+		navItem := self navrailExpandedBuildItem: eachItem.
+		element appendChild: navItem ].
 
 	^ #nav asHtmlTag
 		styleAt: 'height' put: '100%';
@@ -256,24 +235,16 @@ SlmdNavRailView >> navrailExpandedBuildItem: aNavAction [
 ]
 
 { #category : #nav }
-SlmdNavRailView >> navrailNarrowBuild [
-	| element list |
-
-	list := self navActions.
+SlmdNavRailView >> navrailNarrowBuild: list [
+	| element |
 
 	element := #div asHtmlTag addClass: 'smd-navrail'; yourself.
-	navItems ifNotNil: [
-		navItems do: [ :eachItem | | navItem |
-			navItem := self navrailNarrowBuildItem: (list at: eachItem asSymbol).
-			element appendChild: navItem ] ].
-	"element appendChild: (
-		(SlIconButton named: 'gear')
-			when: CpClickEvent basicPrimary send: #settingsOpen to: self;
-			yourself)."
+	list do: [ :eachItem | | navItem |
+		navItem := self navrailNarrowBuildItem: eachItem.
+		element appendChild: navItem ].
 
 	^ #nav asHtmlTag
 		styleAt: 'height' put: '100%';
-		"styleAt: 'overflow-y' put: 'auto';"
 		appendChild: element;
 		yourself
 ]
@@ -299,4 +270,12 @@ SlmdNavRailView >> navrailNarrowBuildItem: aNavAction [
 				textContent: (aNavAction at: #iconLabel);
 				yourself);
 		yourself
+]
+
+{ #category : #nav }
+SlmdNavRailView >> renderNavContent: items [
+
+	self modalNavElementOrNil replaceAllChildrenWith: (self navContent: items) atSlotNamed: nil.
+	self replaceAllChildrenWith: (self navContent: items) atSlotNamed: 'navRegion'.
+
 ]
