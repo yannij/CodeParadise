@@ -1,5 +1,5 @@
 Class {
 	#name : #SlResizeObserver,
 	#superclass : #SlElement,
-	#category : #'CodeParadise-Examples-Shoelace'
+	#category : #'CodeParadise-WebApplication-Shoelace-Elements'
 }

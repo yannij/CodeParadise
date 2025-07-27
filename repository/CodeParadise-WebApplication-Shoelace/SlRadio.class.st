@@ -1,7 +1,7 @@
 Class {
 	#name : #SlRadio,
 	#superclass : #SlElement,
-	#category : #'CodeParadise-Examples-Shoelace'
+	#category : #'CodeParadise-WebApplication-Shoelace-Elements'
 }
 
 { #category : #evaluating }
