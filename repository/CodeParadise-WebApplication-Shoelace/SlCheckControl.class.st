@@ -78,9 +78,3 @@ SlCheckControl >> labelText: aString [
 
 	self textContent: aString
 ]
-
-{ #category : #testing }
-SlCheckControl >> slmdValue [
-
-	^ self isChecked
-]
