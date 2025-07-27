@@ -53,7 +53,7 @@ BaselineOfCodeParadise >> baseline: spec [
 
 		"Groups"
 		spec 
-			group: 'default' with: #( 'Core' 'NodeJS-Core' 'Shoelace' 'Ionic' 'ChartJS' 'Presentation' 'Snapshot' 'Tests' 'Examples' 'Development' 'NodeJS-Applications');
+			group: 'default' with: #( 'Core' 'NodeJS-Core' 'Shoelace' 'Ionic' 'ChartJS' 'Presentation' 'Snapshot' 'Tests' 'Development' 'NodeJS-Applications');
 
 			group: 'Core' with: #( 'CodeParadise-Browser-Support' );
 			group: 'NodeJS-Core' with: #( 'CodeParadise-NodeJS-Support' );
