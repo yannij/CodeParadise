@@ -109,7 +109,7 @@ CpServerApplication class >> hasAbstractTag [
 	^ self classSide includesSelector: #isAbstractTag
 ]
 
-{ #category : #testing }
+{ #category : #tags }
 CpServerApplication class >> isAbstractTag [
 
 	"The method is present to indicate the receiver is abstract.
@@ -188,7 +188,7 @@ CpServerApplication class >> validateClientVersion: aString [
 	Implementation:
 	Currently a strict check is performed on the client version (a monotonic increasing counter)."
 
-	aString = '2'
+	aString = CpClientEnvironment version
 		ifFalse: [ self error: 'Incompatible ClientEnvironment, please match CodeParadise and ClientEnvironment repos' ]
 ]
 
@@ -383,22 +383,29 @@ CpServerApplication >> load [
 	"Install required extensions"
 	self installExtensionMethods.
 
-	"Install the JavaScriptObject proxy which allows a transparent use of JavaScript objects inside CodeParadise.
-	And install the JavaScriptFunction proxy which allows Smalltalk Blocks to be used as JavaScript functions.
-	Finally install the extension method to convert a Block to a JavaScriptFunction. Because of circular dependencies
+	"Install the extension method to convert a Block to a JavaScriptFunction. Because of circular dependencies
 	this can't be done by defining that method as an extension method."
+	self installMethod: BlockClosure >> #asJavaScriptFunction.
+
+	"Install the JavaScriptObject proxy which allows a transparent use of JavaScript objects inside CodeParadise.
+	And install the JavaScriptFunction proxy which allows Smalltalk Blocks to be used as JavaScript functions."
 	self
 		installClass: CpJavaScriptObject ;
-		installClass: CpJavaScriptFunction ;
-		installMethod: BlockClosure >> #asJavaScriptFunction
+		installClass: CpJavaScriptFunction
 ]
 
 { #category : #'private - actions' }
 CpServerApplication >> load: anAnnoucement [
 
-	"Perform any actions needed when the ClientEnvironment belonging to the receiver loaded (for the first time)"
+	"Perform any actions needed when the ClientEnvironment belonging to the receiver loaded (for the first time).
 
-	self load.
+	Implementation:
+	Because timing can sometimes be an issue, there are pre and post load messages."
+
+	self
+		preLoad ;
+		load ;
+		postLoad.
 
 	self announceLoaded
 ]
@@ -420,6 +427,30 @@ CpServerApplication >> methodChanged: anAnnouncement [
 	^ anAnnouncement isMethodRemoved
 		ifTrue: [ self environment removeMethod: method ]
 		ifFalse: [ self environment updateMethod: method ]
+]
+
+{ #category : #actions }
+CpServerApplication >> postLoad [
+
+	"Perform any actions after the actual load"
+]
+
+{ #category : #actions }
+CpServerApplication >> postReload [
+
+	"Perform any actions after the actual reload"
+]
+
+{ #category : #actions }
+CpServerApplication >> preLoad [
+
+	"Perform any actions needed before the actual load"
+]
+
+{ #category : #actions }
+CpServerApplication >> preReload [
+
+	"Perform any actions needed before the actual reload"
 ]
 
 { #category : #'private - actions' }
@@ -457,7 +488,10 @@ CpServerApplication >> reload: anAnnouncement [
 
 	self clientVariables: anAnnouncement variables.
 
-	self reload.
+	self
+		preReload ;
+		reload ;
+		postReload.
 
 	self announceReloaded
 ]

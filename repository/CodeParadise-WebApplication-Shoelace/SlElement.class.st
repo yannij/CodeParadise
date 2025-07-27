@@ -98,11 +98,19 @@ SlElement class >> importThemesPath [
 	^ self importBasePath, 'themes/light.css'
 ]
 
-{ #category : #testing }
+{ #category : #tags }
 SlElement class >> isAbstractTag [
 
 	"The method is present to indicate the receiver is abstract.
 	This method will NOT be evaluated to decide if the receiver is abstract."
+]
+
+{ #category : #testing }
+SlElement class >> isThirdPartyElement [
+
+	"Answer the fact that the receiver is a third party WebComponent"
+
+	^ true
 ]
 
 { #category : #'class initialization' }

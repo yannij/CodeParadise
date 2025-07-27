@@ -114,13 +114,9 @@ CpDomElement class >> globalApply: aSymbol withArguments: anArray [
 { #category : #'instance creation' }
 CpDomElement class >> new [
 
-	"Instances of the receiver are created through #newWithTag: or when querying children of existing DOM elements
-	or are created by querying the DOM using #firstDescendantMatching: or #allDescendantsMatching:
-	Subclasses might override this behavior and create specific instances."
+	"Instances of the receiver should be created through #newWithTag:"
 
-	self requiresInstantiationWithTag
-		ifTrue: [ self errorNewReplacedBy: #newWithTag: ]
-		ifFalse: [ ^ super new ]
+	self errorNewReplacedBy: #newWithTag:
 ]
 
 { #category : #'instance creation' }
@@ -164,12 +160,6 @@ CpDomElement class >> registerNamespace: namespaceString forPrefix: prefixString
 	self primitiveFailed
 ]
 
-{ #category : #testing }
-CpDomElement class >> requiresInstantiationWithTag [
-
-	^ true
-]
-
 { #category : #support }
 CpDomElement class >> tag: tagString withPrefix: prefixString [
 
@@ -204,6 +194,32 @@ CpDomElement >> addClasses: aCollection [
 
 	aCollection do: [ :each | self addClass: each ]
 
+]
+
+{ #category : #'event handling' }
+CpDomElement >> addEventListener: aSymbol handler: aBlock [
+
+	"Add event listener to the receiver.
+	The more common/consistent approach for adding event handlers is using the #when:send:to: or
+	#when:do:for: messages. That approach allows more control of the events (like support for
+	conditional events or synthetic events) and mixes better with the general Pharo approach of
+	using Announcements.
+	If the more native approach of event listeners is preferred, use this method.
+
+	Add the specified Block as an event handler for the specified event for the receiver.
+	Answer the added handler (wrapped as Function) which is needed as the handler to remove
+	the event listener."
+
+	| function |
+
+	"Create function from the Block and specify the event name (to allow later removal)"
+	function := CpJavaScriptFunction wrap: aBlock.
+	function propertyAt: #eventName put: aSymbol.
+
+	"Add event listener"
+	self apply: #addEventListener withArguments: { aSymbol . function }.
+
+	^ function
 ]
 
 { #category : #querying }
@@ -314,6 +330,12 @@ CpDomElement >> appendChild: childElement after: siblingElement [
 ]
 
 { #category : #performing }
+CpDomElement >> apply: aSymbol [
+
+	^ self apply: aSymbol withArguments: nil
+]
+
+{ #category : #performing }
 CpDomElement >> apply: aSymbol resultAs: aProxyClass [
 
 	^ self apply: aSymbol withArguments: nil resultAs: aProxyClass
@@ -373,6 +395,14 @@ CpDomElement >> attributeAt: nameString put: valueString [
 	<primitive: 'primitiveDomElementAttributeAt:put:' module: 'CpDOMPlugin'>
 	self primitiveFailed
 
+]
+
+{ #category : #'text input' }
+CpDomElement >> blur [
+
+	"Remove the focus from the receiver"
+
+	self apply: #blur withArguments: #()
 ]
 
 { #category : #sizing }
@@ -453,12 +483,11 @@ CpDomElement >> customPropertyAt: nameString put: valueString [
 { #category : #performing }
 CpDomElement >> defer: aBlock [
 
-	"Evaluate the specified block with a small delay.
-	For example to prevent resulting events from overlapping."
+	"Evaluate the specified Block (as soon as possible) in separate execution context.
+	This if useful to execute code containing awaits (which should not run in the Event Process)
+	or to delay execution of something that might trigger a (nested/overlapping) Event."
 
-	aBlock asTransition
-		duration: 0 ;
-		startDelayedBy: 10
+	CpGlobalThis defer: aBlock
 ]
 
 { #category : #removing }
@@ -534,6 +563,33 @@ CpDomElement >> focus [
 	self apply: #focus withArguments: #()
 ]
 
+{ #category : #'event handling' }
+CpDomElement >> fullStopEvent: anEvent [
+
+	"Stop propagation and default handling of the specified Event.
+	Other event handlers on the receiver are still executed
+	(i.e. stopImmediatePropagation: is NOT used)."
+
+	anEvent
+		stopPropagation ;
+		preventDefault
+]
+
+{ #category : #announcing }
+CpDomElement >> fullStopWhen: anAnnouncementClass [
+
+	"Stop propagation (bubbling) and default event handling of the
+	specified Announcement/Event.
+	This will only prevent ancestors of the receiver receiving this
+	Event. If more event handlers for this Anouncement/Event are
+	present on the receiver, they will all be handled normally."
+
+	^ self
+		when: anAnnouncementClass
+		send: #fullStopEvent:
+		to: self
+]
+
 { #category : #attributes }
 CpDomElement >> hasAttributeAt: nameString [
 
@@ -558,6 +614,16 @@ CpDomElement >> hasStyleAt: nameString [
 	^ (self styleAt: nameString) notNil
 ]
 
+{ #category : #querying }
+CpDomElement >> host [
+
+	"Answer the host element of the receiver.
+	Only elements inside a Shadow DOM have a host, all other elements will answer nil."
+
+	<primitive: 'primitiveDomElementHost' module: 'CpDOMPlugin'>
+	self primitiveFailed
+]
+
 { #category : #'tag/id/classes' }
 CpDomElement >> id [
 
@@ -577,6 +643,25 @@ CpDomElement >> id: aString [
 
 	<primitive: 'primitiveDomElementId:' module: 'CpDOMPlugin'>
 	self primitiveFailed
+]
+
+{ #category : #querying }
+CpDomElement >> ifEmpty: aBlock [
+
+	"Answer the children of the receiver or the evaluation of the specified Block
+	if there are no children"
+
+	^ self children
+		ifEmpty: aBlock
+]
+
+{ #category : #querying }
+CpDomElement >> ifNotEmpty: aBlock [
+
+	"Answer an empty collection or the evaluation of the specified Block if the receiver has children"
+
+	^ self children
+		ifNotEmpty: aBlock
 ]
 
 { #category : #querying }
@@ -644,12 +729,28 @@ CpDomElement >> isDescendantOf: aDomElement [
 	self primitiveFailed
 ]
 
+{ #category : #testing }
+CpDomElement >> isEmpty [
+
+	"Answer whether the receiver is childless"
+
+	^ self children isEmpty
+]
+
 { #category : #announcing }
 CpDomElement >> isListeningTo: anEventClass [
 
 	"Answer whether the receiver is listening for the specified event type"
 
 	^ anEventClass isListenedToOn: self
+]
+
+{ #category : #testing }
+CpDomElement >> isNotEmpty [
+
+	"Answer whether the receiver has children"
+
+	^ self children isNotEmpty
 ]
 
 { #category : #testing }
@@ -811,7 +912,7 @@ CpDomElement >> printOn: aStream [
 { #category : #properties }
 CpDomElement >> propertyAt: nameString [
 
-	"Answer the value (String, Number, Boolean or nil) of the specified property of the receiver"
+	"Answer the value of the specified property of the receiver"
 
 	<primitive: 'primitiveDomElementPropertyAt:' module: 'CpDOMPlugin'>
 	self primitiveFailed
@@ -821,7 +922,7 @@ CpDomElement >> propertyAt: nameString [
 { #category : #properties }
 CpDomElement >> propertyAt: nameString put: anObject [
 
-	"Set the value (String, Number, Boolean, nil or Dictionary) of the specified property of the receiver"
+	"Set the value of the specified property of the receiver"
 
 	<primitive: 'primitiveDomElementPropertyAt:put:' module: 'CpDOMPlugin'>
 	self primitiveFailed
@@ -892,6 +993,14 @@ CpDomElement >> removeClasses: aCollection [
 
 	aCollection do: [ :each | self removeClass: each ]
 
+]
+
+{ #category : #'event handling' }
+CpDomElement >> removeEventListener: aFunction [
+
+	"Remove the specified funcion (a wrapped Block, answered by #addEventListener:handler:) from the receiver"
+
+	self apply: #removeEventListener withArguments: { aFunction propertyAt: #eventName . aFunction }
 ]
 
 { #category : #'text input' }
@@ -988,6 +1097,22 @@ CpDomElement >> replaceChildAtIndex: anInteger with: replacementElement [
 	self replaceChild: childElement with: replacementElement
 ]
 
+{ #category : #'adding/removing' }
+CpDomElement >> replaceWith: anElement [
+
+	"Replace the receiver (within its parent) with the specified Element.
+
+	In contrast with using #replaceChild:with: this method will keep
+	any text elements surrounding the receiver and can therefore be
+	used in variants like <p>My text <b>replace me!</b> more text</p>.
+	CodeParadise works on Elements (not Nodes) and therefore can't
+	handle the mentioned situation in most cases. This method makes it
+	possible to work with both."
+
+	<primitive: 'primitiveDomElementReplaceWith:' module: 'CpDOMPlugin'>
+	self primitiveFailed
+]
+
 { #category : #'event handling' }
 CpDomElement >> stopImmediatePropagation: anEvent [
 
@@ -1010,6 +1135,20 @@ CpDomElement >> stopPropagation: anEvent [
 	"
 
 	anEvent stopPropagation
+]
+
+{ #category : #announcing }
+CpDomElement >> stopWhen: anAnnouncementClass [
+
+	"Stop propagation (bubbling) of the specified Announcement/Event.
+	This will only prevent ancestors of the receiver receiving this
+	Event. If more event handlers for this Aoouncement/Event are
+	present on the receiver, they will all be handled normally."
+
+	^ self
+		when: anAnnouncementClass
+		send: #stopPropagation:
+		to: self
 ]
 
 { #category : #styles }
@@ -1127,6 +1266,38 @@ CpDomElement >> unsubscribe: anObject [
 	^ self announcer unsubscribe: anObject
 ]
 
+{ #category : #announcing }
+CpDomElement >> when: anAnnouncementClass deferDo: aBlock for: anObject [
+
+	"Subscribe the specified Announcement Class.
+	This particular variant forkes the message send in a separate Process.
+	This is useful in combination with using CpJavaScriptPromise >> #await
+	which temporarily suspends execution. Normally execution can't stop in
+	an event handler. Having a handler which forks of a separate Process
+	allows execution to continu.
+	Be aware that the event handling should not rely on some ordering or
+	timing. These become unpredictable because of awaiting results."
+
+	^ self announcer
+		when: anAnnouncementClass deferDo: aBlock for: anObject
+]
+
+{ #category : #announcing }
+CpDomElement >> when: anAnnouncementClass deferSend: aSymbol to: anObject [
+
+	"Subscribe the specified Announcement Class.
+	This particular variant forkes the message send in a separate Process.
+	This is useful in combination with using CpJavaScriptPromise >> #await
+	which temporarily suspends execution. Normally execution can't stop in
+	an event handler. Having a handler which forks of a separate Process
+	allows execution to continu.
+	Be aware that the event handling should not rely on some ordering or
+	timing. These become unpredictable because of awaiting results."
+
+	^ self announcer
+		when: anAnnouncementClass deferSend: aSymbol to: anObject
+]
+
 { #category : #deprecated }
 CpDomElement >> when: anAnnouncementClass do: aBlock [
 
@@ -1158,5 +1329,6 @@ CpDomElement >> when: anAnnouncementClass send: aSymbol to: anObject [
 
 	See CpDomElementAnnouncer>>#when:send:to:"
 
-	^ self announcer when: anAnnouncementClass send: aSymbol to: anObject
+	^ self announcer
+		when: anAnnouncementClass send: aSymbol to: anObject
 ]

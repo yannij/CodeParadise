@@ -51,10 +51,8 @@ Squeak.flushAllFiles = function() {};
 
 // Add default download operation to the filePut method
 Squeak.filePut = function(name, buffer) {
-	if(name === "./client-environment.image") {
-		console.log("Saving image");
-		globalThis.cpDownload(buffer, "application/octet-stream", "snapshot.image");
-	}
+	console.log("Saving image");
+	globalThis.cpDownload(buffer, "application/octet-stream", name.endsWith(".image") ? name : name + ".image");
 };'
 ]
 
@@ -76,7 +74,7 @@ CpBrowserSnapshot class >> postInstall [
 	CpHtmlElement documentAddScript: self downloadImageScript.
 
 	"Install the keyboard handler to perform the snapshot operation"
-	CpHtmlElement document
+	CpBrowserWindow current
 		when: (CpKeyDownEvent fromString: 'X-S-s') send: #saveSnapshot: to: self
 ]
 
@@ -115,9 +113,7 @@ CpBrowserSnapshot class >> saveSnapshot [
 	"Save a snapshot of the image"
 
 	"Start snapshot in separate process which terminates itself"
-	(Process forContext: [
-		self snapshotImage.
-		Processor activeProcess terminate ] asContext  priority: 2) resume
+	[ self snapshotImage ] forkAt: 2 named: 'Snapshot'
 ]
 
 { #category : #private }
@@ -171,6 +167,7 @@ CpBrowserSnapshot class >> snapshotImage [
 	CpEvent allSubclassesDo: [ :each | each preSnapshot ].
 	CpJavaScriptObject withAllSubclassesDo: [ :each |
 		each preSnapshot ].
+	CpGlobalThis preSnapshotOnce.
 
 	"Save application content"
 	content := CpHtmlElement documentBody markupContent.

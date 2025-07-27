@@ -14,7 +14,7 @@ Class {
 		'stream',
 		'componentClass'
 	],
-	#category : #'CodeParadise-WebApplication-Ionic-Elements'
+	#category : #'CodeParadise-WebApplication-Ionic-Support'
 }
 
 { #category : #actions }
@@ -105,7 +105,6 @@ CpIonInterfaceInstaller >> installClass [
 	stream skipSeparators.
 
 	componentClass := (componentName includesSubstring: 'Legacy')
-		ifTrue: [ nil ]
 		ifFalse: [
 			(Smalltalk classNamed: componentName)
 				ifNil: [
@@ -190,7 +189,7 @@ CpIonInterfaceInstaller >> installMethod [
 { #category : #installing }
 CpIonInterfaceInstaller >> installMethod: selectorString arguments: arguments optionals: optionalCount comment: commentString type: typeString [
 
-	"Install the method with it optional arguments"
+	"Install the method with its optional arguments"
 
 	| totalOptionalCount selector code actualArgs sourceCode |
 
@@ -369,14 +368,12 @@ CpIonInterfaceInstaller >> resultTypeFromTypeString: aString [
 	resultType := self typeFromTypeString: aString.
 
 	^ (#('String' 'Number' 'Boolean') includes: resultType)
-		ifTrue: [ nil ]
 		ifFalse: [
 			resultType = 'Promise'
 				ifTrue: [ CpJavaScriptPromise name ]
 				ifFalse: [
 					(Smalltalk classNamed: resultType) isNotNil
-						ifTrue: [ resultType ]
-						ifFalse: [ nil ] ] ]
+						ifTrue: [ resultType ] ] ]
 ]
 
 { #category : #accessing }

@@ -22,6 +22,26 @@ Class {
 	#category : #'CodeParadise-JavaScript-Core'
 }
 
+{ #category : #'class initialization' }
+CpJavaScriptFunction class >> postInstallOnce [
+
+	"Install a function which allows calling Smalltalk's #perform:withArguments: code.
+
+	Implementation:
+	This performer function is used internally by the CodeParadise System plugin."
+
+	self getClass
+		propertyAt: #smalltalkPerformer
+		put: (self wrap: [ :instance :selector :arguments |
+			instance perform: selector asSymbol withArguments: arguments ])
+]
+
+{ #category : #'class initialization' }
+CpJavaScriptFunction class >> postSnapshotOnce [
+
+	self postInstallOnce
+]
+
 { #category : #converting }
 CpJavaScriptFunction class >> wrap: aBlock [
 
@@ -29,60 +49,44 @@ CpJavaScriptFunction class >> wrap: aBlock [
 	Smalltalk code in places where a JavaScript function is required.
 
 	Implementation:
-	Wrap the Block in a Context to allow execution by a Process (internally).
+	Wrap the Block in a Context to allow execution by the VM interpreter.
 	This allows Smalltalk calling JavaScript calling Smalltalk calling
 	JavaScript constructs as well as recursive calls (even within the Block
 	where the Block evaluates itself).
 	The Block below makes sure the correct arguments are retrieved (which
 	come from JavaScript) and the result is stored again for the JavaScript
 	code performing this function (i.e. Block).
-	Since the Context will be used inside a Process that will be created
-	when the function gets executed, we need to terminate this (i.e. the
-	active) Process at the end of the Block."
+	The Context will be executed in a new Process, so the Process needs
+	termination once the Block is evaluated and the result is stored."
 
-	| instance executionContext |
+	| instance |
 
-	executionContext := [
-		| arguments |
-
-		"Retrieve and resize arguments to match the Block"
-		arguments := instance arguments.
-		arguments size = aBlock numArgs
-			ifFalse: [
-				"Create correct sized arguments Array (potentially losing arguments or adding nils)"
-				| receivedArguments |
-				receivedArguments := arguments.
-				arguments := Array new: aBlock numArgs.
-				arguments
-					replaceFrom: 1
-					to: (receivedArguments size min: arguments size)
-					with: receivedArguments
-					startingAt: 1 ].
+	instance := super wrap: [
 
 		"Execute the Block and store the result (or the error instance if an error occurred)"
-		instance setResult: ([ aBlock valueWithArguments: arguments ] on: Error do: [ :error |
+		instance setResult: ([ aBlock valueWithArguments: (instance arguments: aBlock numArgs) ] on: Error do: [ :error |
 			(CpJavaScriptError message: error messageText)
 				rawPropertyAt: #cause put: error ;
 				yourself ]).
 
-		"Stop execution"
+		"Terminate the Process running this context"
 		Processor activeProcess terminate ] asContext.
 
-	"Create an instance with the newly created execution Context"
-	instance := super wrap: executionContext.
-
-	"Add the original Block as property to the new JavaScript Function instance"
+	"Add the original Block to the new JavaScript Function instance"
 	^ instance
-		rawPropertyAt: #_st_block put: aBlock ;
+		setBlock: aBlock ;
 		yourself
 ]
 
 { #category : #private }
-CpJavaScriptFunction >> arguments [
+CpJavaScriptFunction >> arguments: anInteger [
 
-	"Answer the arguments of the receiver's executing JavaScript function (an Array)"
+	"Answer the arguments of the receiver's executing JavaScript function (an Array),
+	matching the number of arguments specified.
+	If too many arguments are present, the last will be ignored.
+	If not enough arguments are present, nils will be added."
 
-	<primitive: 'primitiveJavaScriptFunctionArguments' module: 'CpSystemPlugin'>
+	<primitive: 'primitiveJavaScriptFunctionArguments:' module: 'CpSystemPlugin'>
 	self primitiveFailed
 ]
 
@@ -91,11 +95,26 @@ CpJavaScriptFunction >> asBlock [
 
 	"Answer the Smalltalk Block used to create the receiver (if any)"
 
-	^ self rawPropertyAt: #_st_block
+	<primitive: 'primitiveJavaScriptFunctionBlock' module: 'CpSystemPlugin'>
+	self primitiveFailed
 ]
 
 { #category : #converting }
 CpJavaScriptFunction >> asJavaScriptFunction [
+
+	^ self
+]
+
+{ #category : #converting }
+CpJavaScriptFunction >> asRelaxedJsonObjectValue [
+
+	"Answer a representation of the receiver to be used in a relaxed JSON Object.
+	This means the representation allows JavaScriptFunction property values too.
+
+	JSON values can either be: String, Number (Float or Integer), Boolean, nil,
+	a Dictionary-like value (Dictionary, OrderedDictionary or subclasses)
+	or an Array of such elements.
+	This variant accepts JavaScriptFunction values too."
 
 	^ self
 ]
@@ -123,10 +142,78 @@ CpJavaScriptFunction >> call: anObject withArguments: anArray resultAs: aClass [
 ]
 
 { #category : #private }
+CpJavaScriptFunction >> handleValueError [
+
+	"Check if an exception was thrown"
+	(self primLastExceptionAs: self exceptionClass)
+		ifNotNil: [ :exception | ^ exception rootException signal ].
+
+	"Log (generic) error"
+	self errorCr: 'Error when evaluating function'.
+	self consoleError.
+
+	self primitiveFailed
+]
+
+{ #category : #private }
+CpJavaScriptFunction >> setBlock: aBlock [
+
+	"Set the Block which was used to create the receiver (using class side #wrap:)"
+
+	<primitive: 'primitiveJavaScriptFunctionSetBlock:' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #private }
 CpJavaScriptFunction >> setResult: anObject [
 
 	"Set the result value for the receiver's executing JavaScript function"
 
 	<primitive: 'primitiveJavaScriptFunctionSetResult:' module: 'CpSystemPlugin'>
 	self primitiveFailed
+]
+
+{ #category : #operations }
+CpJavaScriptFunction >> value [
+
+	"Evaluate the receiver without any arguments"
+
+	<primitive: 'primitiveJavaScriptFunctionValue' module: 'CpSystemPlugin'>
+	self handleValueError
+]
+
+{ #category : #operations }
+CpJavaScriptFunction >> value: anObject [
+
+	"Evaluate the receiver with a single argument"
+
+	<primitive: 'primitiveJavaScriptFunctionValue:' module: 'CpSystemPlugin'>
+	self handleValueError
+]
+
+{ #category : #operations }
+CpJavaScriptFunction >> value: arg1Object value: arg2Object [
+
+	"Evaluate the receiver with two arguments"
+
+	<primitive: 'primitiveJavaScriptFunctionValue:value:' module: 'CpSystemPlugin'>
+	self handleValueError
+]
+
+{ #category : #operations }
+CpJavaScriptFunction >> value: arg1Object value: arg2Object value: arg3Object [
+
+	"Evaluate the receiver with two arguments"
+
+	<primitive: 'primitiveJavaScriptFunctionValue:value:value:' module: 'CpSystemPlugin'>
+	self handleValueError
+]
+
+{ #category : #operations }
+CpJavaScriptFunction >> valueWithArguments: anArray [
+
+	"Evaluate the receiver with the specified arguments"
+
+	<primitive: 'primitiveJavaScriptFunctionValueWithArguments:' module: 'CpSystemPlugin'>
+	self handleValueError
 ]

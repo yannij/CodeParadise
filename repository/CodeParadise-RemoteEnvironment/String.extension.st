@@ -1,23 +1,20 @@
 Extension { #name : #String }
 
 { #category : #'*CodeParadise-RemoteEnvironment' }
-String >> asJsonObjectValue [
-
-	"Answer a representation of the receiver to be used in a JSON Object.
-
-	Implementation:
-	Override the Collection >> #asJsonObjectValue implementation, since Strings are supported natively
-	and should not be seen as an Array of Characters."
-
-	<applicationExtension>
-
-	^ self
-]
-
-{ #category : #'*CodeParadise-RemoteEnvironment' }
 String >> asNumberOrNil [
 
-	^ [ self asNumber ] on: Error do: [ nil ]
+	"Answer the specified number represented by the receiver
+	or nil if no such value exists.
+	The 'special' values 'NaN', 'Infinity' and '-Infinity' ARE supported.
+	In contrast with #asNumber, the (Smalltalk) radix is NOT supported.
+	For example: 16rff will not be accepted (i.e. will answer nil)."
+
+	<clientEnvironment>
+
+	^ [
+		(self includes: $r)
+			ifFalse: [ self asNumber ]
+	] on: Error do: [ nil ]
 ]
 
 { #category : #'*CodeParadise-RemoteEnvironment' }

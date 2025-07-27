@@ -41,6 +41,16 @@ CpWebComponent class >> basicNew [
 	^ self basicNewWithTag: self tagName
 ]
 
+{ #category : #'instance creation' }
+CpWebComponent class >> content: anElement [
+
+	"Answer a new instance of the receiver with the specified DOM element content"
+
+	^ self new
+		appendChild: anElement ;
+		yourself
+]
+
 { #category : #accessing }
 CpWebComponent class >> first [
 
@@ -57,7 +67,7 @@ CpWebComponent class >> hasAbstractTag [
 	^ self classSide includesSelector: #isAbstractTag
 ]
 
-{ #category : #testing }
+{ #category : #tags }
 CpWebComponent class >> isAbstractTag [
 
 	"The method is present to indicate the receiver is abstract.
@@ -75,6 +85,16 @@ CpWebComponent class >> isRegistered: aString [
 
 ]
 
+{ #category : #testing }
+CpWebComponent class >> isThirdPartyElement [
+
+	"Answer whether the receiver is a third party WebComponent.
+
+	Third party elements don't need a JS constructor (they are provided by the third party library)."
+
+	^ false
+]
+
 { #category : #accessing }
 CpWebComponent class >> last [
 
@@ -84,6 +104,16 @@ CpWebComponent class >> last [
 	^ self all
 		ifNotEmpty: [ :matches | matches last ]
 		ifEmpty: [ nil ]
+]
+
+{ #category : #'instance creation' }
+CpWebComponent class >> markupContent: aString [
+
+	"Answer a new instance of the receiver with the specified markup content"
+
+	^ self new
+		markupContent: aString ;
+		yourself
 ]
 
 { #category : #'instance creation' }
@@ -109,23 +139,47 @@ CpWebComponent class >> postInstall [
 	"Register the receiver as a WebComponent in the web browser.
 
 	Implementation:
+	During registration a Boolean is provided to indicate whether a
+	specific #initialize method is present. This is done to prevent too
+	many calls to an 'empty' initialize method. This initialization is
+	used when creating instances explicitly in a template or when using
+	#markupContent: to create instances through HTML code.
+	For third party elements, this mechanism can't be installed because
+	we lack access to the elements internals (in general).
 	First perform the registration, then proceed with calling super's
 	implementation. This ensures that when #postInstallOnce is executed
 	the receiver is already registered."
 
-	self register.
+	| hasInitialize |
+
+	self hasAbstractTag
+		ifFalse: [
+
+			"The #initialize method is first present on the Object class in the tiny image"
+			hasInitialize := (self instanceSide lookupSelector: #initialize) methodClass ~= Object.
+
+			self registerWithInitialize: hasInitialize thirdParty: self isThirdPartyElement ].
 
 	super postInstall
 ]
 
 { #category : #primitives }
-CpWebComponent class >> register [
+CpWebComponent class >> registerWithInitialize: initializeBoolean thirdParty: thirdPartyBoolean [
 
-	"Register the receiver as a WebComponent class"
+	"Register the receiver as a WebComponent class
+	with a Boolean indicating whether the receiver (instances)
+	require initialization. This is 'needed' to prevent too many
+	calls to an initialization method which does nothing (i.e. the
+	default Object >> #initialize).
+	The second Boolean provided indicates whether the receiver is from
+	a third party library, in which case JS WebComponents do NOT need
+	be created, because it is done by the library itself. Also there is
+	no generic way to handle #initialize on such objects. It will be
+	called when instantiating component specifically, but not when they
+	are part of a template."
 
-	<primitive: 'primitiveWebComponentRegister' module: 'CpDOMPlugin'>
+	<primitive: 'primitiveWebComponentRegisterWithInitialize:thirdParty:' module: 'CpDOMPlugin'>
 	self primitiveFailed
-
 ]
 
 { #category : #accessing }
@@ -152,6 +206,16 @@ CpWebComponent class >> tagName [
 	^ (self name withoutSuffix: #View) asKebabCase
 ]
 
+{ #category : #'instance creation' }
+CpWebComponent class >> textContent: aString [
+
+	"Answer a new instance of the receiver with the specified text content"
+
+	^ self new
+		textContent: aString ;
+		yourself
+]
+
 { #category : #accessing }
 CpWebComponent class >> whenDefinedAll: aCollection do: aBlock [
 
@@ -159,25 +223,22 @@ CpWebComponent class >> whenDefinedAll: aCollection do: aBlock [
 	(allowing third-party WebComponents to be present before using them).
 
 	Implementation:
-	The method does not refer to the CpBrowserCustomElementRegistry class
-	directly to prevent another class from being put into the image. Please
+	The method ignores the reference to the CpBrowserCustomElementRegistry
+	class to prevent another class from being put into the image. Please
 	add this class in the relevant #beLoaded method (either of a specific
-	component or more generally in the WebClient class for your application).
-	Likewise for the CpJavaScriptPromise class."
+	component or more generally in the WebClient class for your application)
+	if using this method."
 
-	| registryClass registry promiseClass |
+	<ignoreReference: #CpBrowserCustomElementRegistry>
+	<ignoreReference: #CpJavaScriptPromise>
 
-	(registryClass := Smalltalk classNamed: #CpBrowserCustomElementRegistry)
-		ifNil: [ self error: 'The class ', #CpBrowserCustomElementRegistry, ' is not installed, please add it in the #beLoaded of your class/application' ].
-	(promiseClass := Smalltalk classNamed: #CpJavaScriptPromise)
-		ifNil: [ self error: 'The class ', #CpJavaScriptPromise, ' is not installed, please add it in the #beLoaded of your class/application' ].
+	| registry |
 
-	registry := registryClass current.
+	registry := CpBrowserCustomElementRegistry current.
 
-	"Perform Promise.all on the individual Promise per WebComponent (class)"
-	(promiseClass all: (aCollection collect: [ :each |
-		registryClass current whenDefined: each tagName ]))
-			then: aBlock
+	"Perform Promise.all on the collection of Promises per WebComponent (class)"
+	(CpJavaScriptPromise allSettled: (aCollection collect: [ :each | registry whenDefined: each tagName ]))
+		then: aBlock
 ]
 
 { #category : #accessing }
@@ -187,14 +248,16 @@ CpWebComponent class >> whenDefinedDo: aBlock [
 	(allowing third-party WebComponents to be present before using them).
 
 	Implementation:
-	The method does not refer to the CpBrowserCustomElementRegistry class
-	directly to prevent another class from being put into the image. Please
+	The method ignores the reference to the CpBrowserCustomElementRegistry
+	class to prevent another class from being put into the image. Please
 	add this class in the relevant #beLoaded method (either of a specific
-	component or more generally in the WebClient class for your application)."
+	component or more generally in the WebClient class for your application)
+	if using this method."
 
-	(Smalltalk classNamed: #CpBrowserCustomElementRegistry)
-		ifNotNil: [ :registryClass | (registryClass current whenDefined: self tagName) then: aBlock ]
-		ifNil: [ self error: 'The class ', #CpBrowserCustomElementRegistry, ' is not installed, please add it in the #beLoaded of your class/application' ]
+	<ignoreReference: #CpBrowserCustomElementRegistry>
+
+	(CpBrowserCustomElementRegistry current whenDefined: self tagName)
+		then: aBlock
 ]
 
 { #category : #private }

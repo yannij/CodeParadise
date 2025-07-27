@@ -72,7 +72,12 @@ CpViewInspectorView class >> postInstallOnce [
 		registerObject: self
 		withId: self name.
 
-	self createInstance
+	self
+		whenDefinedAll: {
+			CpViewCodeInspectorView.
+			SlIcon.
+			SlIconButton }
+		do: [ self createInstance ]
 ]
 
 { #category : #rendering }
@@ -84,7 +89,7 @@ CpViewInspectorView class >> showAlert: aString [
 			slot: 'icon' ;
 			yourself) ;
 		textContent: aString ;
-		duration: 1500 ;
+		duration: 2500 ;
 		beCountdownRightToLeft ;
 		toast
 ]
@@ -245,6 +250,21 @@ CpViewInspectorView >> codeElement [
 	^ self firstChild
 ]
 
+{ #category : #accessing }
+CpViewInspectorView >> ensureInstanceOf: aClass [
+
+	"Answer an instanece of the specified class"
+	aClass first ifNotNil: [ :instance | ^ instance ].
+
+	"Do a full DOM tree search (includes shadow DOMS)"
+	CpHtmlElement documentBody allElementsDo: [ :each |
+		each class == aClass
+			ifTrue: [ ^ each ] ].
+
+	"Finally try to instantiate one (can fail)"
+	^ self newInstanceFor: aClass
+]
+
 { #category : #'event handling' }
 CpViewInspectorView >> handleBrowse: aKeyEvent [
 
@@ -280,8 +300,8 @@ CpViewInspectorView >> handleInput [
 	input := (self shadowedElementWithId: #'name-input') value.
 
 	selectedClassName := (completionIndex > 0
-		ifTrue: [ (self childrenAtSlotNamed: #completion) at: completionIndex ifAbsent: [ nil ] ]
-		ifFalse: [ nil ]) ifNotNil: [ :selection | selection textContent ].
+		ifTrue: [ (self childrenAtSlotNamed: #completion) at: completionIndex ifAbsent: [ nil ] ])
+			ifNotNil: [ :selection | selection textContent ].
 
 	self removeChildrenAtSlotNamed: #completion.
 	completionIndex := 0.
@@ -383,12 +403,13 @@ CpViewInspectorView >> initialize [
 
 	self appendChild: CpViewCodeInspectorView new atSlotNamed: #end.
 
-	"Show this info delayed, so it will appear at the bottom of the console"
-	CpHtmlElement documentBody
+	"Set the key handler on the Window"
+	CpBrowserWindow current
 		when: (CpKeyDownEvent key: 'i') & CpActionKeyDown send: #handleToggle: to: self ;
 		when: (CpKeyDownEvent key: 'b') & CpActionKeyDown send: #handleBrowse: to: self ;
 		when: CpKeyPressEvent escape send: #handleEscape: to: self.
 
+	"Show this info delayed, so it will appear at the bottom of the console"
 	CpGlobalThis setTimeout: 1000 thenDo: [
 	self traceCr: ('
 ===================== Installed ViewInspector tool =====================
@@ -427,6 +448,25 @@ CpViewInspectorView >> makeTopView [
 	self nextSibling ifNil: [ ^ self ].
 
 	self parent appendChild: self remove
+]
+
+{ #category : #accessing }
+CpViewInspectorView >> newInstanceFor: aClass [
+
+	"Answer a new instance of the specified TemplateComponent class.
+
+	Implementation:
+	Not all classes allow instantation, check for this and report any errors."
+
+	| instance |
+
+	instance := [ aClass basicNew initialize ; yourself ] on: Error do: [ nil ].
+
+	instance
+		ifNotNil: [ self class showAlert: 'WebComponent ', aClass name, ' is not present in the current page/DOM, a new instance is created' ]
+		ifNil: [ self class showErrorAlert: 'WebComponent ', aClass name, ' can''t be instantiated and no instance is present in the current page/DOM' ].
+
+	^ instance
 ]
 
 { #category : #rendering }
@@ -477,7 +517,7 @@ CpViewInspectorView >> showCodeForClassNamed: aString [
 		each name = aString
 			ifTrue: [
 				self hideInput.
-				self showCodeFor: (each first ifNil: [ each new ]).
+				self showCodeFor: (self ensureInstanceOf: each).
 				^ self ] ].
 
 	self class showErrorAlert: 'Class not found: ', aString printString

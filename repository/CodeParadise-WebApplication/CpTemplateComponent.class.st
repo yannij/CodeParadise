@@ -68,40 +68,11 @@ CpTemplateComponent class >> installTemplate: templateString [
 	self primitiveFailed
 ]
 
-{ #category : #testing }
+{ #category : #tags }
 CpTemplateComponent class >> isAbstractTag [
 
 	"The method is present to indicate the receiver is abstract.
 	This method will NOT be evaluated to decide if the receiver is abstract."
-]
-
-{ #category : #'class initialization' }
-CpTemplateComponent class >> postInstallOnce [
-
-	"Install event handler to make sure all (sub)instances of the receiver get initialized correctly.
-
-	When an instance of the receiver is created through some markup content (i.e. as part of HTML
-	description) it will not be initialized like a regular Smalltalk object instance. Therefore
-	perform the initialization if such a situation is triggered (by an event)."
-
-	CpHtmlElement document
-		when: CpCreatedFromMarkupEvent send: #initializeMarkupCreatedInstance: to: self
-]
-
-{ #category : #'class initialization' }
-CpTemplateComponent class >> register [
-
-
-	"Register the receiver as a WebComponent class (with own style and template)
-	and then install style and template"
-
-	super register.
-
-	self registerStyleAndTemplate.
-
-	self
-		installStyle: self style andTemplate: self template ;
-		installGlobalStyle
 ]
 
 { #category : #primitives }
@@ -112,6 +83,19 @@ CpTemplateComponent class >> registerStyleAndTemplate [
 	<primitive: 'primitiveTemplateComponentRegisterStyleAndTemplate' module: 'CpDOMPlugin'>
 	self primitiveFailed
 
+]
+
+{ #category : #'class initialization' }
+CpTemplateComponent class >> registerWithInitialize: initializeBoolean thirdParty: thirdPartyBoolean [
+
+	"Register the receiver as a WebComponent class (with own style and template)
+	and then install style and template"
+
+	super registerWithInitialize: initializeBoolean thirdParty: thirdPartyBoolean.
+
+	self
+		installStyle: self style andTemplate: self template ;
+		installGlobalStyle
 ]
 
 { #category : #updating }
@@ -144,7 +128,7 @@ CpTemplateComponent class >> template [
 
 	<webResource: #html>
 
-	^ ''
+	^ '<slot></slot>'
 ]
 
 { #category : #updating }

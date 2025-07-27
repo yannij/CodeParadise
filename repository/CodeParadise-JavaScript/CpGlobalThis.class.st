@@ -71,6 +71,61 @@ CpGlobalThis class >> clearTimeout: anInteger [
 ]
 
 { #category : #operations }
+CpGlobalThis class >> decodeURI: aString [
+
+	"Answer a new string representing the unencoded version of the given encoded Uniform Resource Identifier (URI)"
+
+	^ self apply: #decodeURI withArguments: { aString }
+]
+
+{ #category : #operations }
+CpGlobalThis class >> decodeURIComponent: aString [
+
+	"Answer a new string representing the decoded version of the given encoded Uniform Resource Identifier (URI) component"
+
+	^ self apply: #decodeURIComponent withArguments: { aString }
+]
+
+{ #category : #'deferred message' }
+CpGlobalThis class >> defer: aBlock [
+
+	"Evaluate the specified Block with the smallest delay (at least one tick).
+
+	Implementation:
+	Since execution of Blocks is handled synchronously when used as JavaScript
+	function, the Block will be executed synchronously here. If you prefer a
+	more relaxed execution please use `[ ... ] fork`."
+
+	self setTimeout: 0 thenDo: aBlock
+]
+
+{ #category : #'deferred message' }
+CpGlobalThis class >> deferLongRunning: aBlock [
+
+	"Evaluate the specified Block with the smallest delay.
+	Assuming the Block is long running, perform it in its own Process.
+	See also #defer:"
+
+	aBlock fork
+]
+
+{ #category : #operations }
+CpGlobalThis class >> encodeURI: aString [
+
+	"Answer a new string representing the provided string encoded as a URI"
+
+	^ self apply: #encodeURI withArguments: { aString }
+]
+
+{ #category : #operations }
+CpGlobalThis class >> encodeURIComponent: aString [
+
+	"Answer a new string representing the provided uriComponent encoded as a URI component"
+
+	^ self apply: #encodeURIComponent withArguments: { aString }
+]
+
+{ #category : #operations }
 CpGlobalThis class >> fetch: aString withOptions: aDictionary [
 
 	"Fetch the resource using the specified URL string.
@@ -141,6 +196,8 @@ CpGlobalThis class >> fetch: aString withOptions: aDictionary [
 		auto
 			Automatically determine the priority of the fetch request relative to other requests of the same type (default)."
 
+	<ignoreReference: #CpJavaScriptPromise>
+
 	^ self apply: #fetch withArguments: { aString . aDictionary } resultAs: CpJavaScriptPromise
 ]
 
@@ -152,6 +209,12 @@ CpGlobalThis class >> globalThis [
 	Node.js environment this will be an instance of CpJavaScriptObject."
 
 	^ GlobalThis ifNil: [ GlobalThis := CpJavaScriptObject global ]
+]
+
+{ #category : #'class initialization' }
+CpGlobalThis class >> preSnapshotOnce [
+
+	GlobalThis := nil
 ]
 
 { #category : #accessing }
@@ -232,5 +295,5 @@ CpGlobalThis class >> setTimeout: anInteger thenDo: aBlock [
 	An integer is answered to identify this timeout. It can be
 	used to stop the timeout using #clearTimeout."
 
-	^ self apply: #setTimeout withArguments: { aBlock . anInteger }
+	^ self apply: #setTimeout withArguments: { aBlock asJavaScriptFunction . anInteger }
 ]

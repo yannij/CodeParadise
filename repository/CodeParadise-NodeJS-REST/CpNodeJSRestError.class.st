@@ -4,6 +4,16 @@ Class {
 	#category : #'CodeParadise-NodeJS-REST-Errors'
 }
 
+{ #category : #'instance creation' }
+CpNodeJSRestError class >> messageText: aString [
+
+	"Answer an instance of the receiver with the specified message"
+
+	^ self new
+		messageText: aString ;
+		yourself
+]
+
 { #category : #accessing }
 CpNodeJSRestError class >> responseCode [
 
@@ -51,7 +61,5 @@ CpNodeJSRestError >> restResponseCode [
 { #category : #accessing }
 CpNodeJSRestError >> restResponseString [
 
-	^ messageText isEmptyOrNil
-		ifTrue: [ self class responseString ]
-		ifFalse: [ messageText ]
+	^ messageText ifEmptyOrNil: [ self class responseString ]
 ]

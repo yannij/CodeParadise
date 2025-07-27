@@ -42,6 +42,8 @@ CpBrowserBlob >> arrayBuffer [
 { #category : #converting }
 CpBrowserBlob >> asBrowserClipboardItem [
 
+	<ignoreReference: #CpBrowserClipboardItem>
+
 	^ CpBrowserClipboardItem newWithBlob: self
 ]
 
@@ -51,6 +53,16 @@ CpBrowserBlob >> size [
 	"The size, in bytes, of the data contained in the Blob object."
 
 	^ self propertyAt: #size
+]
+
+{ #category : #accessing }
+CpBrowserBlob >> stream [
+
+	"Returns a ReadableStream that can be used to read the contents of the Blob.
+
+	Return: ReadableStream"
+
+	^ self apply: #stream resultAs: CpBrowserReadableStream
 ]
 
 { #category : #accessing }

@@ -1,8 +1,17 @@
 Class {
 	#name : #CpBrowserSupportExamplesWebClientBehavior,
 	#superclass : #CpWebClientBehavior,
+	#instVars : [
+		'process'
+	],
 	#category : #'CodeParadise-Browser-Support-Examples'
 }
+
+{ #category : #'class initialization' }
+CpBrowserSupportExamplesWebClientBehavior class >> beLoaded [
+
+	CpBrowserSpeechSynthesisEvent beLoaded
+]
 
 { #category : #accessing }
 CpBrowserSupportExamplesWebClientBehavior >> clearOutput [
@@ -391,7 +400,7 @@ CpBrowserSupportExamplesWebClientBehavior >> exampleBrowserSpeechSynthesis [
 { #category : #examples }
 CpBrowserSupportExamplesWebClientBehavior >> exampleDNU [
 
-	<example: 'DNU' order: 9999>
+	<example: 'Basic: DNU' order: 1400>
 
 	| outputElement math |
 
@@ -412,7 +421,15 @@ CpBrowserSupportExamplesWebClientBehavior >> exampleDNU [
 		math apply: #doSomething ] on: Error do: [ :err |
 			outputElement appendChild: ((CpHtmlElement newWithTag: #p)
 				textContent: 'DNU error: ', err printString ;
-				yourself) ]
+				yourself) ].
+
+	outputElement appendChild: ('Doing a DNU from setTimeout(2s)' inHtmlTag: #p).
+
+	CpGlobalThis setTimeout: 2000 thenDo: [ [
+		math apply: #doSomethingInCallback ] on: Error do: [ :err |
+			outputElement appendChild: ((CpHtmlElement newWithTag: #p)
+				textContent: 'DNU error in callback: ', err printString ;
+				yourself) ] ]
 ]
 
 { #category : #examples }
@@ -458,14 +475,14 @@ CpBrowserSupportExamplesWebClientBehavior >> exampleJavaScriptFunction [
 			textContent: 'JavaScript functions' ;
 			yourself) ;
 		appendChild: ((CpHtmlElement newWithTag: #p)
-			textContent: 'Smalltalk Blocks can be used in place of JavaScript functions (like callbacks or in Promises). The Smalltalk Block can call other JavaScript functions which can call Smalltalk Blocks again. Even recursively. See the dev console for some output (please check source code to see what is going on). Need to make some proper tests at some point ;-).' ;
+			textContent: 'Smalltalk Blocks can be used in place of JavaScript functions (like callbacks or in Promises). The Smalltalk Block can call other JavaScript functions which can call Smalltalk Blocks again. Even recursively. See the output below (please check source code to see what is going on).' ;
 			yourself) ;
 		yourself.
 
 	counter := 1.
 
 	jsFunc1 := CpJavaScriptFunction wrap: [ :input |
-		self traceCr: 'in func1 with ', input printString.
+		self showInfo: 'In func1 with input: ', input printString.
 		counter := counter + 1.
 
 		"Answer counter without the increment"
@@ -474,26 +491,41 @@ CpBrowserSupportExamplesWebClientBehavior >> exampleJavaScriptFunction [
 	jsFunc2 := CpJavaScriptFunction wrap: [ :input |
 		| x |
 		
-		self traceCr: 'in func2 with ', input printString, ' calling func1'.
-		x := jsFunc1 call: nil withArguments: { 'from 2' }.
-		self traceCr: 'called 1 - result ', x printString.
-		x := jsFunc1 call: nil withArguments: { 'from 2 too' }.
-		self traceCr: 'called 1 more - result ', x printString.
+		self showInfo: 'In func2 with input: ', input printString.
+		self showInfo: 'Calling func1'.
+		x := jsFunc1 call: nil withArguments: { 'from func2 first' }.
+		x = 1
+			ifFalse: [ self showInfo: 'Unexpected result from func1' ].
+		self showInfo: 'Called func1 -  (expect result 1): ', x printString.
+		self showInfo: 'Calling func1'.
+		x := jsFunc1 call: nil withArguments: { 'from func2 second' }.
+		x = 2
+			ifFalse: [ self showInfo: 'Unexpected result from func1' ].
+		self showInfo: 'Called func1 more - (expect result 2): ', x printString.
 
 		"Answer fixed value"		
 		123 ].
 
-	self traceCr: 'Ran all - result ', (jsFunc2 call: nil withArguments: { 'from fixThis' }) printString.
+	(jsFunc2 call: nil withArguments: { 'from example' })
+		ifNotNil: [ :result |
+			result = 123
+				ifFalse: [ self showInfo: 'Unexpected result from func2' ].
+			self showInfo: 'Ran all - result (expect result 123): ', result printString ]
+		ifNil: [ self showInfo: 'Unexpected result from func2' ].
 
+	"Some recursive calls"
+	counter := 10.
+	jsFunc3 := CpJavaScriptFunction wrap: [ counter >= 0 ifTrue: [ self showInfo: 'Count down ', counter printString. counter := counter - 1. jsFunc3 call: nil withArguments: nil ] ].
+	jsFunc3 call: nil withArguments: nil.
 
 	"Prevent errors from giving results"
-	jsFunc4 := CpJavaScriptFunction wrap: [ self traceCr: 'In for an error?'. self error: 'OOPS' ].
+	jsFunc4 := CpJavaScriptFunction wrap: [ self showInfo: 'In for an error?'. self error: 'OOPS' ].
 	[
-		self traceCr: 'Result on error ', (jsFunc4 call: nil withArguments: nil) printString
+		self showInfo: 'Result on error ', (jsFunc4 call: nil withArguments: nil) printString
 	] on: Error do: [ :err |
-		self traceCr: 'Error during JavaScriptFunction: ', err rootCause printString
+		self showInfo: '(Expected) Error during JavaScriptFunction: ', err rootException printString
 	].
-	self traceCr: 'After the Error incident'
+	self showInfo: 'After the Error incident (glad that is over ;-)'
 ]
 
 { #category : #examples }
@@ -518,19 +550,34 @@ CpBrowserSupportExamplesWebClientBehavior >> exampleJavaScriptPromise [
 			yourself) ;
 		appendChild: ((CpHtmlElement newWithTag: #button)
 			id: 'promise-button' ;
-			textContent: 'Show message (using await, takes 2s to run)' ;
+			textContent: 'Run Promise: show message after 2 second delay' ;
 			when: CpClickEvent primary only send: #promiseRun to: self ;
 			yourself) ;
 		appendChild: ((CpHtmlElement newWithTag: #p)
-			textContent: 'There is no Smalltalk equivalent for await with Promises. The reason is that await is not actually suspending execution (like Smalltalk Processes can), but is more a syntactic replacement for chained Promises. Furthermore, the way CodeParadise is implemented does not play well with this asynchronous mechanism. Browser events are the initiator for performing code. The event handler should perform its task as quickly as possible (not waiting on some Promise to resolve). Similar for Transitions which periodically run (as quickly as possible). So only background Processes would/could benefit from having an await feature, because these Processes can be suspended. Since such Processes are probably not used often and making distinction between such Processes is probably awkward for the developer, await is not supported. See also explanation in the link below:' ;
+			textContent: 'You can make Promises behave more like synchronous using #await.' ;
 			yourself) ;
 		appendChild: ((CpHtmlElement newWithTag: #p)
-			appendChild: ((CpHtmlElement newWithTag: #a)
-				attributeAt: #href put: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function' ;
-				textContent: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function' ;
-				yourself) ;
+			textContent: 'BE AWARE: you should always use #await in a separate Process from a browser event handler (or transition), since it will otherwise make the browser unresponsive. To prevent this happening, an Error will be signaled if the Process does not allow "awaiting" (currently this is the case for both the CpEvent handler and the CpTransition handler).' ;
 			yourself) ;
-		yourself
+		appendChild: ((CpHtmlElement newWithTag: #button)
+			id: 'promise-await-button' ;
+			textContent: 'Run Promise: show message after 2 second delay, using await' ;
+			when: CpClickEvent primary only send: #promiseRunAwait to: self ;
+			yourself) ;
+		appendChild: ((CpHtmlElement newWithTag: #p)
+			textContent: 'Errors within Promises are handled differently. If you don''t have a .catch(...) it will become an unhandled rejection. If using the default async mechanism, this rejection happens outside of any Smalltalk context. In that case, the best CP can do is show in which CodeBlock the issue arose. Fix this by adding a catch, because it is a programmer''s mistake. Be sure your catch doesn''t signal an error itself, otherwise we are back at square one ;-).' ;
+			yourself) ;
+		appendChild: ((CpHtmlElement newWithTag: #p)
+			textContent: 'When applying #await however, the async code is made synchronous again. Now you can catch the rejection using a regular [ ... ] on: Error do: [ ...] handler. (See the code of this example)' ;
+			yourself) ;
+		appendChild: ((CpHtmlElement newWithTag: #button)
+			id: 'promise-error-button' ;
+			textContent: 'Run Promise: show message then signal error (no catch)' ;
+			when: CpClickEvent primary only send: #promiseRunError to: self ;
+			yourself) ;
+		yourself.
+
+	self promiseRunTests
 ]
 
 { #category : #examples }
@@ -552,7 +599,50 @@ CpBrowserSupportExamplesWebClientBehavior >> exampleJavaScriptProxy [
 			yourself) ;
 		appendChild: ((CpHtmlElement newWithTag: #button)
 			textContent: 'Add text (after 2s)' ;
-			when: CpClickEvent primary only do: [ CpJavaScriptObject global setTimeout: [ outputElement appendChild: 'Hello!' asHtmlElement ] duration: 2000 ] for: self ;
+			when: CpClickEvent primary only do: [ CpBrowserWindow current setTimeout: 2000 thenDo: [ outputElement appendChild: 'Hello!' asHtmlElement ] ] for: self ;
+			yourself) ;
+		yourself
+]
+
+{ #category : #examples }
+CpBrowserSupportExamplesWebClientBehavior >> exampleProcess [
+
+	<example: 'Basic: Process test' order: 1300>
+
+	| outputElement |
+
+	self clearOutput.
+	outputElement := self outputElement.
+
+	outputElement
+		appendChild: ((CpHtmlElement newWithTag: #h1)
+			textContent: 'Process' ;
+			yourself) ;
+		appendChild: ((CpHtmlElement newWithTag: #p)
+			textContent: 'Press buttons to start or stop the process' ;
+			yourself) ;
+		appendChild: ((CpHtmlElement newWithTag: #button)
+			id: 'start-button' ;
+			textContent: 'Start' ;
+			when: CpClickEvent primary only do: [
+				process
+					ifNotNil: [
+						process isSuspended
+							ifTrue: [ process resume ]
+							ifFalse: [ outputElement appendChild: ('Not suspended' inHtmlTag: #p) ] ]
+					ifNil: [
+						outputElement appendChild: ('About to start new process...' inHtmlTag: #p).
+						process := [ | counter | outputElement appendChild: ('Go!' inHtmlTag: #p). counter := 0. [ counter := counter + 1. (counter rem: 100000) = 0 ifTrue: [ outputElement appendChild: (('counted ', counter printString) inHtmlTag: #p) ]. counter > 0 ] whileTrue ] forkAt: 3 ] ] for: self ;
+			yourself) ;
+		appendChild: ((CpHtmlElement newWithTag: #button)
+			id: 'stop-button' ;
+			textContent: 'Stop' ;
+			when: CpClickEvent primary only do: [
+				process
+					ifNotNil: [ process isSuspended
+							ifTrue: [ outputElement appendChild: ('Already suspended' inHtmlTag: #p) ]
+							ifFalse: [ process suspend ] ]
+					ifNil: [ outputElement appendChild: ('Not created yet' inHtmlTag: #p) ] ] for: self ;
 			yourself) ;
 		yourself
 ]
@@ -631,7 +721,7 @@ CpBrowserSupportExamplesWebClientBehavior >> outputElement [
 	^ CpHtmlElement documentBody firstDescendantMatching: '#output'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 CpBrowserSupportExamplesWebClientBehavior >> promiseRun [
 
 	| outputElement jsPromise |
@@ -647,7 +737,144 @@ CpBrowserSupportExamplesWebClientBehavior >> promiseRun [
 	jsPromise then: [  :value |
 		outputElement appendChild: ((CpHtmlElement newWithTag: #p)
 			textContent: value ;
-			yourself) ]
+			yourself) ].
+	outputElement appendChild: ((CpHtmlElement newWithTag: #p)
+		textContent: 'After Promise >> #then, but Promise not fulfilled yet (result will arrive soon...)' ;
+		yourself)
+]
+
+{ #category : #examples }
+CpBrowserSupportExamplesWebClientBehavior >> promiseRunAwait [
+
+	| outputElement jsPromise result |
+
+	[
+		outputElement := self outputElement.
+
+		jsPromise := CpJavaScriptPromise on: [ :resolveBlock :rejectBlock |
+			CpGlobalThis setTimeout: 2000 thenDo: [ resolveBlock value: 'Hello world' ] ].
+
+		outputElement appendChild: ((CpHtmlElement newWithTag: #p)
+			textContent: 'Wait 2 seconds...' ;
+			yourself).
+		result := (jsPromise then: [  :value | value asUppercase ]) await.
+		outputElement appendChild: ((CpHtmlElement newWithTag: #p)
+			textContent: result ;
+			yourself).
+		outputElement appendChild: ((CpHtmlElement newWithTag: #p)
+			textContent: 'Finished Promise (waited for result)' ;
+			yourself)
+	] fork
+]
+
+{ #category : #examples }
+CpBrowserSupportExamplesWebClientBehavior >> promiseRunError [
+
+	| outputElement |
+
+	"Run the following code in separate Process since we can't await in the Event handler Process"
+	[
+		outputElement := self outputElement.
+
+		outputElement appendChild: ((CpHtmlElement newWithTag: #p)
+			textContent: 'Wait 2 seconds...' ;
+			yourself).
+		[
+			(((CpJavaScriptPromise on: [ :resolveBlock :rejectBlock | CpGlobalThis setTimeout: 2000 thenDo: [ resolveBlock value: 'Going to signal an Error (sync waiting for it)' ] ])
+				then: [ :value |
+					outputElement
+						appendChild: ((CpHtmlElement newWithTag: #p)
+							textContent: value ;
+							yourself) ;
+						appendChild: ('This unhandled exception will be caught (the rejection reason follows below)' inHtmlTag: #p) ])
+				then: [ :value | self error: 'Error as expected' ]) await
+		] on: Error do: [ :error |
+			outputElement appendChild: ((CpHtmlElement newWithTag: #p)
+				textContent: 'Error is caught, because of await on Promise: ', error rootException printString ;
+				yourself) ].
+
+		outputElement appendChild: ((CpHtmlElement newWithTag: #p)
+			textContent: 'Wait another 2 seconds...' ;
+			yourself).
+		[
+			((CpJavaScriptPromise on: [ :resolveBlock :rejectBlock | CpGlobalThis setTimeout: 2000 thenDo: [ resolveBlock value: 'Going to signal an Error (async no await)' ] ])
+				then: [ :value |
+					outputElement
+						appendChild: ((CpHtmlElement newWithTag: #p)
+							textContent: value ;
+							yourself) ;
+						appendChild: ('Check the console for the message about an unhandled exception. It can''t be caught because of the async nature of Promises. This type of unhandled rejection should be considered a programmer''s error. Please add a #catch: or make the call synchronous using #await to allow a regular Smalltalk [ ... ] on: Error do: [ ...] handler.' inHtmlTag: #p) ])
+				then: [ :value | self error: 'Error as expected' ]
+		] on: Error do: [ :error |
+			outputElement appendChild: ((CpHtmlElement newWithTag: #p)
+				textContent: 'Error is never caught, because of async nature of Promises: ', error rootException printString ;
+				yourself) ].
+	] fork
+]
+
+{ #category : #examples }
+CpBrowserSupportExamplesWebClientBehavior >> promiseRunTests [
+
+	| outputElement jsPromise result error |
+
+	[
+		outputElement := self outputElement.
+
+		jsPromise := CpJavaScriptPromise resolve: 123.
+		result := (jsPromise
+			then: [ :value |
+				value = 123
+					ifFalse: [ outputElement appendChild: ('ERROR: resolve failure 1' inHtmlTag: #p) ].
+				999 ]
+			then: [ :value |
+				value = 999
+					ifFalse: [ outputElement appendChild: ('ERROR: resolve failure 2' inHtmlTag: #p) ].
+			1000 ]) await.
+		result = 1000
+			ifFalse: [ outputElement appendChild: ('ERROR: resolve failure 3' inHtmlTag: #p) ].
+
+		result := (jsPromise
+			then: [ :value | CpJavaScriptPromise reject: 666 ]
+			then: [ :value | 123 ]
+			catch: [ :reason |
+				reason = 666
+					ifFalse: [ outputElement appendChild: ('ERROR: reject failure 1' inHtmlTag: #p) ].
+				1000 ]) await.
+		result = 1000
+			ifFalse: [ outputElement appendChild: ('ERROR: reject failure 2' inHtmlTag: #p) ].
+
+		result := (jsPromise
+			then: [ :value | error := Error new messageText: 'Oops' ; yourself. error signal ]
+			then: [ :value | 123 ]
+			catch: [ :reason |
+				reason = error
+					ifFalse: [ outputElement appendChild: ('ERROR: reject failure 3' inHtmlTag: #p) ].
+				1000 ]) await.
+		result = 1000
+			ifFalse: [ outputElement appendChild: ('ERROR: reject failure 4' inHtmlTag: #p) ].
+
+		result := (jsPromise
+			then: [ :value | 345 ]
+			thenAwait: [ :value |
+				value ~= 345
+					ifTrue: [ self error: 'Failed on 345' ].
+				(CpJavaScriptPromise resolve: 456) await ]).
+		result = 456
+			ifFalse: [ outputElement appendChild: ('ERROR: reject failure 5' inHtmlTag: #p) ].
+
+		[ result := jsPromise
+			then: [ :value | 345 ]
+			thenAwait: [ :value |
+				value ~= 345
+					ifTrue: [ self error: 'Failed on 345' ].
+				(CpJavaScriptPromise reject: 456) await ].
+			outputElement appendChild: ('ERROR: reject failure 6' inHtmlTag: #p)
+		] on: Error do: [ :err |
+			err rootCause = 456
+				ifFalse: [ outputElement appendChild: ('ERROR: reject failure 7' inHtmlTag: #p) ] ].
+
+		self traceCr: 'Internal tests done'
+	] fork
 ]
 
 { #category : #examples }
@@ -710,8 +937,15 @@ CpBrowserSupportExamplesWebClientBehavior >> showIndex [
 		list appendChild: ((CpHtmlElement newWithTag: 'li')
 			id: item key ;	"ie selector"
 			textContent: item value first ;	"ie title"
+			when: CpClickEvent send: #stopProcess to: self ;
 			when: CpClickEvent send: item key to: self ;
 			yourself) ]
+]
+
+{ #category : #examples }
+CpBrowserSupportExamplesWebClientBehavior >> showInfo: aString [
+
+	self outputElement appendChild: (aString inHtmlTag: #div)
 ]
 
 { #category : #examples }
@@ -792,4 +1026,12 @@ CpBrowserSupportExamplesWebClientBehavior >> speechVoiceSelected [
 	voiceIndex := ((self outputElement firstDescendantMatching: #select) propertyAt: #selectedIndex) + 1.
 
 	^ CpBrowserSpeechSynthesis current getVoices at: voiceIndex ifAbsent: [ nil ]
+]
+
+{ #category : #support }
+CpBrowserSupportExamplesWebClientBehavior >> stopProcess [
+
+	process ifNil: [ ^ self ].
+	process terminate.
+	process := nil
 ]

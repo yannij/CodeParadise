@@ -13,11 +13,11 @@ BaselineOfCodeParadise >> baseline: spec [
 
 		"Dependencies"
 		spec
-			baseline: 'ZincHTTPComponents' with: [ spec loads: #('Core' 'WebSocket') ; repository: 'github://svenvc/zinc:v5' ].
+			package: 'Zinc-WebSocket-Core' with: [ spec repository: 'github://svenvc/zinc' ].
 
 		"Packages"
 		spec
-			package: 'CodeParadise-RemoteEnvironment' with: [ spec requires: #('CpClientEnvironment' 'ZincHTTPComponents') ];
+			package: 'CodeParadise-RemoteEnvironment' with: [ spec requires: #('CpClientEnvironment' 'Zinc-WebSocket-Core') ];
 			package: 'CodeParadise-JavaScript' ;
 			package: 'CodeParadise-WebApplication' with: [ spec requires: #('CodeParadise-RemoteEnvironment' 'CodeParadise-JavaScript') ];
 			package: 'CodeParadise-Browser-Support' with: [ spec requires: #('CodeParadise-WebApplication') ];
@@ -27,12 +27,19 @@ BaselineOfCodeParadise >> baseline: spec [
 			package: 'CodeParadise-NodeJS-REST' with: [ spec requires: #('CodeParadise-NodeJS-Support') ];
 			package: 'CodeParadise-NodeJS-Sqlite3' with: [ spec requires: #('CodeParadise-NodeJS-Support') ];
 			package: 'CodeParadise-NodeJS-Nodemailer' with: [ spec requires: #('CodeParadise-NodeJS-Support') ];
+			package: 'CodeParadise-NodeJS-Sharp' with: [ spec requires: #('CodeParadise-NodeJS-Support') ];
 
 			package: 'CodeParadise-WebApplication-MVP' with: [ spec requires: #('CodeParadise-WebApplication') ];
 
 			package: 'CodeParadise-WebApplication-Shoelace' with: [ spec requires: #('CodeParadise-WebApplication') ];
 			package: 'CodeParadise-WebApplication-Ionic' with: [ spec requires: #('CodeParadise-WebApplication') ];
 			package: 'CodeParadise-WebApplication-ChartJS' with: [ spec requires: #('CodeParadise-WebApplication') ];
+
+			"Canyon"
+			package: 'CodeParadise-Canyon-Model' with: [ spec requires: #('CodeParadise-RemoteEnvironment' 'CodeParadise-JavaScript') ];
+			package: 'CodeParadise-Canyon-Data' with: [ spec requires: #('CodeParadise-Canyon-Model' 'CodeParadise-NodeJS-REST') ];
+			package: 'CodeParadise-Canyon-App' with: [ spec requires: #('CodeParadise-Canyon-Model' 'CodeParadise-WebApplication-Ionic' 'CodeParadise-Browser-Support') ];
+			package: 'CodeParadise-Canyon-Development' with: [ spec requires: #('CodeParadise-Canyon-App') ];
 
 			"2022-06: No longer maintained"
 			package: 'CodeParadise-WebApplication-Fomantic' with: [ spec requires: #('CodeParadise-WebApplication') ];
@@ -51,13 +58,15 @@ BaselineOfCodeParadise >> baseline: spec [
 
 		"Groups"
 		spec 
-			group: 'default' with: #( 'Core' 'NodeJS-Core' 'Shoelace' 'Ionic' 'ChartJS' 'Presentation' 'Snapshot' 'Tests' 'Development' 'NodeJS-Applications');
+			group: 'default' with: #( 'Core' 'NodeJS-Core' 'Shoelace' 'Ionic' 'ChartJS' 'Presentation' 'Snapshot' 'Tests' 'Development' 'NodeJS-Applications' 'Canyon');
 
 			group: 'Core' with: #( 'CodeParadise-Browser-Support' );
 			group: 'NodeJS-Core' with: #( 'CodeParadise-NodeJS-Support' );
 			group: 'Tests' with: #( 'CodeParadise-WebApplication-Tests' 'CodeParadise-RemoteEnvironment-Tests' );
 
 			group: 'MVP' with: #( 'CodeParadise-WebApplication-MVP' );
+
+			group: 'Canyon' with: #( 'CodeParadise-Canyon-Model' 'CodeParadise-Canyon-Data' 'CodeParadise-Canyon-App' 'CodeParadise-Canyon-Development' );
 
 			group: 'Shoelace' with: #( 'CodeParadise-WebApplication-Shoelace' );
 			group: 'Ionic' with: #( 'CodeParadise-WebApplication-Ionic' );
@@ -72,7 +81,7 @@ BaselineOfCodeParadise >> baseline: spec [
 
 			group: 'Development' with: #( 'CodeParadise-WebApplication-Development' 'CodeParadise-WebApplication-Debugger' );
 
-			group: 'NodeJS-Applications' with: #( 'CodeParadise-NodeJS-REST' 'CodeParadise-NodeJS-Sqlite3' 'CodeParadise-NodeJS-Nodemailer' );
+			group: 'NodeJS-Applications' with: #( 'CodeParadise-NodeJS-REST' 'CodeParadise-NodeJS-Sqlite3' 'CodeParadise-NodeJS-Nodemailer' 'CodeParadise-NodeJS-Sharp');
 
 			group: 'CI' with: #( 'Tests' ) ].
 

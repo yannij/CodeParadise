@@ -186,7 +186,8 @@ CpViewCodeInspectorView >> applyStyle [
 	styleType = #style
 		ifTrue: [
 			element class
-				installStyle: self styleContent ]
+				installStyle: self styleContent ;
+				updateAllInstances ]
 		ifFalse: [
 			element class
 				updateGlobalStyleUsing: self styleContent ]
@@ -199,7 +200,8 @@ CpViewCodeInspectorView >> applyTemplate [
 		ifFalse: [ ^ self ].
 
 	element class
-		installTemplate: self templateContent
+		installTemplate: self templateContent ;
+		updateAllInstances
 ]
 
 { #category : #rendering }
@@ -430,7 +432,8 @@ CpViewCodeInspectorView >> handleApplyStyle: anEvent [
 		stopPropagation ;
 		preventDefault.
 
-	self applyStyle
+	"Update deferred, because of possible awaits being used in #initializeShadowRoot"
+	self defer: [ self applyStyle ]
 ]
 
 { #category : #'event handling' }
@@ -440,7 +443,8 @@ CpViewCodeInspectorView >> handleApplyTemplate: anEvent [
 		stopPropagation ;
 		preventDefault.
 
-	self applyTemplate
+	"Update deferred, because of possible awaits being used in #initializeShadowRoot"
+	self defer: [ self applyTemplate ]
 ]
 
 { #category : #'event handling' }
@@ -591,7 +595,7 @@ CpViewCodeInspectorView >> initialize [
 
 	styleType := #style.
 
-	CpHtmlElement document
+	CpBrowserWindow current
 		when: (CpKeyDownEvent fromString: 'X-s') send: #preventDefault: to: self ;
 		when: (CpKeyDownEvent fromString: 'X-S-s') send: #preventDefault: to: self.
 
@@ -641,7 +645,7 @@ CpViewCodeInspectorView >> refreshStyle [
 	self elementIsTemplateComponent
 		ifFalse: [ ^ self ].
 
-	cssEditor isDirty
+	(cssEditor isNotNil and: [ cssEditor isDirty ])
 		ifTrue: [
 			self
 				confirm: 'The source code for the style is changed. What do you want to do with the code?'
@@ -696,7 +700,7 @@ CpViewCodeInspectorView >> requestGlobalStyle [
 	styleType = #globalStyle
 		ifTrue: [ ^ self ].
 
-	cssEditor isDirty
+	(cssEditor isNotNil and: [ cssEditor isDirty ])
 		ifTrue: [
 			self
 				confirm: 'The source code for the style is changed. What do you want to do with the code?'
@@ -716,7 +720,7 @@ CpViewCodeInspectorView >> requestLocalStyle [
 	styleType = #style
 		ifTrue: [ ^ self ].
 
-	cssEditor isDirty
+	(cssEditor isNotNil and: [ cssEditor isDirty ])
 		ifTrue: [
 			self
 				confirm: 'The source code for the style is changed. What do you want to do with the code?'
@@ -751,6 +755,8 @@ CpViewCodeInspectorView >> requestTemplate [
 
 { #category : #accessing }
 CpViewCodeInspectorView >> revertStyle [
+
+	cssEditor ifNil: [ ^ self ].
 
 	cssEditor revert
 ]
@@ -911,6 +917,8 @@ CpViewCodeInspectorView >> showTemplate: aString [
 
 { #category : #accessing }
 CpViewCodeInspectorView >> styleContent [
+
+	cssEditor ifNil: [ ^ '' ].
 
 	^ cssEditor content
 ]

@@ -45,6 +45,46 @@ IonRadioGroup >> compareWith: anObject [
 ]
 
 { #category : #api }
+IonRadioGroup >> errorText [
+
+	"The error text to display at the top of the radio group.
+	
+	Type: string"
+
+	^ self propertyAt: #errorText
+]
+
+{ #category : #api }
+IonRadioGroup >> errorText: aString [
+
+	"The error text to display at the top of the radio group.
+	
+	Type: string"
+
+	self propertyAt: #errorText put: aString
+]
+
+{ #category : #api }
+IonRadioGroup >> helperText [
+
+	"The helper text to display at the top of the radio group.
+	
+	Type: string"
+
+	^ self propertyAt: #helperText
+]
+
+{ #category : #api }
+IonRadioGroup >> helperText: aString [
+
+	"The helper text to display at the top of the radio group.
+	
+	Type: string"
+
+	self propertyAt: #helperText put: aString
+]
+
+{ #category : #api }
 IonRadioGroup >> name [
 
 	"The name of the control, which is submitted with the form data.
@@ -62,6 +102,14 @@ IonRadioGroup >> name: aString [
 	Type: string"
 
 	self propertyAt: #name put: aString
+]
+
+{ #category : #api }
+IonRadioGroup >> setFocus [
+
+	"Type: Promise<void>"
+
+	^ self apply: #setFocus resultAs: CpJavaScriptPromise
 ]
 
 { #category : #api }

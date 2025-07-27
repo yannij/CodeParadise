@@ -3,7 +3,7 @@ Extension { #name : #String }
 { #category : #'*CodeParadise-Canyon-Model' }
 String >> formatKnown: aCollection [
 
-	<applicationExtension>
+	<canyonModelExtension>
 
 	"Format the receiver by interpolating elements from the collection specified.
 	In contrast with #format: any unknown elements are left intact (instead of
@@ -23,8 +23,8 @@ String >> formatKnown: aCollection [
 							replacement := index
 								ifNotNil: [ aCollection at: index ifAbsent: [ nil ] ]
 								ifNil: [
+									"SequenceableCollection has numeric indices and we have a name here (will result in 'nil' for SequenceableCollection)"
 									(aCollection isKindOf: SequenceableCollection)
-										ifTrue: [ nil ] "SequenceableCollection has numeric indices and we have a name here"
 										ifFalse: [ aCollection at: expression ifAbsent: [ nil ] ] ].
 							replacement
 								ifNotNil: [ result nextPutAll: replacement asString ]

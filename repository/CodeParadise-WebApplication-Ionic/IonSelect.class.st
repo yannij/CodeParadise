@@ -85,6 +85,26 @@ IonSelect >> disabled: aBoolean [
 ]
 
 { #category : #api }
+IonSelect >> errorText [
+
+	"Text that is placed under the select and displayed when an error is detected.
+	
+	Type: string"
+
+	^ self propertyAt: #errorText
+]
+
+{ #category : #api }
+IonSelect >> errorText: aString [
+
+	"Text that is placed under the select and displayed when an error is detected.
+	
+	Type: string"
+
+	self propertyAt: #errorText put: aString
+]
+
+{ #category : #api }
 IonSelect >> expandedIcon [
 
 	"The toggle icon to show when the select is open. If defined, the icon rotation behavior in 'md' mode will be disabled. If undefined, 'toggleIcon' will be used for when the select is both open and closed.
@@ -125,9 +145,29 @@ IonSelect >> fill: aString [
 ]
 
 { #category : #api }
+IonSelect >> helperText [
+
+	"Text that is placed under the select and displayed when no error is detected.
+	
+	Type: string"
+
+	^ self propertyAt: #helperText
+]
+
+{ #category : #api }
+IonSelect >> helperText: aString [
+
+	"Text that is placed under the select and displayed when no error is detected.
+	
+	Type: string"
+
+	self propertyAt: #helperText put: aString
+]
+
+{ #category : #api }
 IonSelect >> interface [
 
-	"The interface the select should use: 'action-sheet', 'popover' or 'alert'.
+	"The interface the select should use: 'action-sheet', 'popover', 'alert', or 'modal'.
 	
 	Type: SelectInterface"
 
@@ -137,7 +177,7 @@ IonSelect >> interface [
 { #category : #api }
 IonSelect >> interface: anObject [
 
-	"The interface the select should use: 'action-sheet', 'popover' or 'alert'.
+	"The interface the select should use: 'action-sheet', 'popover', 'alert', or 'modal'.
 	
 	Type: SelectInterface"
 
@@ -147,7 +187,7 @@ IonSelect >> interface: anObject [
 { #category : #api }
 IonSelect >> interfaceOptions [
 
-	"Any additional options that the 'alert', 'action-sheet' or 'popover' interface can take. See the [ion-alert docs](./alert), the [ion-action-sheet docs](./action-sheet) and the [ion-popover docs](./popover) for the create options for each interface.  Note: 'interfaceOptions' will not override 'inputs' or 'buttons' with the 'alert' interface.
+	"Any additional options that the 'alert', 'action-sheet' or 'popover' interface can take. See the [ion-alert docs](./alert), the [ion-action-sheet docs](./action-sheet), the [ion-popover docs](./popover), and the [ion-modal docs](./modal) for the create options for each interface.  Note: 'interfaceOptions' will not override 'inputs' or 'buttons' with the 'alert' interface.
 	
 	Type: any"
 
@@ -157,7 +197,7 @@ IonSelect >> interfaceOptions [
 { #category : #api }
 IonSelect >> interfaceOptions: anObject [
 
-	"Any additional options that the 'alert', 'action-sheet' or 'popover' interface can take. See the [ion-alert docs](./alert), the [ion-action-sheet docs](./action-sheet) and the [ion-popover docs](./popover) for the create options for each interface.  Note: 'interfaceOptions' will not override 'inputs' or 'buttons' with the 'alert' interface.
+	"Any additional options that the 'alert', 'action-sheet' or 'popover' interface can take. See the [ion-alert docs](./alert), the [ion-action-sheet docs](./action-sheet), the [ion-popover docs](./popover), and the [ion-modal docs](./modal) for the create options for each interface.  Note: 'interfaceOptions' will not override 'inputs' or 'buttons' with the 'alert' interface.
 	
 	Type: any"
 
@@ -344,6 +384,26 @@ IonSelect >> placeholder: aString [
 	Type: string"
 
 	self propertyAt: #placeholder put: aString
+]
+
+{ #category : #api }
+IonSelect >> required [
+
+	"If true, screen readers will announce it as a required field. This property works only for accessibility purposes, it will not prevent the form from submitting if the value is invalid.
+	
+	Type: boolean"
+
+	^ self propertyAt: #required
+]
+
+{ #category : #api }
+IonSelect >> required: aBoolean [
+
+	"If true, screen readers will announce it as a required field. This property works only for accessibility purposes, it will not prevent the form from submitting if the value is invalid.
+	
+	Type: boolean"
+
+	self propertyAt: #required put: aBoolean
 ]
 
 { #category : #api }
